@@ -1,11 +1,14 @@
 """
-Stáhne data o učitelích ze stagu a uloží do "ucitele.json"
+Stáhne data o učitelích FŽP ze stagu a uloží do "ucitele_fzp.json"
 """
 
 import requests, json
 from bs4 import BeautifulSoup
 
-data = "type=katedra&varName=G230413suggestor&katedraInput=%25&krouzekSearchFakulta=PRF&searchCisloPracoviste=%25&prohlizeniPracovisteJenPlatna=A&porLo=cs"
+
+fakulta = "FZP"
+
+data = f"type=katedra&varName=G230413suggestor&katedraInput=%25&krouzekSearchFakulta={fakulta}&searchCisloPracoviste=%25&prohlizeniPracovisteJenPlatna=A&porLo=cs"
 
 r = requests.get('https://portal.ujep.cz/StagPortletsJSR168/StagSuggest', data)
 
@@ -24,5 +27,5 @@ for workplace in workplaces:
     teachers[workplace] = t
 
 print(teachers)
-with open("ucitele.json", "w") as out:
+with open("ucitele_fzp.json", "w") as out:
     out.write(json.dumps(teachers))
