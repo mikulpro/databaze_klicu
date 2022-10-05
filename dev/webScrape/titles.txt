@@ -1,3 +1,28 @@
+(
+    ('JUDr.', True, 30),
+    ('RNDr.', True, 30),
+    ('MUDr.', True, 30),
+    ('Bc.', True, 10),
+    ('DiS.', False, 0),
+    ('ak. mal.', True, 20),
+    ('prof.', True, 50),
+    ('Ing.', True, 20),
+    ('PaedDr.', True, 30),
+    ('Ph.D.', False, 0),
+    ('doc.', True, 40),
+    ('PhD.', False, 0),
+    ('CSc.', False, 0),
+    ('Mgr.', True, 20),
+    ('PhDr.', True, 30),
+    ('PharmDr.', True, 30),
+    ('DSc.', False, 0),
+    ('Dr.', True, 30),
+    ('Dr.', False, 0),
+    ('DrSc.', False, 0)
+ )
+
+
+
 [' Bc. ', ' prof. Ing.', ' Mgr.', ' Mgr. ', ' RNDr.', ' Mgr. ', ' Mgr. ', ' Mgr.', ' Mgr.', ' Ing.', ' RNDr.', ' Dr. ', ' doc. PhDr.', ' Mgr.', ' RNDr.', ' RNDr.', ' Ing. ', ' Mgr.', ' Mgr.', ' Mgr. ', ' Mgr. ', ' Ing.', ' doc. RNDr.', ' doc. RNDr.', ' Bc. ', ' Ing.', ' Mgr. ', ' RNDr.', ' RNDr.', ' doc. RNDr.', ' doc. RNDr.', ' Mgr.', ' RNDr.', ' RNDr.', ' Mgr. ', ' Mgr. ', ' Mgr.', ' Ing.', ' PhDr. Ing.', ' Mgr.', ' Mgr.', ' Ing.', ' RNDr.', ' Mgr. ', ' prof. RNDr.', ' Mgr.', ' doc. RNDr. ', ' prof. Ing.', ' RNDr.', ' prof. ', ' Mgr. ', ' Ing. ', ' doc. Ing.', ' Bc. ', ' prof. Ing.', ' Mgr.', ' Mgr. ', ' RNDr.', ' Mgr. ', ' Mgr. ', ' Mgr.', ' Mgr.', ' Ing.', ' RNDr.', ' Dr. ', ' doc. PhDr.', ' Mgr.', ' RNDr.', ' RNDr.', ' Ing. ', ' Mgr.', ' Mgr.', ' Mgr. ', ' Mgr. ', ' Ing.', ' doc. RNDr.', ' doc. RNDr.', ' Bc. ', ' Ing.', ' Mgr. ', ' RNDr.', ' RNDr.', ' doc. RNDr.', ' doc. RNDr.', ' Mgr.', ' RNDr.', ' RNDr.', ' Mgr. ', ' Mgr. ', ' Mgr.', ' Ing.', ' PhDr. Ing.', ' Mgr.', ' Mgr.', ' Ing.', ' RNDr.', ' Mgr. ', ' prof. RNDr.', ' Mgr.', ' doc. RNDr. ', ' prof. Ing.', ' RNDr.', ' prof. ', ' Mgr. ', ' Ing. ', ' doc. Ing.', ' RNDr.', ' prof. Ing.', ' RNDr.', ' doc. RNDr.', ' prof. RNDr.', ' RNDr.', ' doc. RNDr.', ' Mgr.', ' RNDr.', ' doc. RNDr.', ' prof. RNDr.', ' doc. RNDr.', ' Mgr.', ' doc. RNDr.', ' doc. RNDr.', ' Bc. ', ' Mgr. ', ' Mgr.', ' RNDr.', ' doc. RNDr.', ' doc. RNDr.', ' doc. RNDr.', ' Mgr. ', ' doc. RNDr.', ' doc. PhDr. RNDr.', ' Mgr.', ' Ing. ', ' RNDr.', ' Mgr.', ' RNDr.', ' RNDr. Mgr. ', ' RNDr.', ' Mgr. ', ' RNDr.', ' RNDr.', ' Mgr. ', ' prof. ak. mal.', ' Ph.D. ', ' Mgr. ', ' Mgr. ', ' doc. Mgr.', ' Mgr.', ' Mgr.', ' Ing.', ' Mgr. ', ' Mgr. ', ' Mgr. ', ' Mgr. Ing. ', ' Mgr.', ' Mgr. ', ' Ing.', ' RNDr.', ' Ing.', ' doc. Ing.', ' Bc. ', ' doc. RNDr.', ' doc. Ing.', ' Ing.', ' Ing. ', ' doc. RNDr.', ' Mgr.', ' Ing. ', ' Mgr. ', ' Ing.', ' Mgr.', ' Ing.', ' doc. Ing.', ' prof. RNDr.', ' RNDr.', ' Mgr. ', ' Mgr. ', ' Ing.', ' Ing. ', ' RNDr.', ' Mgr.', ' doc. Ing.', ' MUDr. ', ' MUDr. ', ' RNDr.', ' Ing.', ' RNDr.', ' PharmDr.', ' RNDr.', ' prof. doc. RNDr.', ' doc. RNDr.', ' RNDr.', ' prof. PharmDr.', ' prof.', ' Mgr. ', ' doc. Ing. Mgr.', ' Mgr. ', ' Ing. Mgr. ', ' Mgr.', ' Ing. ', ' Bc. ', ' Mgr. ', ' RNDr.', ' Ing.', ' RNDr.', ' doc. RNDr.', ' Dr. ', ' doc. RNDr.', ' RNDr.', ' Ph.D. ', ' Ing. ', ' Mgr. ', ' Ing. ', ' RNDr.', ' RNDr.', ' Bc. ', ' Ing. ', ' Ing. ', ' doc. ', ' doc. Mgr. Ing.', ' prof. RNDr.', ' doc. PaedDr.', ' RNDr.', ' PhDr.', ' RNDr.', ' Mgr. ', ' Ing. ', ' doc. RNDr.', ' RNDr.', ' PhDr.', ' Mgr. ', ' Mgr. ', ' Mgr. Bc. ', ' Ing. ', ' Ing.', ' Bc. ']
 
 # ALL
