@@ -19,15 +19,18 @@ with open("../../webScrape/ucebny.json") as file:
 ucebny_dict = json.loads(data)
 ucebny_out = []
 
+id = 1
 for floor in ucebny_dict.keys():
     for ucebna in ucebny_dict[floor]:
         # name, floor, type, faculty
         ucebny_out.append((
+            id,
             ucebna['name'],
             floor,
             room_types[ucebna['type']],
             faculties[ucebna['faculty']]
         ))
+        id += 1
 
 
 with open(f"../data/export_Rooms.csv", "w") as outfile:

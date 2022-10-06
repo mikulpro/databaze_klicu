@@ -24,12 +24,15 @@ new_titles = []
 for i in titles:
     new_titles.append((i[0], i[1]))
 
+id = 1
 with open(f"../data/data_Titles.csv", "w") as outfile:
     for row in new_titles:
+        outfile.write(str(id) + ';')
         for i in range(len(row)):
             outfile.write(str(row[i]))
             if i < (len(row)-1):
                 outfile.write(";")
         outfile.write("\n")
+        id += 1
 
 print(new_titles)

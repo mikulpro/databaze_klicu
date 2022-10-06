@@ -1,5 +1,7 @@
 import pysqlite3
 
+IMPORT_DATA = True
+
 con = pysqlite3.connect("keys_test.db")
 cur = con.cursor()
 
@@ -33,7 +35,7 @@ con.execute("""CREATE TABLE Keys(
 con.execute("""CREATE TABLE KeysRooms(
   key INTEGER,
   room INTEGER,
-  FOREIGN KEY(key) REFERENCES Keys(id),
+  FOREIGN KEY(key) REFERENCES Keys(registration_number),
   FOREIGN KEY(room) REFERENCES Rooms(id)
 );""")
 
@@ -55,13 +57,13 @@ con.execute("""CREATE TABLE Borrowers(
 con.execute("""CREATE TABLE Titles(
   id INTEGER PRIMARY KEY,
   abbreviation VARCHAR NOT NULL ,
-  is_before_name INTEGER NOT NULL,
+  is_before_name INTEGER NOT NULL
 );""")
 
 con.execute("""CREATE TABLE BorrowersTitles(
   borrower INTEGER,
   title INTEGER,
-  order INTEGER NOT NULL,
+  title_order INTEGER NOT NULL,
   FOREIGN KEY(borrower) REFERENCES Borrowers(id), 
   FOREIGN KEY(title) REFERENCES Titiles(id)
 );""")
@@ -92,6 +94,12 @@ con.execute("""CREATE TABLE Borrowings(
   FOREIGN KEY(doorkeeper) REFERENCES Doorkeepers(id)
 );""")
 
+print('Databáze byla úspěšně vytvořena')
+
+if IMPORT_DATA:
+    import import_data_db
+    import_data_db.do_directory('data', con)
+    con.commit()
 
 # Close the connection
 con.close()
