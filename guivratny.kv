@@ -1,0 +1,40 @@
+#:kivy 2.1.0
+#:set odsazeni 200
+
+<VyberOsoby>
+    GridLayout:
+        cols: 3
+        rows: 1
+        size: root.width, odsazeni
+        padding: 0
+
+        Button:
+            height: odsazeni
+            text: "Pokračovat"
+            disabled: True
+
+        Button:
+            height: odsazeni
+            text: "Načíst občanský průkaz"
+            disabled: True
+
+        Button:
+            height: odsazeni
+            text: "Raději zadám klíč jako první"
+            disabled: True
+
+        Button:
+            height: odsazeni
+            text: "Storno"
+
+    GridLayout:
+        cols: 1
+        rows: 1
+        size: root.width, root.height
+        padding: odsazeni
+
+        Label:
+            text: "Kdo si chce půljčit klíč?"
+
+        TextInput:
+            multiline: False
