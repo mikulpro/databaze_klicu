@@ -1,8 +1,9 @@
 import pysqlite3
 
 IMPORT_DATA = True
+DB_FILE = "../../db.sqlite"
 
-con = pysqlite3.connect("keys_test.db")
+con = pysqlite3.connect(DB_FILE)
 cur = con.cursor()
 
 con.execute("""CREATE TABLE RoomTypes(
@@ -93,6 +94,23 @@ con.execute("""CREATE TABLE Borrowings(
   FOREIGN KEY(borrower) REFERENCES Borrowers(id),
   FOREIGN KEY(doorkeeper) REFERENCES Doorkeepers(id)
 );""")
+
+
+con.execute("""CREATE VIEW IF NOT EXISTS borrowers_fullnames AS
+    SELECT COALESCE(group_concat(tb, " "), "") || " " || 
+        COALESCE(firstname, "") || " " || 
+        COALESCE(surname, "") || " " || 
+        COALESCE(group_concat(ta, " "), "") AS full_name
+    FROM (
+        SELECT borrowers.id, tb.abbreviation as tb, borrowers.firstname, borrowers.surname, ta.abbreviation as ta
+        FROM borrowers
+        LEFT JOIN borrowerstitles AS bt ON borrowers.id == bt.borrower
+        LEFT JOIN titles AS tb ON (bt.title == tb.id AND tb.is_before_name == "True")
+        LEFT JOIN titles AS ta ON (bt.title == ta.id AND ta.is_before_name == "False")
+        ORDER by borrowers.id, bt.title_order 
+    )
+    GROUP BY id
+;""")
 
 print('Databáze byla úspěšně vytvořena')
 

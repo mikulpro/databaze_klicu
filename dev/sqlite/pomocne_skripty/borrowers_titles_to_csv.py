@@ -42,13 +42,14 @@ for borrower in borrowers:
             order += 1
     if borrower['titles2']:
         is_before = False
-        for title in borrower['titles1']:
-            borrowers_titles.append((
-                borrower['id'],
-                int(titles[title]),
-                order
-            ))
-            order += 1
+        for title in borrower['titles2']:
+            if title != "et":
+                borrowers_titles.append((
+                    borrower['id'],
+                    int(titles[title]),
+                    order
+                ))
+                order += 1
 
 print(borrowers_titles)
 
