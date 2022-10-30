@@ -12,11 +12,13 @@ from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
+from kivy.lang import Builder
+from kivymd.app import MDApp
 
 class LoginWindow(GridLayout):
     pass
 
-class LoginApp(App):
+class LoginApp(MDApp):
     def build(self):
         self.title = "Přihlášení se"
         return LoginWindow()
@@ -24,7 +26,7 @@ class LoginApp(App):
 
 if __name__ == "__main__":
     Window.clearcolor = (1, 1, 1, 1)
-    Window.size = (1280, 720)
+    Window.size = (1080, 720)
 
     login = LoginApp()
     login.run()
