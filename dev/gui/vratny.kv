@@ -10,7 +10,7 @@ MDScreen:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'cpto3.jpg'
+            source: 'cpto2.jpg'
 
     MDLabel:
         id: appname_label
@@ -22,7 +22,8 @@ MDScreen:
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 1}
+        pos_hint: {'top': 0.85}
+        bold: True
 
     MDCard:
         size_hint: None, None
@@ -79,3 +80,4 @@ MDScreen:
             md_bg_color: "#005963"
             font_size: 24
             pos_hint: {'right': 1}
+            on_press: app.clear() 

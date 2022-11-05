@@ -32,13 +32,13 @@ colors = {
     },
 }
 
-class LoginApp(MDApp):
+class VratnyApp(MDApp):
     def build(self):
         self.theme_cls.colors = colors
         self.theme_cls.primary_palette = "Gray"
         self.theme_cls.accent_palette = "Cyan"
         self.theme_cls.theme_style = "Light"
-        return Builder.load_file('login.kv')
+        return Builder.load_file('vratny.kv')
 
 
 if __name__ == "__main__":
@@ -47,9 +47,5 @@ if __name__ == "__main__":
     Config.set('graphics', 'width', '1080')
     Config.set('graphics', 'height', '720')
 
-    login = LoginApp()
-    login.run()
-
-    login_uspesny = False
-    if login_uspesny:
-        pass
+    _my_application = VratnyApp()
+    _my_application.run()
