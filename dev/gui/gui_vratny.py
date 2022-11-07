@@ -6,51 +6,57 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import Config
 from kivymd.app import MDApp
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
+from kivy.uix.image import Image
+from kivy.properties import ObjectProperty
 
-colors = {
-    "Cyan": {
-        "200": "#005963",
-        "500": "#005963",
-        "700": "#005963",
-    },
-    "Gray": {
-        "200": "#ededed",
-        "500": "#ededed",
-        "700": "#ededed",
-    },
-    "Red": {
-        "200": "#ff0000",
-        "500": "#ff0000",
-        "A700": "#ff0000",
-    },
-    "Light": {
-        "StatusBar": "E0E0E0",
-        "AppBar": "#202020",
-        "Background": "#ededed",
-        "CardsDialogs": "#FFFFFF",
-        "FlatButtonDown": "#CCCCCC",
-    },
-}
+# colors = {
+#     "Cyan": {
+#         "200": "#005963",
+#         "500": "#005963",
+#         "700": "#005963",
+#     },
+#     "Gray": {
+#         "200": "#ededed",
+#         "500": "#ededed",
+#         "700": "#ededed",
+#     },
+#     "Red": {
+#         "200": "#ff0000",
+#         "500": "#ff0000",
+#         "A700": "#ff0000",
+#     },
+#     "Light": {
+#         "StatusBar": "E0E0E0",
+#         "AppBar": "#202020",
+#         "Background": "#ededed",
+#         "CardsDialogs": "#FFFFFF",
+#         "FlatButtonDown": "#CCCCCC",
+#     },
+# }
 
 
 class LoginScreen(Screen):
     ...
 
-
 class KeySelectionScreen(Screen):
+    ...
+
+
+class PersonSelectionScreen(Screen):
     ...
 
 
 class VratnyApp(MDApp):
     def build(self):
-        self.theme_cls.colors = colors
-        self.theme_cls.primary_palette = "Gray"
-        self.theme_cls.accent_palette = "Cyan"
-        self.theme_cls.theme_style = "Light"
+        # self.theme_cls.colors = colors
+        # self.theme_cls.primary_palette = "Gray"
+        # self.theme_cls.accent_palette = "Cyan"
+        # self.theme_cls.theme_style = "Light"
+        
         Builder.load_file('vratny.kv')
 
-        sc_mngr = ScreenManager()
+        sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
 
