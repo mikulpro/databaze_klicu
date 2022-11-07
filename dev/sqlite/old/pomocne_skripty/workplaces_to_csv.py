@@ -1,6 +1,6 @@
 import json
 
-with open('../../webScrape/ucitele.json') as file:
+with open('webScrape/ucitele.json') as file:
     data = file.readline()
 
 ucitele_prf = json.loads(data)
@@ -17,7 +17,7 @@ for workplace_str in ucitele_prf.keys():
     ))
 
 
-with open('../../webScrape/ucitele_fzp.json') as file:
+with open('webScrape/ucitele_fzp.json') as file:
     data = file.readline()
 
 ucitele_fzp = json.loads(data)

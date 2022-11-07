@@ -1,9 +1,9 @@
 import json
 
-with open('../../webScrape/ucitele.json') as file:
+with open('webScrape/ucitele.json') as file:
     ucitele = json.loads(file.readline())
 
-with open('../../webScrape/ucitele_fzp.json') as file:
+with open('webScrape/ucitele_fzp.json') as file:
     ucitele_fzp = json.loads(file.readline())
 
 
@@ -42,7 +42,7 @@ ucitele_out = list(ucitele_dicts.values())
 # zadny ucitel podle stagu neni zamestnancem vice pracovist
 print(ucitele_out)
 
-with open('../../webScrape/ucitele2.json', 'w') as file:
+with open('webScrape/ucitele2.json', 'w') as file:
     file.write(json.dumps(ucitele_out))
 
 with open(f"../data/data_Borrowers.csv", "w") as outfile:

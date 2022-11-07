@@ -1,7 +1,7 @@
 import pysqlite3
 
 IMPORT_DATA = True
-DB_FILE = "../../db.sqlite"
+DB_FILE = "../../../db_old.sqlite"
 
 con = pysqlite3.connect(DB_FILE)
 cur = con.cursor()

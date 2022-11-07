@@ -57,9 +57,12 @@ class Db:
             WHERE floor == {floor};""")
         return self.cur.fetchall()
 
+    def excel_dump(self):
+        self.cur.execute("SELECT _ FROM Borrowings")
+
 
 if __name__ == "__main__":#
-    db = Db("db.sqlite")
+    db = Db("db_old.sqlite")
     data = db.filter_rooms_by_floor(5)
     for i in data:
         print(dict(i))

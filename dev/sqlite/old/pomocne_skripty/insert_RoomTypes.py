@@ -4,7 +4,7 @@ import pysqlite3
 con = pysqlite3.connect("keys_test.db")
 cur = con.cursor()
 
-with open('../../webScrape/types.txt') as file:
+with open('webScrape/types.txt') as file:
     data = file.readline()
 
 

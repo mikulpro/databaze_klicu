@@ -1,6 +1,6 @@
 import json, csv
 
-with open('../../webScrape/ucitele2.json', 'r') as file:
+with open('webScrape/ucitele2.json', 'r') as file:
     borrowers = json.loads(file.readline())
 
 with open('../data/data_Workplaces.csv') as csv_file:

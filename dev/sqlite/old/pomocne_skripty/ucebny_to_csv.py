@@ -13,7 +13,7 @@ with open('../data/data_Faculties.csv') as csv_file:
 
 faculties.update({'PRF': 1, 'FZP': 2})
 
-with open("../../webScrape/ucebny.json") as file:
+with open("webScrape/ucebny.json") as file:
     data = file.readline()
 
 ucebny_dict = json.loads(data)
@@ -33,7 +33,7 @@ for floor in ucebny_dict.keys():
         id += 1
 
 
-with open(f"../data/export_Rooms.csv", "w") as outfile:
+with open(f"../old/data/export_Rooms.csv", "w") as outfile:
     for row in ucebny_out:
         for i in range(len(row)):
             outfile.write(str(row[i]))
