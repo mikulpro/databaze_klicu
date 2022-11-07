@@ -6,6 +6,7 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import Config
 from kivymd.app import MDApp
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 colors = {
     "Cyan": {
@@ -32,13 +33,37 @@ colors = {
     },
 }
 
+
+class LoginScreen(Screen):
+    ...
+
+
+class KeySelectionScreen(Screen):
+    ...
+
+
 class VratnyApp(MDApp):
     def build(self):
         self.theme_cls.colors = colors
         self.theme_cls.primary_palette = "Gray"
         self.theme_cls.accent_palette = "Cyan"
         self.theme_cls.theme_style = "Light"
-        return Builder.load_file('vratny.kv')
+        Builder.load_file('vratny.kv')
+
+        sc_mngr = ScreenManager()
+        sc_mngr.add_widget(LoginScreen(name = "login"))
+        sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
+
+        return sc_mngr
+
+
+def PrihasitSeButtonFunction(username=None, password=None):
+
+    # some function to authenticate
+
+    # some function to select next screen
+
+    ...
 
 
 if __name__ == "__main__":
@@ -47,5 +72,4 @@ if __name__ == "__main__":
     Config.set('graphics', 'width', '1080')
     Config.set('graphics', 'height', '720')
 
-    _my_application = VratnyApp()
-    _my_application.run()
+    VratnyApp().run()

@@ -5,79 +5,112 @@
 # seda       : .93, .93, .93, 1    #ededed
 # prf        : 0.0, .45, .50, 1    #007380
 
-MDScreen:
-    canvas.before:
-        Rectangle:
-            pos: self.pos
-            size: self.size
-            source: 'cpto2.jpg'
+<LoginScreen>:
+    MDScreen:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'cpto2.jpg'
 
-    MDLabel:
-        id: appname_label
-        text: "Aplikace pro správu klíčů CPTO"
-        font_size: 40
-        halign: 'center'
-        size_hint_y: None
-        height: self.texture_size[1]
-        padding_y: 15
-        theme_text_color: "Custom"
-        text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.85}
-        bold: True
+        MDLabel:
+            id: appname_label
+            text: "Aplikace pro správu klíčů CPTO"
+            font_size: 40
+            halign: 'center'
+            size_hint_y: None
+            height: self.texture_size[1]
+            padding_y: 15
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            pos_hint: {'top': 0.85}
+            bold: True
 
-    MDCard:
-        size_hint: None, None
-        size: 300, 300
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        elevation: 1
-        padding: 25
-        spacing: 25
-        orientation: 'vertical'
-        md_bg_color: app.theme_cls.primary_light
+        MDCard:
+            size_hint: None, None
+            size: 300, 300
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            elevation: 1
+            padding: 25
+            spacing: 25
+            orientation: 'vertical'
+            md_bg_color: app.theme_cls.primary_light
 
-        MDTextField:
-            id: user
-            mode: "round"
-            text_color_normal: "#005963"
-            text_color_focus: "#000000"
-            background_color: "#FFFFFF"
-            multiline: False
-            fill_color_focus: "#FFFFFF"
-            line_color_normal: "#005963"
-            line_color_focus: "#000000"
-            hint_text: "Přihlašovací jméno"
-            icon_right: "account"
-            icon_right_color_focus: "#000000"
-            icon_right_color_normal: "#005963"
-            size_hint_x: None
-            width: 200
-            font_size: 18
-            pos_hint: {"center_x": 0.5}
+            MDTextField:
+                id: user
+                mode: "round"
+                text_color_normal: "#005963"
+                text_color_focus: "#000000"
+                background_color: "#FFFFFF"
+                multiline: False
+                fill_color_focus: "#FFFFFF"
+                line_color_normal: "#005963"
+                line_color_focus: "#000000"
+                hint_text: "Přihlašovací jméno"
+                icon_right: "account"
+                icon_right_color_focus: "#000000"
+                icon_right_color_normal: "#005963"
+                size_hint_x: None
+                width: 200
+                font_size: 18
+                pos_hint: {"center_x": 0.5}
 
-        MDTextField:
-            id: password
-            mode: "round"
-            text_color_normal: "#005963"
-            text_color_focus: "#000000"
-            background_color: "#FFFFFF"
-            multiline: False
-            fill_color_focus: "#FFFFFF"
-            line_color_normal: "#005963"
-            line_color_focus: "#000000"
-            hint_text: "Heslo"
-            icon_right: "eye-off"
-            icon_right_color_focus: "#000000"
-            icon_right_color_normal: "#005963"
-            size_hint_x: None
-            width: 200
-            font_size: 18
-            pos_hint: {"center_x": 0.5}
-            password: True
+            MDTextField:
+                id: password
+                mode: "round"
+                text_color_normal: "#005963"
+                text_color_focus: "#000000"
+                background_color: "#FFFFFF"
+                multiline: False
+                fill_color_focus: "#FFFFFF"
+                line_color_normal: "#005963"
+                line_color_focus: "#000000"
+                hint_text: "Heslo"
+                icon_right: "eye-off"
+                icon_right_color_focus: "#000000"
+                icon_right_color_normal: "#005963"
+                size_hint_x: None
+                width: 200
+                font_size: 18
+                pos_hint: {"center_x": 0.5}
+                password: True
 
-        MDRoundFlatButton:
-            text: "Přihlásit se"
-            text_color: "#FFFFFF"
-            md_bg_color: "#005963"
-            font_size: 24
-            pos_hint: {'right': 1}
-            on_press: app.clear() 
+            MDRoundFlatButton:
+                text: "Přihlásit se"
+                text_color: "#FFFFFF"
+                md_bg_color: "#005963"
+                font_size: 24
+                pos_hint: {'right': 1}
+                on_press: root.manager.current = "keyselection"
+                #on_press: PrihasitSeButtonFunction() 
+
+<KeySelectionScreen>
+    MDScreen:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'cpto2.jpg'
+
+        MDLabel:
+            id: appname_label2
+            text: "Dalsi obrazovka"
+            font_size: 40
+            halign: 'center'
+            size_hint_y: None
+            height: self.texture_size[1]
+            padding_y: 15
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            pos_hint: {'top': 0.85}
+            bold: True
+
+        MDCard:
+            size_hint: None, None
+            size: 300, 300
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            elevation: 1
+            padding: 25
+            spacing: 25
+            orientation: 'vertical'
+            md_bg_color: app.theme_cls.primary_light
