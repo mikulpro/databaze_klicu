@@ -9,6 +9,7 @@ from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.image import Image
 from kivy.properties import ObjectProperty
+from kivy.uix.boxlayout import BoxLayout
 
 # colors = {
 #     "Cyan": {
@@ -36,11 +37,23 @@ from kivy.properties import ObjectProperty
 # }
 
 
+class SearchResultWidget(BoxLayout):
+    # sem funkce ohledne klikani na widget samotny
+    ...
+
+
 class LoginScreen(Screen):
     ...
 
+
 class KeySelectionScreen(Screen):
-    ...
+    
+    def __init__(self, **kwargs):
+        super(KeySelectionScreen, self).__init__(**kwargs)
+    
+    def add_key_widget(self):
+        key_widget = SearchResultWidget()
+        self.ids.key_widget_scrollview.add_widget(key_widget)
 
 
 class PersonSelectionScreen(Screen):

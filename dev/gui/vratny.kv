@@ -4,7 +4,16 @@
 # tmavsi prf : 0.0, .35, .39, 1    #005963
 # seda       : .93, .93, .93, 1    #ededed
 # prf        : 0.0, .45, .50, 1    #007380
-            
+
+<SearchResultWidget>
+    height: 40
+    size_hint: 1, None
+    #id: searchresultwidget
+    
+    MDLabel:
+        text: "Tohle je test"
+
+
 <LoginScreen>:  
 
     Image:
@@ -121,6 +130,12 @@
             line_color_focus: "#000000"
             hint_text: "Učebna nebo název klíče"
             size_hint_x: None
-            width: 450
+            #width: 450
+            size_hint: 1, None
             font_size: 18
             pos_hint: {"center_x": 0.5, "top": 1.0}
+            on_text: root.add_key_widget()
+
+        BoxLayout:
+            size_hint: 1, None
+            id: key_widget_scrollview
