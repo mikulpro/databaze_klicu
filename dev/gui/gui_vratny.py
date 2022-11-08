@@ -11,57 +11,17 @@ from kivy.config import Config
 from kivymd.app import MDApp
 from kivymd.uix.datatables import MDDataTable
 from kivymd.theming import ThemableBehavior
+from kivymd.uix.button import MDRoundFlatIconButton
 
 # kivy basic objects
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 
 # auxiliary kivy functions
 from kivy.properties import ObjectProperty
 from kivy.metrics import dp
-
-# # for MDDataTable override
-# from kivymd.uix.dialog import BaseDialog
-# from kivy.clock import Clock
-# from functools import partial
-
-
-# # MDDataTable override
-# class MyDataTable(MDDataTable):
-#         def __init__(self, **kwargs):
-#             # skip the MDDataTable.__init__() and call its superclass __init__()
-#             super(ThemableBehavior, self).__init__(**kwargs)
-    
-#             # schedule call to MDDataTable.__init__() contents after ids are populated
-#             Clock.schedule_once(partial(self.delayed_init, **kwargs))
-    
-#         def delayed_init(self, dt, **kwargs):
-#             # this is copied from MDDataTable.__init__() with super() call deleted
-#             self.header = TableHeader(
-#                 column_data=self.column_data,
-#                 sorted_on=self.sorted_on,
-#                 sorted_order=self.sorted_order,
-#             )
-#             self.table_data = TableData(
-#                 self.header,
-#                 row_data=self.row_data,
-#                 check=self.check,
-#                 rows_num=self.rows_num,
-#                 _parent=self,
-#             )
-#             self.register_event_type("on_row_press")
-#             self.register_event_type("on_check_press")
-#             self.pagination = TablePagination(table_data=self.table_data)
-#             self.table_data.pagination = self.pagination
-#             self.header.table_data = self.table_data
-#             self.table_data.fbind("scroll_x", self._scroll_with_header)
-#             self.ids.container.add_widget(self.header)
-#             self.ids.container.add_widget(self.table_data)
-#             if self.use_pagination:
-#                 self.ids.container.add_widget(self.pagination)
-#             Clock.schedule_once(self.create_pagination_menu, 0.5)
-#             self.bind(row_data=self.update_row_data)
 
 
 # colors = {
@@ -91,8 +51,12 @@ from kivy.metrics import dp
 
 # custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
-    # sem funkce ohledne klikani na widget samotny
-    ...
+    
+    def __init__(self, **kwargs):
+        super(SearchResultWidget, self).__init__(**kwargs)
+    
+    def SearchResultWidgetClickFunction(self):
+        sc_mngr.current = "login"
 
 # first screen
 class LoginScreen(Screen):
@@ -122,6 +86,7 @@ class KeySelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(KeySelectionScreen, self).__init__(**kwargs)
         self._list_of_current_keywidgets = []
+        self.SearchKeyTextInputFunction() # initial search
     
     def SearchKeyTextInputFunction(self):
         
@@ -136,8 +101,17 @@ class KeySelectionScreen(Screen):
         for item in list_of_matches:
             self._add_keywidget(item)
 
+        # bugfix for duplicit buttons
+        self._remove_error_labels()
+
+    def _remove_error_labels(self):
+        for item in self.ids.key_widget_scrollview.children:
+            if item is not None and hasattr(item, 'text') and item.text == 'ERROR':
+                self.ids.key_widget_scrollview.remove_widget(item)  
+
     def _find_relevant_matches(self, input_text):
         output = []
+        #return ["testing_result"]
         
         try:
             with open("dev/sqlite/old/data/data_Rooms.csv", "r") as f:
@@ -147,8 +121,8 @@ class KeySelectionScreen(Screen):
         except:
             pass
 
-        if len(output) > 15:
-            output = output[:14]
+        if len(output) > 8:
+            return output[:8]
 
         return output
 
@@ -169,14 +143,10 @@ class PersonSelectionScreen(Screen):
 
 
 class VratnyApp(MDApp):
-    def build(self):
-        # self.theme_cls.colors = colors
-        # self.theme_cls.primary_palette = "Gray"
-        # self.theme_cls.accent_palette = "Cyan"
-        # self.theme_cls.theme_style = "Light"
-        
+    def build(self):       
         Builder.load_file('vratny.kv')
 
+        global sc_mngr
         sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
