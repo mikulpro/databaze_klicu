@@ -2,14 +2,27 @@
 # # from ...db_interface import Db as db
 # from pomocne_gui_funkce import *
 
+# kivy builder and builder configuration
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import Config
+
+# kivy material design library
 from kivymd.app import MDApp
+from kivymd.uix.datatables import MDDataTable
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.button import MDRoundFlatIconButton
+
+# kivy basic objects
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.image import Image
-from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+
+# auxiliary kivy functions
+from kivy.properties import ObjectProperty
+from kivy.metrics import dp
+
 
 # colors = {
 #     "Cyan": {
@@ -36,23 +49,92 @@ from kivy.uix.boxlayout import BoxLayout
 #     },
 # }
 
-
+# custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
-    # sem funkce ohledne klikani na widget samotny
-    ...
+    
+    def __init__(self, **kwargs):
+        super(SearchResultWidget, self).__init__(**kwargs)
+    
+    def SearchResultWidgetClickFunction(self):
+        sc_mngr.current = "login"
 
-
+# first screen
 class LoginScreen(Screen):
-    ...
 
+    def __init__(self, **kwargs):
+        super(LoginScreen, self).__init__(**kwargs)
 
+    def _authenticate(self, username, password):
+        if username == "" and password == "":
+            return True
+        else:
+            return False
+
+    def PrihasitSeButtonFunction(self):
+
+        # some function to authenticate
+        usr = self.ids.user.text
+        pswd = self.ids.password.text
+        
+        if self._authenticate(usr, pswd):
+            # some function to select next screen
+            self.manager.current = "keyselection"
+        
+# second screen
 class KeySelectionScreen(Screen):
     
     def __init__(self, **kwargs):
         super(KeySelectionScreen, self).__init__(**kwargs)
+        self._list_of_current_keywidgets = []
+        self.SearchKeyTextInputFunction() # initial search
     
-    def add_key_widget(self):
+    def SearchKeyTextInputFunction(self):
+        
+        # some function, that finds all relevant examples
+        searched_expression = self.ids.keysearch.text
+        list_of_matches = self._find_relevant_matches(searched_expression)
+
+        # some function, that removes all existing widgets
+        self._remove_current_keywidgets()
+
+        # some function, that adds widget for each match
+        for item in list_of_matches:
+            self._add_keywidget(item)
+
+        # bugfix for duplicit buttons
+        self._remove_error_labels()
+
+    def _remove_error_labels(self):
+        for item in self.ids.key_widget_scrollview.children:
+            if item is not None and hasattr(item, 'text') and item.text == 'ERROR':
+                self.ids.key_widget_scrollview.remove_widget(item)  
+
+    def _find_relevant_matches(self, input_text):
+        output = []
+        #return ["testing_result"]
+        
+        try:
+            with open("dev/sqlite/old/data/data_Rooms.csv", "r") as f:
+                for line in f:
+                    if input_text in line:
+                        output.append(line)          
+        except:
+            pass
+
+        if len(output) > 8:
+            return output[:8]
+
+        return output
+
+    def _remove_current_keywidgets(self):
+        for item in self._list_of_current_keywidgets:
+            if item is not None:
+                self.ids.key_widget_scrollview.remove_widget(item)
+
+    def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
+        key_widget.ids.searchresultwidget_label_content.text = data
+        self._list_of_current_keywidgets.append(key_widget)
         self.ids.key_widget_scrollview.add_widget(key_widget)
 
 
@@ -61,28 +143,15 @@ class PersonSelectionScreen(Screen):
 
 
 class VratnyApp(MDApp):
-    def build(self):
-        # self.theme_cls.colors = colors
-        # self.theme_cls.primary_palette = "Gray"
-        # self.theme_cls.accent_palette = "Cyan"
-        # self.theme_cls.theme_style = "Light"
-        
+    def build(self):       
         Builder.load_file('vratny.kv')
 
+        global sc_mngr
         sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
 
         return sc_mngr
-
-
-def PrihasitSeButtonFunction(username=None, password=None):
-
-    # some function to authenticate
-
-    # some function to select next screen
-
-    ...
 
 
 if __name__ == "__main__":
