@@ -102,7 +102,7 @@ class WorkPlace(Base):
     __tablename__ = "workplaces"
 
     id = Column(Integer, primary_key=True)
-    abbreviation = Column(String(8))
-    name = Column(String(64))
+    abbreviation = Column(String(8), nullable=False)
+    name = Column(String(64), nullable=False)
     faculty = relationship("Faculty", back_populates="workplaces")
 
