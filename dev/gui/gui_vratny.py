@@ -52,14 +52,15 @@ from kivy.metrics import dp
 # custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
     
+
     def __init__(self, **kwargs):
         super(SearchResultWidget, self).__init__(**kwargs)
-    
-    def SearchResultWidgetClickFunction(self):
-        sc_mngr.current = "login"
+        self.label_pointer = None
+
 
 # first screen
 class LoginScreen(Screen):
+
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
@@ -69,6 +70,7 @@ class LoginScreen(Screen):
             return True
         else:
             return False
+
 
     def PrihasitSeButtonFunction(self):
 
@@ -82,12 +84,14 @@ class LoginScreen(Screen):
         
 # second screen
 class KeySelectionScreen(Screen):
-    
+
+
     def __init__(self, **kwargs):
         super(KeySelectionScreen, self).__init__(**kwargs)
         self._list_of_current_keywidgets = []
         self.SearchKeyTextInputFunction() # initial search
-    
+
+
     def SearchKeyTextInputFunction(self):
         
         # some function, that finds all relevant examples
@@ -104,10 +108,12 @@ class KeySelectionScreen(Screen):
         # bugfix for duplicit buttons
         self._remove_error_labels()
 
+
     def _remove_error_labels(self):
         for item in self.ids.key_widget_scrollview.children:
             if item is not None and hasattr(item, 'text') and item.text == 'ERROR':
                 self.ids.key_widget_scrollview.remove_widget(item)  
+
 
     def _find_relevant_matches(self, input_text):
         output = []
@@ -126,30 +132,54 @@ class KeySelectionScreen(Screen):
 
         return output
 
+
     def _remove_current_keywidgets(self):
         for item in self._list_of_current_keywidgets:
             if item is not None:
                 self.ids.key_widget_scrollview.remove_widget(item)
 
+
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
         key_widget.ids.searchresultwidget_label_content.text = data
+        key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
         self._list_of_current_keywidgets.append(key_widget)
         self.ids.key_widget_scrollview.add_widget(key_widget)
 
 
 class PersonSelectionScreen(Screen):
-    ...
+
+
+    def __init__(self, **kwargs):
+        super(PersonSelectionScreen, self).__init__(**kwargs)
 
 
 class VratnyApp(MDApp):
-    def build(self):       
+
+
+    def __init__(self, **kwargs):
+        super(VratnyApp, self).__init__(**kwargs)
+        self.selected_key = None
+
+
+    def SearchResultWidgetClickFunction(self, pressed_button_instance):
+        self.selected_key = pressed_button_instance.text
+        sc_mngr.current = "personselection"
+        sc_mngr.get_screen("personselection").ids.debugging_label.text = self.selected_key
+
+
+    def get_selected_key(self):
+        return self.selected_key
+
+
+    def build(self):
         Builder.load_file('vratny.kv')
 
         global sc_mngr
         sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
+        sc_mngr.add_widget(PersonSelectionScreen(name = "personselection"))
 
         return sc_mngr
 
