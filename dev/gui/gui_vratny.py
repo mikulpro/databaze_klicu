@@ -1,6 +1,6 @@
-# from tkinter import Grid
-# # from ...db_interface import Db as db
-# from pomocne_gui_funkce import *
+# python modules
+from datetime import datetime
+# from ...db_interface import Db as db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
@@ -12,6 +12,7 @@ from kivymd.app import MDApp
 from kivymd.uix.datatables import MDDataTable
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDRoundFlatIconButton
+from kivymd.uix.pickers import MDDatePicker, MDTimePicker
 
 # kivy basic objects
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
@@ -96,41 +97,23 @@ class KeySelectionScreen(Screen):
         
         # some function, that finds all relevant examples
         searched_expression = self.ids.keysearch.text
-        list_of_matches = self._find_relevant_matches(searched_expression)
+        list_of_matches_keys = MDApp.get_running_app().find_relevant_matches(searched_expression, "dev/sqlite/old/data/data_Rooms.csv")
 
         # some function, that removes all existing widgets
         self._remove_current_keywidgets()
 
         # some function, that adds widget for each match
-        for item in list_of_matches:
+        for item in list_of_matches_keys:
             self._add_keywidget(item)
 
         # bugfix for duplicit buttons
-        self._remove_error_labels()
+        #self._remove_error_labels()
 
 
     def _remove_error_labels(self):
         for item in self.ids.key_widget_scrollview.children:
             if item is not None and hasattr(item, 'text') and item.text == 'ERROR':
                 self.ids.key_widget_scrollview.remove_widget(item)  
-
-
-    def _find_relevant_matches(self, input_text):
-        output = []
-        #return ["testing_result"]
-        
-        try:
-            with open("dev/sqlite/old/data/data_Rooms.csv", "r") as f:
-                for line in f:
-                    if input_text in line:
-                        output.append(line)          
-        except:
-            pass
-
-        if len(output) > 8:
-            return output[:8]
-
-        return output
 
 
     def _remove_current_keywidgets(self):
@@ -152,6 +135,50 @@ class PersonSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PersonSelectionScreen, self).__init__(**kwargs)
+        self._list_of_current_personwidgets = []
+        self.PersonSearchTextInputFunction() # initial search
+
+
+    def PersonSearchTextInputFunction(self):
+        
+        # some function, that finds all relevant examples
+        searched_expression = self.ids.personsearch.text
+        list_of_matches_ppl = MDApp.get_running_app().find_relevant_matches(searched_expression, "dev/sqlite/old/data/data_Borrowers.csv")
+
+        # some function, that removes all existing widgets
+        self._remove_current_personwidgets()
+
+        # some function, that adds widget for each match
+        for item in list_of_matches_ppl:
+            self._add_personwidget(item)
+
+
+    def _remove_current_personwidgets(self):
+        for item in self._list_of_current_personwidgets:
+            if item is not None:
+                self.ids.person_widget_scrollview.remove_widget(item)
+
+
+    def _add_personwidget(self, data):
+        person_widget = SearchResultWidget()
+        person_widget.ids.searchresultwidget_label_content.text = data
+        person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
+        self._list_of_current_personwidgets.append(person_widget)
+        self.ids.person_widget_scrollview.add_widget(person_widget)
+
+
+class TimeSelectionScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(TimeSelectionScreen, self).__init__(**kwargs)
+
+
+class ReviewScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(ReviewScreen, self).__init__(**kwargs)
 
 
 class VratnyApp(MDApp):
@@ -160,16 +187,82 @@ class VratnyApp(MDApp):
     def __init__(self, **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_key = None
+        self.selected_person = None
+        self.selected_starttime = datetime.now()
+        self.selected_endtime_time = None
+        self.selected_endtime_date = None
+
+
+    def show_time_picker(self):
+		# Define default time
+        default_time = datetime.strptime("23:59:59", '%H:%M:%S').time()
+
+        time_dialog = MDTimePicker()
+		# Set default Time
+        time_dialog.set_time(default_time)
+        time_dialog.bind(on_cancel=self._on_timepicker_cancel, time=self._on_timepicker_confirm)
+        time_dialog.open()
+
+
+    def _on_timepicker_confirm(self, instance, time):
+        self.selected_endtime_time = str(time)
+        sc_mngr.get_screen("timeselection").ids.timepicker_label.text = str(time)
+
+
+    def _on_timepicker_cancel(self, instance, time):
+        self.selected_endtime_time = self.selected_endtime_time
+        if self.selected_endtime_time is None or self.selected_endtime_time == "None":
+            sc_mngr.get_screen("timeselection").ids.timepicker_label.text = "Nebyl vybrán žádný čas"
+        else:
+            sc_mngr.get_screen("timeselection").ids.timepicker_label.text = str(time)
+
+
+    def show_date_picker(self):
+		#date_dialog = MDDatePicker(year=2000, month=2, day=14)
+        date_dialog = MDDatePicker(mode="range")
+        date_dialog.bind(on_save=self._on_datepicker_confirm, on_cancel=self._on_datepicker_cancel)
+        date_dialog.open()
+
+
+    def _on_datepicker_confirm(self, instance, value, date_range):
+        self.selected_endtime_date = date_range[-1]
+        sc_mngr.get_screen("timeselection").ids.datepicker_label.text = str(date_range[-1])
+
+
+    def _on_datepicker_cancel(self, instance, value):
+        sc_mngr.get_screen("timeselection").ids.datepicker_label.text = "CANCELED"
 
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
-        self.selected_key = pressed_button_instance.text
-        sc_mngr.current = "personselection"
-        sc_mngr.get_screen("personselection").ids.debugging_label.text = self.selected_key
+        if sc_mngr.current == "keyselection":
+            self.selected_key = pressed_button_instance.text
+            sc_mngr.current = "personselection"
+        elif sc_mngr.current == "personselection":
+            self.selected_person = pressed_button_instance.text
+            sc_mngr.current = "timeselection"        
 
 
     def get_selected_key(self):
         return self.selected_key
+
+
+    def find_relevant_matches(self, input_text, where_to_search):
+        output = []
+        #return ["testing_result"]
+        
+        try:
+            with open(where_to_search, "r", encoding="utf8") as f:
+                for line in f:
+                    if input_text in line:
+                        output.append(line)
+            f.close()          
+        except:
+            pass
+
+        if len(output) > 8:
+            return output[:8]
+
+        return output
 
 
     def build(self):
@@ -180,6 +273,8 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
         sc_mngr.add_widget(PersonSelectionScreen(name = "personselection"))
+        sc_mngr.add_widget(TimeSelectionScreen(name = "timeselection"))
+        sc_mngr.add_widget(ReviewScreen(name = "review"))
 
         return sc_mngr
 
