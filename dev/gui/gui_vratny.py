@@ -67,7 +67,9 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
 
     def _authenticate(self, username, password):
-        if username == "" and password == "":
+        if username == "Pavel Pyšný" and password == "123456":
+        #if username == "" and password == "":
+            MDApp.get_running_app().set_lender(username)
             return True
         else:
             return False
@@ -173,6 +175,11 @@ class TimeSelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(TimeSelectionScreen, self).__init__(**kwargs)
 
+    
+    def confirm_timestamps(self):
+        if self.ids.datepicker_label.text not in ["CANCELED", "Nebylo vybráno žádné datum"] and self.ids.timepicker_label.text not in ["None", "Nebyl vybrán žádný čas"]:
+            sc_mngr.current = "review"
+
 
 class ReviewScreen(Screen):
 
@@ -186,11 +193,16 @@ class VratnyApp(MDApp):
 
     def __init__(self, **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
+        self.selected_lender = ""
         self.selected_key = None
         self.selected_person = None
         self.selected_starttime = datetime.now()
         self.selected_endtime_time = None
         self.selected_endtime_date = None
+
+
+    def set_lender(self, input):
+        self.selected_lender = input
 
 
     def show_time_picker(self):
@@ -277,6 +289,14 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(ReviewScreen(name = "review"))
 
         return sc_mngr
+
+
+    def update_review_information(self):
+        sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
+        sc_mngr.get_screen("review").ids.rev_lab_borrower.text = str("Komu půjčuje: " + self.selected_person)
+        sc_mngr.get_screen("review").ids.rev_lab_key.text = str("Klíč: " + self.selected_key)
+        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str("Od: " + str(self.selected_starttime))
+        sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
 
 
 if __name__ == "__main__":

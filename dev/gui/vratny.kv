@@ -322,7 +322,7 @@
                 font_size: 24
                 size_hint: 1, 0.5
                 pos_hint: {"center_X": 0.75}
-                #on_release:
+                on_release: root.confirm_timestamps()
 
 
 <ReviewScreen>
@@ -352,18 +352,98 @@
         orientation: 'vertical'
         md_bg_color: "#ededed"
 
-    GridLayout:
-        id: review_layout
-        cols: 1
-        rows: 5
-        size_hint: 1, 1
+        GridLayout:
+            id: review_layout
+            cols: 1
+            rows: 7
+            size_hint: 1, 1
 
-    # kdo půjčuje klíč
+            MDLabel:
+                id: rev_topiclabel
+                text: "Rekapitulace"
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                font_size: 32
+                size_hint: 1, 0.4
+                halign: "center"
+                valign: "top"
+                pos_hint: {"top": 1.0}
+                bold: True
+                multiline: False
 
-    # komu ho půjčuje
+            # kdo půjčuje klíč
+            MDLabel:
+                id: rev_lab_lender
+                text: "Oprávněná osoba: "
+                font_size: 24
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                size_hint: 0.5, 0.5
+                valign: "center"
 
-    # jaký klíč půjčuje
+            # komu ho půjčuje
+            MDLabel:
+                id: rev_lab_borrower
+                text: "Komu půjčuje: "
+                font_size: 24
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                size_hint: 0.5, 0.5
+                valign: "center"
+                
+            # jaký klíč půjčuje
+            MDLabel:
+                id: rev_lab_key
+                text: "Klíč: "
+                font_size: 24
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                size_hint: 0.5, 0.5
+                valign: "center"
 
-    # na jak dlouho jej půjčuje
+            # na jak dlouho jej půjčuje
+            MDLabel:
+                id: rev_lab_starttime
+                text: "Od: "
+                font_size: 24
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                size_hint: 0.5, 0.5
+                valign: "center"
 
-    # tlačítko potvrdit zapůjčení
+            MDLabel:
+                id: rev_lab_endtime
+                text: "Do: "
+                font_size: 24
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                size_hint: 0.5, 0.5
+                valign: "center"
+
+            # tlačítka
+            GridLayout:
+                rows: 1
+                cols: 2
+                size_hint: 1, 1
+
+                MDRoundFlatButton:
+                    id: timeselection_confirmbutton
+                    text: "Aktualizovat"
+                    text_color: "#FFFFFF"
+                    md_bg_color: "#005963"
+                    line_color: "#005963"
+                    font_size: 24
+                    size_hint: 0.5, 0.5
+                    pos_hint: {"center_X": 0.75}
+                    on_release: app.update_review_information()
+
+                MDRoundFlatButton:
+                    id: timeselection_confirmbutton
+                    text: "Dokončit"
+                    text_color: "#FFFFFF"
+                    md_bg_color: "#005963"
+                    line_color: "#005963"
+                    font_size: 24
+                    size_hint: 0.5, 0.5
+                    pos_hint: {"center_X": 0.75}
+                    #on_release:
