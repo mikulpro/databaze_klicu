@@ -1,6 +1,6 @@
 # python modules
 from datetime import datetime
-# from ...db_interface import Db as db
+from sqlite.db_interface import Db as db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
