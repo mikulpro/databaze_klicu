@@ -102,7 +102,7 @@ class AuthorizationOrigin(Base):
     __tablename__ = "authorization_origins"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False)
+    name = Column(String(32), nullable=False, unique=True)
 
 
 class AuthorizedPerson(Base):
@@ -123,8 +123,8 @@ class Workplace(Base):
     __tablename__ = "workplaces"
 
     id = Column(Integer, primary_key=True)
-    abbreviation = Column(String(8), nullable=False)
-    name = Column(String(64), nullable=False)
+    abbreviation = Column(String(8), nullable=False, unique=True)
+    name = Column(String(64), nullable=False, unique=True)
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
 

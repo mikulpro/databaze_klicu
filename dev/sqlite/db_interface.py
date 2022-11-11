@@ -1,13 +1,13 @@
 from models import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
-# from sqlalchemy.sql import select
+from sqlalchemy.sql import select
 import datetime
 
 """
 Db:
-    get_all_floors(self) -> list[int]
-    get_rooms_by_floor(self, int: floor) -> list[Room]
+    -get_all_floors(self) -> list[int]
+    -get_rooms_by_floor(self, int: floor) -> list[Room]
     get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
     get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
     get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
@@ -23,21 +23,21 @@ Db:
 
 class Db:
 
-    def __int__(self, db_path="sqlite:///db.sqlite"):
+    def __init__(self, db_path="sqlite:///db.sqlite"):
         engine = create_engine(db_path, echo=True, future=True)
-        # Base.metadata.create_all(engine)
         self.session = Session(engine)
 
     def get_all_floors(self):
-        return self.session.query(Room).distinct(Room.floor)
+        result = self.session.query(Room.floor).distinct(Room.floor).all()
+        return {i[0] for i in result}
 
     def get_rooms_by_floor(self, floor):
         # return self.session.execute(select(Room).filter(Room.floor == floor))
-        return self.session.query(Room).filter(Room.floor == floor)
+        return self.session.query(Room).filter(Room.floor == floor).all()
 
     def get_authorizations_for_room(self, room_id):
-        room = self.session.query(Room).filter(Room.id == room_id)
-        return room.authorizations.filter(Authorization.expiration > datetime.datetime.utcnow)
+        room = self.session.query(Room).filter(Room.id == room_id).one()
+        return room.authorizations.filter(Authorization.expiration > datetime.datetime.utcnow).all()
 
     def get_primary_authorizations_for_room(self, room_id):
         authorizations = self.get_authorizations_for_room(room_id)
@@ -48,12 +48,12 @@ class Db:
         fractions = fraction.split(" ")
 
         if len(fractions) == 1:
-            return self.session.query(AuthorizedPerson).filter(
+            result = self.session.query(AuthorizedPerson).filter(
                 or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                     AuthorizedPerson.surname.like(f"{fractions[0]}%")
                     ))
         elif len(fractions) == 2:
-            return self.session.query(AuthorizedPerson).filter(
+            result = self.session.query(AuthorizedPerson).filter(
                 or_(
                     and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                          AuthorizedPerson.surname.like(f"{fractions[1]}%"),
@@ -65,11 +65,13 @@ class Db:
         else:
             return []
 
+        return result.all()
+
     def get_room_by_name_fraction(self, fraction, floor=None):
         if floor:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"), Room.floor == floor)
+            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"), Room.floor == floor).all()
         else:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"))
+            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
     def add_borrowing(self, key_id, borrower_id):
         borrowing = Borrowing(key_id=key_id, borrower_id=borrower_id)
@@ -80,7 +82,7 @@ class Db:
         borrowing.return_key()
 
     def get_ongoing_borrowings(self):
-        return self.session.query(Borrowing).filter(Borrowing.returned.is_(None))
+        return self.session.query(Borrowing).filter(Borrowing.returned.is_(None)).all()
 
     def excel_dump(self):
         # [borrowed: date, time, key, borrower name, return: date, time]
