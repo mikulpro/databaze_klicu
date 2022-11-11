@@ -62,7 +62,7 @@ class Db:
 
 
 if __name__ == "__main__":#
-    db = Db("db_old.sqlite")
+    db = Db("../../../db_old.sqlite")
     data = db.filter_rooms_by_floor(5)
     for i in data:
         print(dict(i))
