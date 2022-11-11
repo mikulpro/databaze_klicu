@@ -1,23 +1,23 @@
 from models import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import select
+# from sqlalchemy.sql import select
 import datetime
 
 """
-get_all_floors(self) -> list[int]
-get_rooms_by_floor(self, int: floor) -> list[Room]
-# přesunout do room
-get_primary_authorizations_for_room(self, Room: room)-> list[Authorizations]
-get_primary_authorizations_for_room(self, Room: room) -> list[Authorizations]
-get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
-get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
-
-add_borrowing(self, int: key_id, int: borrower_id)
-return_key(self, int: borrowing_id)
-get_ongoing_borrowings(self) -> list[Borrowing]
-
-excel_dump(self) -> list[list[str]]
+Db:
+    get_all_floors(self) -> list[int]
+    get_rooms_by_floor(self, int: floor) -> list[Room]
+    get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
+    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
+    get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
+    get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
+    
+    add_borrowing(self, int: key_id, int: borrower_id)
+    return_key(self, int: borrowing_id)
+    get_ongoing_borrowings(self) -> list[Borrowing]
+    
+    excel_dump(self) -> list[list[str]]
 """
 
 
@@ -35,12 +35,12 @@ class Db:
         # return self.session.execute(select(Room).filter(Room.floor == floor))
         return self.session.query(Room).filter(Room.floor == floor)
 
-    @staticmethod
-    def get_authorizations_for_room(room):
+    def get_authorizations_for_room(self, room_id):
+        room = self.session.query(Room).filter(Room.id == room_id)
         return room.authorizations.filter(Authorization.expiration > datetime.datetime.utcnow)
 
-    def get_primary_authorizations_for_room(self, room):
-        authorizations = self.get_authorizations_for_room(room)
+    def get_primary_authorizations_for_room(self, room_id):
+        authorizations = self.get_authorizations_for_room(room_id)
         # přidat filtorvání na základě origin
         return authorizations
 

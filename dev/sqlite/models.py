@@ -55,13 +55,19 @@ class Room(Base):
     __tablename__ = "rooms"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(8), nullable=False)
+    name = Column(String(8), nullable=False, unique=True)
     floor = Column(Integer, nullable=False)
     type_id = Column(Integer, ForeignKey("room_types.id"))
     type = relationship("RoomType")
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", secondary=authorizations_rooms)
+
+    def get_valid_authorizations(self):
+        return self.filter(Authorization.expiration > datetime.datetime.utcnow)
+
+    def get_primary_authorizations(self):
+        return self.get_valid_authorizations()
 
 
 class RoomType(Base):
