@@ -7,8 +7,6 @@ Currently in pre-alpha...
 - slow search update
 
 # Missing Features
-- no control for time format output
-- time picker is 12-hour format only
 - no button for person adding (if not in database)
 - no real database communication, only .csv files
 - no admin interface
