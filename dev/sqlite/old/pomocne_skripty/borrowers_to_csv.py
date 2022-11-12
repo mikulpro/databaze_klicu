@@ -45,10 +45,11 @@ print(ucitele_out)
 with open('webScrape/ucitele2.json', 'w') as file:
     file.write(json.dumps(ucitele_out))
 
-with open(f"../data/data_Borrowers.csv", "w") as outfile:
+with open(f"../data/data_Borrowers_new.csv", "w") as outfile:
     for ucitel in ucitele_out:
         outfile.write(str(ucitel['id'])+';')
         outfile.write(str(ucitel['firstname']) + ';')
         outfile.write(str(ucitel['surname']) + ';')
+        outfile.write(str(ucitel["workplaces"][0]))
 
         outfile.write("\n")
