@@ -100,7 +100,30 @@ class ActionSelectionScreen(Screen):
 
 
     def vratit(self):
-        pass
+        sc_mngr.current = "borrowingselection"
+
+
+class BorrowingSelectionScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(BorrowingSelectionScreen, self).__init__(**kwargs)
+        self.SearchBorrowingTextInputFunction() # initial search
+
+
+    def SearchBorrowingTextInputFunction(self):
+        borrowings = MDApp.get_running_app().get_ongoing_borrowings()
+        
+        # undisplaying old floors
+        self.ids.borrowings_widget_scrollview.clear_widgets()
+        
+        # displaying new floors
+        number_of_displayed_borrowings = 0
+        for b in borrowings:
+            if number_of_displayed_borrowings == 9:
+                break
+            number_of_displayed_borrowings += 1
+            self._add_floorwidget(f"{b.id}")
 
 
 class FloorSelectionScreen(Screen):
@@ -108,7 +131,6 @@ class FloorSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FloorSelectionScreen, self).__init__(**kwargs)
-        #self._list_of_current_keywidgets = []
         self.SearchFloorTextInputFunction(initial=True) # initial search
 
 
@@ -155,23 +177,22 @@ class RoomSelectionScreen(Screen):
             #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
 
         # undisplay old rooms
-        self.ids.key_widget_scrollview.clear_widgets()
+        self.ids.room_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
         number_of_displayed_rooms = 0
         for item in list_of_matches_rooms:
-            if number_of_displayed_rooms >= 9:
+            if number_of_displayed_rooms == 9:
                 break
-            else:
-                number_of_displayed_rooms += 1
-                self._add_keywidget(item.name)
+            number_of_displayed_rooms += 1
+            self._add_keywidget(item.name)
 
 
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
         key_widget.ids.searchresultwidget_label_content.text = str(data)
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
-        self.ids.key_widget_scrollview.add_widget(key_widget)
+        self.ids.room_widget_scrollview.add_widget(key_widget)
 
 
 class KeySelectionScreen(Screen):
@@ -280,6 +301,7 @@ class VratnyApp(MDApp):
         self.selected_starttime = None
         self.selected_endtime_time = None
         self.selected_endtime_date = None
+        self.selected_borrowing = None
         self.db = database_object
 
     def update_starttime(self):
@@ -360,7 +382,11 @@ class VratnyApp(MDApp):
 
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
-        if sc_mngr.current == "floorselection":
+        if sc_mngr.current == "borrowingselection":
+            self.selected_borrowing = pressed_button_instance.text
+            self.return_key(self.selected_borrowing)
+            sc_mngr = "actionselection"
+        elif sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.text
             sc_mngr.current = "roomselection"
         elif sc_mngr.current == "roomselection":
@@ -421,6 +447,7 @@ class VratnyApp(MDApp):
         sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(ActionSelectionScreen(name = "actionselection"))
+        sc_mngr.add_widget(BorrowingSelectionScreen(name = "borrowingselection"))
         sc_mngr.add_widget(FloorSelectionScreen(name = "floorselection"))
         sc_mngr.add_widget(RoomSelectionScreen(name = "roomselection"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))

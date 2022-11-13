@@ -1,9 +1,10 @@
-Currently in pre-alpha...
+Currently in: alpha
 
 # Bugs
 - initial search in roomselection returns rooms unaffected by selected_floor
 - initial search in keyselection does not work
 - initial update in review screen does not work
+- calling db_interface.add_borrowing() does not modify database
 
 # Missing Features
 - no button for person adding (if not in database)
@@ -18,3 +19,5 @@ Currently in pre-alpha...
 - no support for ppl with same names in GUI
 - no clock
 - no checking if key is available during search
+- GUI displayable borrowings limited to 9 items
+- scroll views aren't scrollable
