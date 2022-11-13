@@ -151,7 +151,8 @@ class KeySelectionScreen(Screen):
         if len(searched_expression) >= 1:
             list_of_matches_keys = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression, floor=selected_floor)
         else:
-            list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+            list_of_matches_keys = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
+            #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
 
         # undisplay old rooms
         self.ids.key_widget_scrollview.clear_widgets()
@@ -159,9 +160,11 @@ class KeySelectionScreen(Screen):
         # some function, that adds widget for each match
         number_of_displayed_rooms = 0
         for item in list_of_matches_keys:
-            if number_of_displayed_rooms == 9:
+            if number_of_displayed_rooms >= 9:
                 break
-            self._add_keywidget(item)
+            else:
+                number_of_displayed_rooms += 1
+                self._add_keywidget(item.name)
 
 
     def _add_keywidget(self, data):
@@ -176,35 +179,35 @@ class PersonSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PersonSelectionScreen, self).__init__(**kwargs)
-        self._list_of_current_personwidgets = []
         self.PersonSearchTextInputFunction() # initial search
 
 
     def PersonSearchTextInputFunction(self):
         
-        # some function, that finds all relevant examples
-        searched_expression = self.ids.personsearch.text
-        list_of_matches_ppl = MDApp.get_running_app().find_relevant_matches(searched_expression, "dev/sqlite/old/data/data_Borrowers.csv")
+        # find all relevant examples
+        searched_expression = str(self.ids.personsearch.text)
+        if len(searched_expression) >= 1:
+            list_of_matches_ppl = MDApp.get_running_app().get_borrowers_by_name_fraction(fraction=searched_expression)
+        else:
+            list_of_matches_ppl = MDApp.get_running_app().get_borrowers_by_name_fraction(fraction="")
 
-        # some function, that removes all existing widgets
-        self._remove_current_personwidgets()
+        # undisplay old rooms
+        self.ids.person_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
+        number_of_displayed_ppl = 0
         for item in list_of_matches_ppl:
-            self._add_personwidget(item)
-
-
-    def _remove_current_personwidgets(self):
-        for item in self._list_of_current_personwidgets:
-            if item is not None:
-                self.ids.person_widget_scrollview.remove_widget(item)
+            if number_of_displayed_ppl >= 9:
+                break
+            else:
+                number_of_displayed_ppl += 1
+                self._add_personwidget((str(item.firstname) + " " + str(item.surname)))
 
 
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
         person_widget.ids.searchresultwidget_label_content.text = data
         person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
-        self._list_of_current_personwidgets.append(person_widget)
         self.ids.person_widget_scrollview.add_widget(person_widget)
 
 
@@ -233,7 +236,7 @@ class VratnyApp(MDApp):
     def __init__(self, database_object=Db(), **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
-        self.selected_floor = 1
+        self.selected_floor = None
         self.selected_key = None
         self.selected_person = None
         self.selected_starttime = datetime.now()
@@ -324,7 +327,7 @@ class VratnyApp(MDApp):
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "personselection":
             self.selected_person = pressed_button_instance.text
-            sc_mngr.current = "timeselection"        
+            sc_mngr.current = "review"        
 
     def get_selected_floor(self):
         return self.selected_floor

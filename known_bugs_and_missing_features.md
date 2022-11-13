@@ -6,6 +6,7 @@ Currently in pre-alpha...
 - openning time or date selector and cancelling sets time and/or date to None
 - slow search update
 - relative path to db_interface
+- in GUI only names are stored, no db ids
 
 # Missing Features
 - no button for person adding (if not in database)
