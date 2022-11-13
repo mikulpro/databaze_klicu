@@ -440,9 +440,3 @@ class VratnyApp(MDApp):
         sc_mngr.get_screen("review").ids.rev_lab_room.text = str(f"Místnost: {self.selected_room}")
         sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute} {self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
         #sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
-
-
-    def complete_borrowing_session(self):
-        room_id = ()
-        key_id = None
-        print(room_id)

@@ -47,7 +47,7 @@ class Key(Base):
     id = Column(Integer, primary_key=True)
     registration_number = Column(Integer, nullable=False)
     key_class = Column(Integer, default=0)
-    rooms = relationship("Room", secondary=keys_rooms)
+    rooms = relationship("Room", secondary=keys_rooms, back_populates="keys")
     borrowings = relationship("Borrowing", back_populates="key")
 
 
@@ -62,12 +62,7 @@ class Room(Base):
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", secondary=authorizations_rooms)
-
-    # def get_valid_authorizations(self):
-    #     return self.filter(Authorization.expiration > datetime.datetime.utcnow)
-    #
-    # def get_primary_authorizations(self):
-    #     return self.get_valid_authorizations()
+    keys = relationship("Key", secondary=keys_rooms, back_populates="rooms")
 
 
 class RoomType(Base):
