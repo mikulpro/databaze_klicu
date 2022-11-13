@@ -135,6 +135,45 @@ class FloorSelectionScreen(Screen):
         self.ids.floor_widget_scrollview.add_widget(floor_widget)
 
 
+class RoomSelectionScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(RoomSelectionScreen, self).__init__(**kwargs)
+        self.SearchRoomTextInputFunction() # initial search
+
+
+    def SearchRoomTextInputFunction(self):
+        
+        # find all relevant examples
+        selected_floor = MDApp.get_running_app().get_selected_floor()
+        searched_expression = str(self.ids.roomsearch.text)
+        if len(searched_expression) >= 1:
+            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression, floor=selected_floor)
+        else:
+            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
+            #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+
+        # undisplay old rooms
+        self.ids.key_widget_scrollview.clear_widgets()
+
+        # some function, that adds widget for each match
+        number_of_displayed_rooms = 0
+        for item in list_of_matches_rooms:
+            if number_of_displayed_rooms >= 9:
+                break
+            else:
+                number_of_displayed_rooms += 1
+                self._add_keywidget(item.name)
+
+
+    def _add_keywidget(self, data):
+        key_widget = SearchResultWidget()
+        key_widget.ids.searchresultwidget_label_content.text = str(data)
+        key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
+        self.ids.key_widget_scrollview.add_widget(key_widget)
+
+
 class KeySelectionScreen(Screen):
 
 
@@ -146,25 +185,24 @@ class KeySelectionScreen(Screen):
     def SearchKeyTextInputFunction(self):
         
         # find all relevant examples
-        selected_floor = MDApp.get_running_app().get_selected_floor()
+        selected_room = MDApp.get_running_app().get_selected_room()
+        selected_room = MDApp.get_running_app().get_room_by_name_fraction(fraction=selected_room)
         searched_expression = str(self.ids.keysearch.text)
-        if len(searched_expression) >= 1:
-            list_of_matches_keys = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression, floor=selected_floor)
-        else:
-            list_of_matches_keys = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
-            #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+        available_keys = []
+        if selected_room is not None and len(selected_room) >= 1:
+            available_keys = selected_room[-1].keys
 
         # undisplay old rooms
         self.ids.key_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
         number_of_displayed_rooms = 0
-        for item in list_of_matches_keys:
+        for item in available_keys:
             if number_of_displayed_rooms >= 9:
                 break
-            else:
+            elif searched_expression in item.registration_number:
                 number_of_displayed_rooms += 1
-                self._add_keywidget(item.name)
+                self._add_keywidget(item.registration_number)
 
 
     def _add_keywidget(self, data):
@@ -237,12 +275,16 @@ class VratnyApp(MDApp):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
         self.selected_floor = None
+        self.selected_room = None
         self.selected_key = None
         self.selected_person = None
-        self.selected_starttime = datetime.now()
+        self.selected_starttime = None
         self.selected_endtime_time = None
         self.selected_endtime_date = None
         self.db = database_object
+
+    def update_starttime(self):
+        self.selected_starttime = datetime.now()
 
     def get_all_floors(self):
         return self.db.get_all_floors()
@@ -321,6 +363,9 @@ class VratnyApp(MDApp):
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
         if sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.text
+            sc_mngr.current = "roomselection"
+        elif sc_mngr.current == "roomselection":
+            self.selected_room = pressed_button_instance.text
             sc_mngr.current = "keyselection"
         elif sc_mngr.current == "keyselection":
             self.selected_key = pressed_button_instance.text
@@ -329,11 +374,17 @@ class VratnyApp(MDApp):
             self.selected_person = pressed_button_instance.text
             sc_mngr.current = "review"        
 
+
     def get_selected_floor(self):
         return self.selected_floor
 
+
     def get_selected_key(self):
         return self.selected_key
+
+
+    def get_selected_room(self):
+        return self.selected_room
 
 
     def find_relevant_matches(self, input_text, where_to_search):
@@ -372,6 +423,7 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(LoginScreen(name = "login"))
         sc_mngr.add_widget(ActionSelectionScreen(name = "actionselection"))
         sc_mngr.add_widget(FloorSelectionScreen(name = "floorselection"))
+        sc_mngr.add_widget(RoomSelectionScreen(name = "roomselection"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
         sc_mngr.add_widget(PersonSelectionScreen(name = "personselection"))
         sc_mngr.add_widget(TimeSelectionScreen(name = "timeselection"))
@@ -381,12 +433,16 @@ class VratnyApp(MDApp):
 
 
     def update_review_information(self):
-        sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
+        self.update_starttime()
+        #sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
         sc_mngr.get_screen("review").ids.rev_lab_borrower.text = str("Komu půjčuje: " + self.selected_person)
-        sc_mngr.get_screen("review").ids.rev_lab_key.text = str("Klíč: " + self.selected_key)
-        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str("Od: " + str(self.selected_starttime))
-        sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
+        sc_mngr.get_screen("review").ids.rev_lab_key.text = str(f"Klíč: {self.selected_key}")
+        sc_mngr.get_screen("review").ids.rev_lab_room.text = str(f"Místnost: {self.selected_room}")
+        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute} {self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
+        #sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
 
 
-if __name__ == "__main__":
-    VratnyApp().run()
+    def complete_borrowing_session(self):
+        room_id = ()
+        key_id = None
+        print(room_id)
