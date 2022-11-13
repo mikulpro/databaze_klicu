@@ -40,7 +40,6 @@ class Db:
         # return self.session.execute(select(Room).filter(Room.floor == floor))
         return self.session.query(Room).filter(Room.floor == floor).all()
 
-    # opravit
     def get_authorizations_for_room(self, room_id):
         return self.session.query(Authorization).join(Authorization.rooms).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
@@ -48,7 +47,6 @@ class Db:
         # room = self.session.query(Room).filter().one()
         # return room.authorizations.filter().all()
 
-    # opravit
     def get_primary_authorizations_for_room(self, room_id):
         authorizations = self.get_authorizations_for_room(room_id)
         # přidat filtorvání na základě origin
