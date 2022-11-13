@@ -8,11 +8,10 @@
 <SearchResultWidget>
     size_hint: 1, 0.06
 
-    MDRoundFlatIconButton:
+    MDRoundFlatButton:
         id: searchresultwidget_label_content
         size_hint: 1, 1
         text: "ERROR"
-        icon: "key-variant"
         pos_hint: {"center_x": .5, "y": 1.0}
         on_release: app.SearchResultWidgetClickFunction(self)
         text_color: "#FFFFFF"
@@ -36,7 +35,7 @@
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.95}
+        pos_hint: {'top': 0.98}
         bold: True
 
     MDCard:
@@ -97,13 +96,13 @@
             on_release: root.PrihasitSeButtonFunction() 
 
 
-<KeySelectionScreen>
+<ActionSelectionScreen>:
 
     Image:
         source: 'cpto3.jpg'
 
     MDLabel:
-        id: appname_label2
+        id: appname_label
         text: "Aplikace pro správu klíčů CPTO"
         font_size: 40
         halign: 'center'
@@ -112,7 +111,119 @@
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.95}
+        pos_hint: {'top': 0.98}
+        bold: True
+
+    MDCard:
+        size_hint: None, None
+        size: 300, 300
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        elevation: 1
+        padding: 25
+        spacing: 25
+        orientation: 'vertical'
+        md_bg_color: "#ededed"
+
+        GridLayout:
+            rows: 2
+            cols: 1
+            size_hint: 1, 1
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 25
+
+            MDRoundFlatButton:
+                text: "PŮJČIT"
+                text_color: "#FFFFFF"
+                md_bg_color: "#005963"
+                font_size: 32
+                line_color: "#005963"
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                size_hint: 1, 1
+                on_release: root.pujcit() 
+
+            MDRoundFlatButton:
+                text: "VRÁTIT"
+                text_color: "#FFFFFF"
+                md_bg_color: "#005963"
+                font_size: 32
+                line_color: "#005963"
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                size_hint: 1, 1
+                on_release: root.vratit() 
+
+
+<FloorSelectionScreen>:
+
+    Image:
+        source: 'cpto3.jpg'
+
+    MDLabel:
+        id: appname_label
+        text: "Zvolte podlaží"
+        font_size: 40
+        halign: 'center'
+        size_hint_y: None
+        height: self.texture_size[1]
+        padding_y: 15
+        theme_text_color: "Custom"
+        text_color: 0.0, .35, .39, 1
+        pos_hint: {'top': 0.98}
+        bold: True
+
+    MDCard:
+        size_hint: None, None
+        size: 900, 500
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        elevation: 1
+        padding: 25
+        spacing: 25
+        orientation: 'vertical'
+        md_bg_color: "#ededed"
+
+        MDTextField:
+            id: floorsearch
+            mode: "round"
+            text_color_normal: "#005963"
+            text_color_focus: "#000000"
+            background_color: "#005963"
+            multiline: False
+            fill_color_focus: "#FFFFFF"
+            line_color_normal: "#005963"
+            line_color_focus: "#000000"
+            hint_text: "Poschodí"
+            size_hint: 1, 0.1
+            font_size: 18
+            padding: 25
+            pos_hint: {"center_x": .5, "y": 1.0}
+            on_text: root.SearchFloorTextInputFunction()
+
+        GridLayout:
+            size_hint: 1, 0.9
+            padding: 25
+            id: floor_widget_scrollview
+            pos_hint: {"x": 0.0}
+            cols: 1
+            rows: 9
+            spacing: 5
+            row_default_height: 40
+
+
+<KeySelectionScreen>
+
+    Image:
+        source: 'cpto3.jpg'
+
+    MDLabel:
+        id: appname_label
+        text: "Vyberte místnost"
+        font_size: 40
+        halign: 'center'
+        size_hint_y: None
+        height: self.texture_size[1]
+        padding_y: 15
+        theme_text_color: "Custom"
+        text_color: 0.0, .35, .39, 1
+        pos_hint: {'top': 0.98}
         bold: True
 
     MDCard:
@@ -148,7 +259,7 @@
             id: key_widget_scrollview
             pos_hint: {"x": 0.0}
             cols: 1
-            rows: 8
+            rows: 9
             spacing: 5
             row_default_height: 40
 
@@ -159,7 +270,7 @@
 
     MDLabel:
         id: appname_label3
-        text: "Aplikace pro správu klíčů CPTO"
+        text: "Kdo si ho půjčuje?"
         font_size: 40
         halign: 'center'
         size_hint_y: None
@@ -167,7 +278,7 @@
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.95}
+        pos_hint: {'top': 0.98}
         bold: True
 
     MDCard:
@@ -222,7 +333,7 @@
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.95}
+        pos_hint: {'top': 0.98}
         bold: True
 
     MDCard:
@@ -339,7 +450,7 @@
         padding_y: 15
         theme_text_color: "Custom"
         text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.95}
+        pos_hint: {'top': 0.98}
         bold: True
 
     MDCard:

@@ -16,3 +16,5 @@ Currently in pre-alpha...
 - no log output
 - no review screen autoupdate
 - weirdly shaped buttons in some cases
+- no giant labels saying what is supposed to be searched
+- no currnet time display
