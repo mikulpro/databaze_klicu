@@ -270,7 +270,7 @@
 
     MDLabel:
         id: appname_label3
-        text: "Kdo si ho půjčuje?"
+        text: "Kdo si klíč půjčuje?"
         font_size: 40
         halign: 'center'
         size_hint_y: None
@@ -314,7 +314,7 @@
             id: person_widget_scrollview
             pos_hint: {"x": 0.0}
             cols: 1
-            rows: 8
+            rows: 9
             spacing: 5
             row_default_height: 40
 
@@ -442,7 +442,7 @@
 
     MDLabel:
         id: appname_label4
-        text: "Aplikace pro správu klíčů CPTO"
+        text: "Rekapitulace"
         font_size: 40
         halign: 'center'
         size_hint_y: None
@@ -466,37 +466,40 @@
         GridLayout:
             id: review_layout
             cols: 1
-            rows: 7
+            rows: 4
             size_hint: 1, 1
+            row_default_height: 100
+            row_force_default: True
+            spacing: 30
 
-            MDLabel:
-                id: rev_topiclabel
-                text: "Rekapitulace"
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                font_size: 32
-                size_hint: 1, 0.4
-                halign: "center"
-                valign: "top"
-                pos_hint: {"top": 1.0}
-                bold: True
-                multiline: False
+            # MDLabel:
+            #     id: rev_topiclabel
+            #     text: "Rekapitulace"
+            #     theme_text_color: "Custom"
+            #     text_color: 0.0, .35, .39, 1
+            #     font_size: 32
+            #     size_hint: 1, 0.4
+            #     halign: "center"
+            #     valign: "top"
+            #     pos_hint: {"top": 1.0}
+            #     bold: True
+            #     multiline: False
 
             # kdo půjčuje klíč
-            MDLabel:
-                id: rev_lab_lender
-                text: "Oprávněná osoba: "
-                font_size: 24
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
+            # MDLabel:
+            #     id: rev_lab_lender
+            #     text: "Oprávněná osoba: "
+            #     font_size: 24
+            #     theme_text_color: "Custom"
+            #     text_color: 0.0, .35, .39, 1
+            #     size_hint: 0.5, 0.5
+            #     valign: "center"
 
             # komu ho půjčuje
             MDLabel:
                 id: rev_lab_borrower
                 text: "Komu půjčuje: "
-                font_size: 24
+                font_size: 32
                 theme_text_color: "Custom"
                 text_color: 0.0, .35, .39, 1
                 size_hint: 0.5, 0.5
@@ -506,7 +509,7 @@
             MDLabel:
                 id: rev_lab_key
                 text: "Klíč: "
-                font_size: 24
+                font_size: 32
                 theme_text_color: "Custom"
                 text_color: 0.0, .35, .39, 1
                 size_hint: 0.5, 0.5
@@ -515,27 +518,30 @@
             # na jak dlouho jej půjčuje
             MDLabel:
                 id: rev_lab_starttime
-                text: "Od: "
-                font_size: 24
+                text: "Kdy: "
+                font_size: 32
                 theme_text_color: "Custom"
                 text_color: 0.0, .35, .39, 1
                 size_hint: 0.5, 0.5
                 valign: "center"
 
-            MDLabel:
-                id: rev_lab_endtime
-                text: "Do: "
-                font_size: 24
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
+            # MDLabel:
+            #     id: rev_lab_endtime
+            #     text: "Do: "
+            #     font_size: 24
+            #     theme_text_color: "Custom"
+            #     text_color: 0.0, .35, .39, 1
+            #     size_hint: 0.5, 0.5
+            #     valign: "center"
 
             # tlačítka
             GridLayout:
                 rows: 1
                 cols: 2
                 size_hint: 1, 1
+                row_default_height: 50
+                row_force_default: True
+                spacing: 50
 
                 MDRoundFlatButton:
                     id: timeselection_confirmbutton
@@ -545,7 +551,7 @@
                     line_color: "#005963"
                     font_size: 24
                     size_hint: 0.5, 0.5
-                    pos_hint: {"center_X": 0.75}
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
                     on_release: app.update_review_information()
 
                 MDRoundFlatButton:
@@ -556,5 +562,5 @@
                     line_color: "#005963"
                     font_size: 24
                     size_hint: 0.5, 0.5
-                    pos_hint: {"center_X": 0.75}
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
                     #on_release:
