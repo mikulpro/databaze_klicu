@@ -1,9 +1,9 @@
 Currently in pre-alpha...
 
 # Bugs
-- relative path to db_interface
-- in GUI only names are stored, no db ids
 - initial search in roomselection returns rooms unaffected by selected_floor
+- initial search in keyselection does not work
+- initial update in review screen does not work
 
 # Missing Features
 - no button for person adding (if not in database)
@@ -13,3 +13,8 @@ Currently in pre-alpha...
 - no review screen autoupdate
 - weirdly shaped buttons in some cases
 - no currnet time display
+- relative path to db_interface
+- in GUI only names are stored, no db ids
+- no support for ppl with same names in GUI
+- no clock
+- no checking if key is available during search

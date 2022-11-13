@@ -200,9 +200,8 @@ class KeySelectionScreen(Screen):
         for item in available_keys:
             if number_of_displayed_rooms >= 9:
                 break
-            elif searched_expression in item.registration_number:
-                number_of_displayed_rooms += 1
-                self._add_keywidget(item.registration_number)
+            number_of_displayed_rooms += 1
+            self._add_keywidget(item.registration_number)
 
 
     def _add_keywidget(self, data):
@@ -305,7 +304,7 @@ class VratnyApp(MDApp):
         return self.db.get_room_by_name_fraction(fraction, floor)
 
     def add_borrowing(self, key_id, borrower_id):
-        self.add_borrowing(key_id, borrower_id)
+        self.db.add_borrowing(key_id, borrower_id)
 
     def return_key(self, borrowing_id):
         self.db.return_key(borrowing_id)
@@ -438,5 +437,32 @@ class VratnyApp(MDApp):
         sc_mngr.get_screen("review").ids.rev_lab_borrower.text = str("Komu půjčuje: " + self.selected_person)
         sc_mngr.get_screen("review").ids.rev_lab_key.text = str(f"Klíč: {self.selected_key}")
         sc_mngr.get_screen("review").ids.rev_lab_room.text = str(f"Místnost: {self.selected_room}")
-        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute} {self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
+        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} {self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
         #sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
+
+
+    def complete_borrowing_session(self):
+        room = self.get_selected_room()
+        room = self.get_room_by_name_fraction(fraction=room)[-1]
+
+        room_keys = room.keys
+        key_id = None
+        for item in room_keys:
+            if str(item.registration_number) == str(self.selected_key):
+                key_id = item.id
+                break
+
+        borrower = self.get_borrowers_by_name_fraction(fraction=self.selected_person)[-1]
+        borrower_id = borrower.id
+        
+        self.add_borrowing(key_id, borrower_id)
+
+        self.selected_lender = ""
+        self.selected_floor = None
+        self.selected_room = None
+        self.selected_key = None
+        self.selected_person = None
+        self.selected_starttime = None
+        self.selected_endtime_time = None
+        self.selected_endtime_date = None    
+        sc_mngr.current = "actionselection"
