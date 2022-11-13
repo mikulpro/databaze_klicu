@@ -388,10 +388,10 @@ class VratnyApp(MDApp):
 
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
-        #if sc_mngr.current == "borrowingselection":
-        #    self.selected_borrowing = pressed_button_instance.text
-        #    self.return_key(self.selected_borrowing)
-        #    sc_mngr = "actionselection"
+        if sc_mngr.current == "borrowingselection":
+            self.selected_borrowing = pressed_button_instance.text
+            self.return_key(self.selected_borrowing)
+            sc_mngr.current = "actionselection"
         if sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.text
             sc_mngr.current = "roomselection"

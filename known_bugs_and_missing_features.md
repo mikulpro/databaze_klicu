@@ -4,7 +4,6 @@ Currently in: alpha
 - initial search in roomselection returns rooms unaffected by selected_floor
 - initial search in keyselection does not work
 - initial update in review screen does not work
-- calling db_interface.add_borrowing() does not modify database
 
 # Missing Features
 - no button for person adding (if not in database)
