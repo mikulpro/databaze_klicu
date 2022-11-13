@@ -1,6 +1,5 @@
 # python modules
 from datetime import datetime
-from sqlite.db_interface import Db as db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
@@ -67,8 +66,8 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
 
     def _authenticate(self, username, password):
-        if username == "Pavel Pyšný" and password == "123456":
-        #if username == "" and password == "":
+        #if username == "Pavel Pyšný" and password == "123456":
+        if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
             return True
         else:
@@ -278,7 +277,12 @@ class VratnyApp(MDApp):
 
 
     def build(self):
-        Builder.load_file('vratny.kv')
+
+        Window.size = (1080, 720)
+        Config.set('graphics', 'width', '1080')
+        Config.set('graphics', 'height', '720')
+
+        Builder.load_file('dev/gui/vratny.kv')
 
         global sc_mngr
         sc_mngr = ScreenManager(transition = NoTransition())
@@ -300,9 +304,4 @@ class VratnyApp(MDApp):
 
 
 if __name__ == "__main__":
-    
-    Window.size = (1080, 720)
-    Config.set('graphics', 'width', '1080')
-    Config.set('graphics', 'height', '720')
-
     VratnyApp().run()
