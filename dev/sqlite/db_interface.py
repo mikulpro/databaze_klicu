@@ -24,7 +24,12 @@ Db:
 class Db:
 
     def __init__(self, db_path="sqlite:///db.sqlite"):
-        engine = create_engine(db_path, echo=True, future=True)
+        self.db_path = db_path
+        self.session = None
+        self.new_session()
+
+    def new_session(self):
+        engine = create_engine(self.db_path, echo=True, future=True)
         self.session = Session(engine)
 
     def get_all_floors(self):
@@ -37,8 +42,11 @@ class Db:
 
     # opravit
     def get_authorizations_for_room(self, room_id):
-        room = self.session.query(Room).filter(Room.id == room_id).one()
-        return room.authorizations.filter(Authorization.expiration > datetime.datetime.utcnow).all()
+        return self.session.query(Authorization).join(Authorization.rooms).filter(
+            Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
+        ).all()
+        # room = self.session.query(Room).filter().one()
+        # return room.authorizations.filter().all()
 
     # opravit
     def get_primary_authorizations_for_room(self, room_id):
