@@ -1,4 +1,4 @@
-from models import *
+from dev.sqlite.models import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select

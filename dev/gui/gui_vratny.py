@@ -1,11 +1,12 @@
 # python modules
 from datetime import datetime
-from sqlite.db_interface import Db as db
+from dev.sqlite.db_interface import Db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import Config
+from kivy.resources import resource_find
 
 # kivy material design library
 from kivymd.app import MDApp
@@ -66,9 +67,10 @@ class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
 
+
     def _authenticate(self, username, password):
-        if username == "Pavel Pyšný" and password == "123456":
-        #if username == "" and password == "":
+        #if username == "Pavel Pyšný" and password == "123456":
+        if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
             return True
         else:
@@ -83,52 +85,90 @@ class LoginScreen(Screen):
         
         if self._authenticate(usr, pswd):
             # some function to select next screen
-            self.manager.current = "keyselection"
+            self.manager.current = "actionselection"
+
+
+class ActionSelectionScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(ActionSelectionScreen, self).__init__(**kwargs)
+
+
+    def pujcit(self):
+        sc_mngr.current = "floorselection"
+
+
+    def vratit(self):
+        pass
+
+
+class FloorSelectionScreen(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(FloorSelectionScreen, self).__init__(**kwargs)
+        #self._list_of_current_keywidgets = []
+        self.SearchFloorTextInputFunction(initial=True) # initial search
+
+
+    def SearchFloorTextInputFunction(self, initial=False):
+        floors = MDApp.get_running_app().get_all_floors()
         
-# second screen
+        # undisplaying old floors
+        self.ids.floor_widget_scrollview.clear_widgets()
+        
+        # displaying new floors
+        number_of_displayed_floors = 0
+        for floor in floors:
+            if number_of_displayed_floors == 9:
+                break
+            if initial or str(self.ids.floorsearch.text) in str(floor):
+                number_of_displayed_floors += 1
+                self._add_floorwidget(floor)
+
+
+    def _add_floorwidget(self, data):
+        floor_widget = SearchResultWidget()
+        floor_widget.ids.searchresultwidget_label_content.text = str(data)
+        floor_widget.label_pointer = floor_widget.ids.searchresultwidget_label_content
+        self.ids.floor_widget_scrollview.add_widget(floor_widget)
+
+
 class KeySelectionScreen(Screen):
 
 
     def __init__(self, **kwargs):
         super(KeySelectionScreen, self).__init__(**kwargs)
-        self._list_of_current_keywidgets = []
         self.SearchKeyTextInputFunction() # initial search
 
 
     def SearchKeyTextInputFunction(self):
         
-        # some function, that finds all relevant examples
-        searched_expression = self.ids.keysearch.text
-        list_of_matches_keys = MDApp.get_running_app().find_relevant_matches(searched_expression, "dev/sqlite/old/data/data_Rooms.csv")
+        # find all relevant examples
+        selected_floor = MDApp.get_running_app().get_selected_floor()
+        searched_expression = str(self.ids.keysearch.text)
+        #if len(searched_expression) >= 1:
+        #    list_of_matches_keys = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression, floor=selected_floor)
+        #else:
+        #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+        list_of_matches_keys = []
 
-        # some function, that removes all existing widgets
-        self._remove_current_keywidgets()
+        # undisplay old rooms
+        self.ids.key_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
+        number_of_displayed_rooms = 0
         for item in list_of_matches_keys:
+            if number_of_displayed_rooms == 9:
+                break
             self._add_keywidget(item)
-
-        # bugfix for duplicit buttons
-        #self._remove_error_labels()
-
-
-    def _remove_error_labels(self):
-        for item in self.ids.key_widget_scrollview.children:
-            if item is not None and hasattr(item, 'text') and item.text == 'ERROR':
-                self.ids.key_widget_scrollview.remove_widget(item)  
-
-
-    def _remove_current_keywidgets(self):
-        for item in self._list_of_current_keywidgets:
-            if item is not None:
-                self.ids.key_widget_scrollview.remove_widget(item)
 
 
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
-        key_widget.ids.searchresultwidget_label_content.text = data
+        key_widget.ids.searchresultwidget_label_content.text = str(data)
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
-        self._list_of_current_keywidgets.append(key_widget)
         self.ids.key_widget_scrollview.add_widget(key_widget)
 
 
@@ -191,15 +231,46 @@ class ReviewScreen(Screen):
 class VratnyApp(MDApp):
 
 
-    def __init__(self, **kwargs):
+    def __init__(self, database_object=Db(), **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
+        self.selected_floor = 1
         self.selected_key = None
         self.selected_person = None
         self.selected_starttime = datetime.now()
         self.selected_endtime_time = None
         self.selected_endtime_date = None
+        self.db = database_object
 
+    def get_all_floors(self):
+        return self.db.get_all_floors()
+
+    def get_rooms_by_floor(self, floor):
+        return self.db.get_rooms_by_floor(floor)
+
+    def get_authorizations_for_room(self, room_id):
+        return self.db.get_authorizations_for_room(room_id)
+
+    def get_primary_authorizations_for_room(self, room_id):
+        return self.db.get_primary_authorizations_for_room(room_id)
+
+    def get_borrowers_by_name_fraction(self, fraction):
+        return self.db.get_borrowers_by_name_fraction(fraction)
+    
+    def get_room_by_name_fraction(self, fraction, floor=None):
+        return self.db.get_room_by_name_fraction(fraction, floor)
+
+    def add_borrowing(self, key_id, borrower_id):
+        self.add_borrowing(key_id, borrower_id)
+
+    def return_key(self, borrowing_id):
+        self.db.return_key(borrowing_id)
+
+    def get_ongoing_borrowings(self):
+        return self.db.get_ongoing_borrowings()
+
+    def excel_dump(self):
+        return self.db.excel_dump()
 
     def set_lender(self, input):
         self.selected_lender = input
@@ -246,13 +317,18 @@ class VratnyApp(MDApp):
 
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
-        if sc_mngr.current == "keyselection":
+        if sc_mngr.current == "floorselection":
+            self.selected_floor = pressed_button_instance.text
+            sc_mngr.current = "keyselection"
+        elif sc_mngr.current == "keyselection":
             self.selected_key = pressed_button_instance.text
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "personselection":
             self.selected_person = pressed_button_instance.text
             sc_mngr.current = "timeselection"        
 
+    def get_selected_floor(self):
+        return self.selected_floor
 
     def get_selected_key(self):
         return self.selected_key
@@ -278,11 +354,22 @@ class VratnyApp(MDApp):
 
 
     def build(self):
-        Builder.load_file('vratny.kv')
+
+        Window.size = (1080, 720)
+        Config.set('graphics', 'width', '1080')
+        Config.set('graphics', 'height', '720')
+
+        filename = 'style_vratny.kv'
+        filename = resource_find(filename) or filename
+        if filename in Builder.files:
+            Builder.unload_file(filename)
+        Builder.load_file('dev/gui/style_vratny.kv')
 
         global sc_mngr
         sc_mngr = ScreenManager(transition = NoTransition())
         sc_mngr.add_widget(LoginScreen(name = "login"))
+        sc_mngr.add_widget(ActionSelectionScreen(name = "actionselection"))
+        sc_mngr.add_widget(FloorSelectionScreen(name = "floorselection"))
         sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
         sc_mngr.add_widget(PersonSelectionScreen(name = "personselection"))
         sc_mngr.add_widget(TimeSelectionScreen(name = "timeselection"))
@@ -300,9 +387,4 @@ class VratnyApp(MDApp):
 
 
 if __name__ == "__main__":
-    
-    Window.size = (1080, 720)
-    Config.set('graphics', 'width', '1080')
-    Config.set('graphics', 'height', '720')
-
     VratnyApp().run()

@@ -5,10 +5,9 @@ Currently in pre-alpha...
 - timestamps are in different data types
 - openning time or date selector and cancelling sets time and/or date to None
 - slow search update
+- relative path to db_interface
 
 # Missing Features
-- no control for time format output
-- time picker is 12-hour format only
 - no button for person adding (if not in database)
 - no real database communication, only .csv files
 - no admin interface
@@ -17,3 +16,5 @@ Currently in pre-alpha...
 - no log output
 - no review screen autoupdate
 - weirdly shaped buttons in some cases
+- no giant labels saying what is supposed to be searched
+- no currnet time display
