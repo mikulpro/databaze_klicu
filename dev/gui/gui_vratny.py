@@ -123,7 +123,13 @@ class BorrowingSelectionScreen(Screen):
             if number_of_displayed_borrowings == 9:
                 break
             number_of_displayed_borrowings += 1
-            self._add_floorwidget(f"{b.id}")
+            self._add_borrowingwidget(f"{b.id}")
+
+    def _add_borrowingwidget(self, data):
+        borrowing_widget = SearchResultWidget()
+        borrowing_widget.ids.searchresultwidget_label_content.text = str(data)
+        borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
+        self.ids.borrowings_widget_scrollview.add_widget(borrowing_widget)
 
 
 class FloorSelectionScreen(Screen):
