@@ -63,11 +63,11 @@ class Room(Base):
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", secondary=authorizations_rooms)
 
-    def get_valid_authorizations(self):
-        return self.filter(Authorization.expiration > datetime.datetime.utcnow)
-
-    def get_primary_authorizations(self):
-        return self.get_valid_authorizations()
+    # def get_valid_authorizations(self):
+    #     return self.filter(Authorization.expiration > datetime.datetime.utcnow)
+    #
+    # def get_primary_authorizations(self):
+    #     return self.get_valid_authorizations()
 
 
 class RoomType(Base):
