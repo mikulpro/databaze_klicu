@@ -84,6 +84,7 @@ class Db:
     def add_borrowing(self, key_id, borrower_id):
         borrowing = Borrowing(key_id=key_id, borrower_id=borrower_id)
         self.session.add(borrowing)
+        self.session.commit()
 
     def return_key(self, borrowing_id):
         borrowing = self.session.query(Borrowing).filter(Borrowing.id == borrowing_id).one()
