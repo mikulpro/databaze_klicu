@@ -101,7 +101,6 @@ class Db:
         # [borrowed: date, time, key, borrower name, return: date, time]
         data = []
         borrowings = self.session.query(Borrowing).all()
-        print([type(b.authorization) for b in borrowings])
         for borrowing in borrowings:
             print(type(borrowing))
             row = [
