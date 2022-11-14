@@ -19,3 +19,4 @@ Currently in: alpha
 - no clock
 - GUI displayable borrowings limited to 9 items
 - scroll views aren't scrollable
+- GUI must sort and convert sets to lists
