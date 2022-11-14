@@ -17,6 +17,5 @@ Currently in: alpha
 - in GUI only names are stored, no db ids
 - no support for ppl with same names in GUI
 - no clock
-- no checking if key is available during search
 - GUI displayable borrowings limited to 9 items
 - scroll views aren't scrollable
