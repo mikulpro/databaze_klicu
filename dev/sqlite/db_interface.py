@@ -84,8 +84,8 @@ class Db:
         else:
             return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
-    def add_borrowing(self, key_id, borrower_id):
-        borrowing = Borrowing(key_id=key_id, borrower_id=borrower_id)
+    def add_borrowing(self, key_id, authorization_id):
+        borrowing = Borrowing(key_id=key_id, borrower_id=authorization_id)
         self.session.add(borrowing)
         self.session.commit()
 
@@ -99,13 +99,15 @@ class Db:
     def excel_dump(self):
         # [borrowed: date, time, key, borrower name, return: date, time]
         data = []
-        borrowings = self.session.query(Borrowing)
+        borrowings = self.session.query(Borrowing).all()
+        print([type(b.authorization) for b in borrowings])
         for borrowing in borrowings:
+            print(type(borrowing))
             row = [
                 borrowing.borrowed.strftime("%d.%m.%Y"),
                 borrowing.borrowed.strftime("%H:%M"),
                 str(borrowing.key.registration_number),
-                borrowing.borrower.borrower.get_full_name(),
+                borrowing.authorization.person.get_full_name(),
             ]
             if borrowing.returned:
                 row.extend([

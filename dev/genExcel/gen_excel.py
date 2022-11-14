@@ -71,10 +71,10 @@ class ExcelGenerator:
         ws['F3'].border = ExcelGenerator.border_thin_full
         ws['F3'].alignment = ExcelGenerator.alignment
 
-        ws['G2'] = "Půjčovatel"
-        ws['G2'].border = ExcelGenerator.border_thin_full
-        ws['G2'].alignment = ExcelGenerator.alignment
-        ws.merge_cells('G2:G3')
+        # ws['G2'] = "Půjčovatel"
+        # ws['G2'].border = ExcelGenerator.border_thin_full
+        # ws['G2'].alignment = ExcelGenerator.alignment
+        # ws.merge_cells('G2:G3')
 
     @staticmethod
     def append_data(ws, data):
@@ -100,9 +100,9 @@ class ExcelGenerator:
 if __name__ == '__main__':
     data = [
         # date, time, room, borrower name, date, time
-        ("10.10.2022", "14:53", "CP1.03", "Jiří Fišer", "10.10.2022", "16:48", "Novák"),
-        ("10.10.2022", "15:56", "CP1.04", "Jan Krejčí", "10.10.2022", "18:46", "Novák"),
-        ("10.10.2022", "17:53", "CP1.03", "Petr Haberzettl", "10.10.2022", "19:48", "Novák"),
+        ("10.10.2022", "14:53", "CP1.03", "Jiří Fišer", "10.10.2022", "16:48"),
+        ("10.10.2022", "15:56", "CP1.04", "Jan Krejčí", "10.10.2022", "18:46"),
+        ("10.10.2022", "17:53", "CP1.03", "Petr Haberzettl", "10.10.2022", "19:48"),
     ]
     ExcelGenerator.gen_excel_file(data)
     print('Excel file was sucessfully generated "export.xlsx"')

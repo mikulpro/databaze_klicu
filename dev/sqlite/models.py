@@ -27,10 +27,10 @@ class Borrowing(Base):
     __tablename__ = "borrowings"
 
     id = Column(Integer, primary_key=True)
-    key_id = Column(Integer, ForeignKey("keys.id"))
+    key_id = Column(Integer, ForeignKey("keys.id"), nullable=False)
     key = relationship("Key", back_populates="borrowings")
-    borrower_id = Column(Integer, ForeignKey("authorizations.id"))
-    borrower = relationship("Authorization", back_populates="borrowings")
+    authorization_id = Column(Integer, ForeignKey("authorizations.id"), nullable=False)
+    authorization = relationship("Authorization", back_populates="borrowings")
     borrowed = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     returned = Column(DateTime(timezone=True), nullable=True)
 
@@ -38,7 +38,7 @@ class Borrowing(Base):
         self.returned = datetime.datetime.utcnow()
 
     def __repr__(self):
-        return f"Borrowing(id={self.id}, key={self.key}, borrower={self.borrower}, borrowed={self.borrowed} returned={self.returned}"
+        return f"Borrowing(id={self.id}, key={self.key}, borrower={self.authorization}, borrowed={self.borrowed} returned={self.returned}"
 
 
 class Key(Base):
@@ -80,30 +80,6 @@ class Faculty(Base):
     name = Column(String(64), nullable=False, unique=True)
 
 
-class Authorization(Base):
-    __tablename__ = "authorizations"
-
-    id = Column(Integer, primary_key=True)
-    borrower_id = Column(Integer, ForeignKey("authorized_persons.id"))
-    borrower = relationship("AuthorizedPerson")
-    created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
-    expiration = Column(DateTime(timezone=True), nullable=False)
-    origin_id = Column(Integer, ForeignKey("authorization_origins.id"))
-    origin = relationship("AuthorizationOrigin")
-    rooms = relationship("Room", secondary=authorizations_rooms, back_populates="authorizations")
-    borrowings = relationship("Borrowing")
-
-    def get_borrowings_count(self):
-        return len(self.borrowings)
-
-
-class AuthorizationOrigin(Base):
-    __tablename__ = "authorization_origins"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32), nullable=False, unique=True)
-
-
 class AuthorizedPerson(Base):
     __tablename__ = "authorized_persons"
 
@@ -113,6 +89,7 @@ class AuthorizedPerson(Base):
     workplace_id = Column(Integer, ForeignKey("workplaces.id"))
     workplace = relationship("Workplace")
     created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+    authorizations = relationship("Authorization", back_populates="person")
 
     def get_full_name(self):
         return self.firstname + " " + self.surname
@@ -127,3 +104,26 @@ class Workplace(Base):
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
 
+
+class Authorization(Base):
+    __tablename__ = "authorizations"
+
+    id = Column(Integer, primary_key=True)
+    person_id = Column(Integer, ForeignKey("authorized_persons.id"))
+    person = relationship("AuthorizedPerson")
+    created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+    expiration = Column(DateTime(timezone=True), nullable=False)
+    origin_id = Column(Integer, ForeignKey("authorization_origins.id"), nullable=False)
+    origin = relationship("AuthorizationOrigin")
+    rooms = relationship("Room", secondary=authorizations_rooms, back_populates="authorizations")
+    borrowings = relationship("Borrowing", back_populates="authorization")
+
+    def get_borrowings_count(self):
+        return len(self.borrowings)
+
+
+class AuthorizationOrigin(Base):
+    __tablename__ = "authorization_origins"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(32), nullable=False, unique=True)
