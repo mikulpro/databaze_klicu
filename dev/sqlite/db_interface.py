@@ -6,7 +6,7 @@ import datetime
 
 """
 Db:
-    -get_all_floors(self) -> list[int]
+    -get_all_floors(self) -> set[int]
     -get_rooms_by_floor(self, int: floor) -> list[Room]
     get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
     get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
