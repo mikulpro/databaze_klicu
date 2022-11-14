@@ -57,6 +57,7 @@ class SearchResultWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(SearchResultWidget, self).__init__(**kwargs)
         self.label_pointer = None
+        self.borrowing = None
 
 
 # first screen
@@ -114,12 +115,13 @@ class BorrowingSelectionScreen(Screen):
             if number_of_displayed_borrowings == 9:
                 break
             number_of_displayed_borrowings += 1
-            self._add_borrowingwidget(f"{b.id}")
+            self._add_borrowingwidget(b)
 
     def _add_borrowingwidget(self, data):
         borrowing_widget = SearchResultWidget()
-        borrowing_widget.ids.searchresultwidget_label_content.text = str(data)
+        borrowing_widget.ids.searchresultwidget_label_content.text = str(data.authorization.person.get_full_name())
         borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
+        borrowing_widget.borrowing = data
         self.ids.borrowings_widget_scrollview.add_widget(borrowing_widget)
 
 
@@ -365,8 +367,9 @@ class VratnyApp(MDApp):
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
         if sc_mngr.current == "borrowingselection":
-            self.selected_borrowing = pressed_button_instance.text
-            self.return_key(self.selected_borrowing)
+            self.selected_borrowing = pressed_button_instance.borrowing
+            self.return_key(self.selected_borrowing.id)
+            #self.logger.warning(str(dir(pressed_button_instance)))
             sc_mngr.current = "actionselection"
         if sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.text
