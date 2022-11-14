@@ -30,7 +30,7 @@ class Borrowing(Base):
     key_id = Column(Integer, ForeignKey("keys.id"))
     key = relationship("Key", back_populates="borrowings")
     borrower_id = Column(Integer, ForeignKey("authorizations.id"))
-    borrower = relationship("Authorization")
+    borrower = relationship("Authorization", back_populates="borrowings")
     borrowed = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     returned = Column(DateTime(timezone=True), nullable=True)
 
@@ -91,6 +91,10 @@ class Authorization(Base):
     origin_id = Column(Integer, ForeignKey("authorization_origins.id"))
     origin = relationship("AuthorizationOrigin")
     rooms = relationship("Room", secondary=authorizations_rooms, back_populates="authorizations")
+    borrowings = relationship("Borrowing")
+
+    def get_borrowings_count(self):
+        return len(self.borrowings)
 
 
 class AuthorizationOrigin(Base):

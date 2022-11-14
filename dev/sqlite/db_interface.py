@@ -41,16 +41,19 @@ class Db:
         return self.session.query(Room).filter(Room.floor == floor).all()
 
     def get_authorizations_for_room(self, room_id):
-        return self.session.query(Authorization).join(Authorization.rooms).filter(
+        authorizations = self.session.query(Authorization).join(Authorization.rooms).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
         ).all()
-        # room = self.session.query(Room).filter().one()
-        # return room.authorizations.filter().all()
+        return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
 
     def get_primary_authorizations_for_room(self, room_id):
         authorizations = self.get_authorizations_for_room(room_id)
         # přidat filtorvání na základě origin
         return authorizations
+
+    def get_authorizations_by_bnf(self, fraction):
+        # lepší bude filtrovat v listu autorizací
+        ...
 
     def get_borrowers_by_name_fraction(self, fraction):
         fractions = fraction.split(" ")
@@ -91,7 +94,7 @@ class Db:
         borrowing.return_key()
 
     def get_ongoing_borrowings(self):
-        return self.session.query(Borrowing).filter(Borrowing.returned.is_(None)).all()
+        return self.session.query(Borrowing).filter(Borrowing.returned.is_(None)).order_by(Borrowing.borrowed).all()
 
     def excel_dump(self):
         # [borrowed: date, time, key, borrower name, return: date, time]
