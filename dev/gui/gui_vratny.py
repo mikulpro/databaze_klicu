@@ -53,7 +53,6 @@ from kivy.metrics import dp
 
 # custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
-    
 
     def __init__(self, **kwargs):
         super(SearchResultWidget, self).__init__(**kwargs)
@@ -63,26 +62,23 @@ class SearchResultWidget(BoxLayout):
 # first screen
 class LoginScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
 
-
     def _authenticate(self, username, password):
-        #if username == "Pavel Pyšný" and password == "123456":
+        # if username == "Pavel Pyšný" and password == "123456":
         if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
             return True
         else:
             return False
 
-
     def PrihasitSeButtonFunction(self):
 
         # some function to authenticate
         usr = self.ids.user.text
         pswd = self.ids.password.text
-        
+
         if self._authenticate(usr, pswd):
             # some function to select next screen
             self.manager.current = "actionselection"
@@ -90,14 +86,11 @@ class LoginScreen(Screen):
 
 class ActionSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(ActionSelectionScreen, self).__init__(**kwargs)
 
-
     def pujcit(self):
         sc_mngr.current = "floorselection"
-
 
     def vratit(self):
         sc_mngr.current = "borrowingselection"
@@ -105,18 +98,16 @@ class ActionSelectionScreen(Screen):
 
 class BorrowingSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(BorrowingSelectionScreen, self).__init__(**kwargs)
-        self.SearchBorrowingTextInputFunction() # initial search
-
+        self.SearchBorrowingTextInputFunction()  # initial search
 
     def SearchBorrowingTextInputFunction(self):
         borrowings = MDApp.get_running_app().get_ongoing_borrowings()
-        
+
         # undisplaying old floors
         self.ids.borrowings_widget_scrollview.clear_widgets()
-        
+
         # displaying new floors
         number_of_displayed_borrowings = 0
         for b in borrowings:
@@ -134,18 +125,16 @@ class BorrowingSelectionScreen(Screen):
 
 class FloorSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(FloorSelectionScreen, self).__init__(**kwargs)
-        self.SearchFloorTextInputFunction(initial=True) # initial search
-
+        self.SearchFloorTextInputFunction(initial=True)  # initial search
 
     def SearchFloorTextInputFunction(self, initial=False):
         floors = MDApp.get_running_app().get_all_floors()
-        
+
         # undisplaying old floors
         self.ids.floor_widget_scrollview.clear_widgets()
-        
+
         # displaying new floors
         number_of_displayed_floors = 0
         for floor in floors:
@@ -154,7 +143,6 @@ class FloorSelectionScreen(Screen):
             if initial or str(self.ids.floorsearch.text) in str(floor):
                 number_of_displayed_floors += 1
                 self._add_floorwidget(floor)
-
 
     def _add_floorwidget(self, data):
         floor_widget = SearchResultWidget()
@@ -165,22 +153,21 @@ class FloorSelectionScreen(Screen):
 
 class RoomSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(RoomSelectionScreen, self).__init__(**kwargs)
-        self.SearchRoomTextInputFunction() # initial search
-
+        self.SearchRoomTextInputFunction()  # initial search
 
     def SearchRoomTextInputFunction(self):
-        
+
         # find all relevant examples
         selected_floor = MDApp.get_running_app().get_selected_floor()
         searched_expression = str(self.ids.roomsearch.text)
         if len(searched_expression) >= 1:
-            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression, floor=selected_floor)
+            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression,
+                                                                                      floor=selected_floor)
         else:
             list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
-            #list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+            # list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
@@ -193,7 +180,6 @@ class RoomSelectionScreen(Screen):
             number_of_displayed_rooms += 1
             self._add_keywidget(item.name)
 
-
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
         key_widget.ids.searchresultwidget_label_content.text = str(data)
@@ -203,14 +189,12 @@ class RoomSelectionScreen(Screen):
 
 class KeySelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(KeySelectionScreen, self).__init__(**kwargs)
-        self.SearchKeyTextInputFunction() # initial search
-
+        self.SearchKeyTextInputFunction()  # initial search
 
     def SearchKeyTextInputFunction(self):
-        
+
         # find all relevant examples
         selected_room = MDApp.get_running_app().get_selected_room()
         selected_room = MDApp.get_running_app().get_room_by_name_fraction(fraction=selected_room)
@@ -230,7 +214,6 @@ class KeySelectionScreen(Screen):
             number_of_displayed_rooms += 1
             self._add_keywidget(item.registration_number)
 
-
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
         key_widget.ids.searchresultwidget_label_content.text = str(data)
@@ -240,14 +223,12 @@ class KeySelectionScreen(Screen):
 
 class PersonSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(PersonSelectionScreen, self).__init__(**kwargs)
-        self.PersonSearchTextInputFunction() # initial search
-
+        self.PersonSearchTextInputFunction()  # initial search
 
     def PersonSearchTextInputFunction(self):
-        
+
         # find all relevant examples
         searched_expression = str(self.ids.personsearch.text)
         if len(searched_expression) >= 1:
@@ -267,7 +248,6 @@ class PersonSelectionScreen(Screen):
                 number_of_displayed_ppl += 1
                 self._add_personwidget((str(item.firstname) + " " + str(item.surname)))
 
-
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
         person_widget.ids.searchresultwidget_label_content.text = data
@@ -277,18 +257,21 @@ class PersonSelectionScreen(Screen):
 
 class TimeSelectionScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(TimeSelectionScreen, self).__init__(**kwargs)
 
-    
     def confirm_timestamps(self):
-        if self.ids.datepicker_label.text not in ["CANCELED", "Nebylo vybráno žádné datum"] and self.ids.timepicker_label.text not in ["None", "Nebyl vybrán žádný čas"]:
+        if self.ids.datepicker_label.text not in [
+            "CANCELED",
+            "Nebylo vybráno žádné datum"
+        ] and self.ids.timepicker_label.text not in [
+            "None",
+            "Nebyl vybrán žádný čas"
+        ]:
             sc_mngr.current = "review"
 
 
 class ReviewScreen(Screen):
-
 
     def __init__(self, **kwargs):
         super(ReviewScreen, self).__init__(**kwargs)
@@ -296,8 +279,7 @@ class ReviewScreen(Screen):
 
 class VratnyApp(MDApp):
 
-
-    def __init__(self, database_object=Db(), **kwargs):
+    def __init__(self, database_object=Db(), logger=None, **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
         self.selected_floor = None
@@ -309,6 +291,7 @@ class VratnyApp(MDApp):
         self.selected_endtime_date = None
         self.selected_borrowing = None
         self.db = database_object
+        self.logger = logger
 
     def update_starttime(self):
         self.selected_starttime = datetime.now()
@@ -327,7 +310,7 @@ class VratnyApp(MDApp):
 
     def get_borrowers_by_name_fraction(self, fraction):
         return self.db.get_borrowers_by_name_fraction(fraction)
-    
+
     def get_room_by_name_fraction(self, fraction, floor=None):
         return self.db.get_room_by_name_fraction(fraction, floor)
 
@@ -346,22 +329,19 @@ class VratnyApp(MDApp):
     def set_lender(self, input):
         self.selected_lender = input
 
-
     def show_time_picker(self):
-		# Define default time
+        # Define default time
         default_time = datetime.strptime("23:59:59", '%H:%M:%S').time()
 
         time_dialog = MDTimePicker()
-		# Set default Time
+        # Set default Time
         time_dialog.set_time(default_time)
         time_dialog.bind(on_cancel=self._on_timepicker_cancel, time=self._on_timepicker_confirm)
         time_dialog.open()
 
-
     def _on_timepicker_confirm(self, instance, time):
         self.selected_endtime_time = str(time)
         sc_mngr.get_screen("timeselection").ids.timepicker_label.text = str(time)
-
 
     def _on_timepicker_cancel(self, instance, time):
         self.selected_endtime_time = self.selected_endtime_time
@@ -370,22 +350,18 @@ class VratnyApp(MDApp):
         else:
             sc_mngr.get_screen("timeselection").ids.timepicker_label.text = str(time)
 
-
     def show_date_picker(self):
-		#date_dialog = MDDatePicker(year=2000, month=2, day=14)
+        # date_dialog = MDDatePicker(year=2000, month=2, day=14)
         date_dialog = MDDatePicker(mode="range")
         date_dialog.bind(on_save=self._on_datepicker_confirm, on_cancel=self._on_datepicker_cancel)
         date_dialog.open()
-
 
     def _on_datepicker_confirm(self, instance, value, date_range):
         self.selected_endtime_date = date_range[-1]
         sc_mngr.get_screen("timeselection").ids.datepicker_label.text = str(date_range[-1])
 
-
     def _on_datepicker_cancel(self, instance, value):
         sc_mngr.get_screen("timeselection").ids.datepicker_label.text = "CANCELED"
-
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
         if sc_mngr.current == "borrowingselection":
@@ -403,39 +379,34 @@ class VratnyApp(MDApp):
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "personselection":
             self.selected_person = pressed_button_instance.text
-            sc_mngr.current = "review"        
-
+            sc_mngr.current = "review"
 
     def get_selected_floor(self):
         return self.selected_floor
 
-
     def get_selected_key(self):
         return self.selected_key
-
 
     def get_selected_room(self):
         return self.selected_room
 
-
     def find_relevant_matches(self, input_text, where_to_search):
         output = []
-        #return ["testing_result"]
-        
+        # return ["testing_result"]
+
         try:
             with open(where_to_search, "r", encoding="utf8") as f:
                 for line in f:
                     if input_text in line:
                         output.append(line)
-            f.close()          
-        except:
+            f.close()
+        except Exception as e:
             pass
 
         if len(output) > 8:
             return output[:8]
 
         return output
-
 
     def build(self):
 
@@ -450,29 +421,30 @@ class VratnyApp(MDApp):
         Builder.load_file('dev/gui/style_vratny.kv')
 
         global sc_mngr
-        sc_mngr = ScreenManager(transition = NoTransition())
-        sc_mngr.add_widget(LoginScreen(name = "login"))
-        sc_mngr.add_widget(ActionSelectionScreen(name = "actionselection"))
-        sc_mngr.add_widget(BorrowingSelectionScreen(name = "borrowingselection"))
-        sc_mngr.add_widget(FloorSelectionScreen(name = "floorselection"))
-        sc_mngr.add_widget(RoomSelectionScreen(name = "roomselection"))
-        sc_mngr.add_widget(KeySelectionScreen(name = "keyselection"))
-        sc_mngr.add_widget(PersonSelectionScreen(name = "personselection"))
-        sc_mngr.add_widget(TimeSelectionScreen(name = "timeselection"))
-        sc_mngr.add_widget(ReviewScreen(name = "review"))
+        sc_mngr = ScreenManager(transition=NoTransition())
+        sc_mngr.add_widget(LoginScreen(name="login"))
+        sc_mngr.add_widget(ActionSelectionScreen(name="actionselection"))
+        sc_mngr.add_widget(BorrowingSelectionScreen(name="borrowingselection"))
+        sc_mngr.add_widget(FloorSelectionScreen(name="floorselection"))
+        sc_mngr.add_widget(RoomSelectionScreen(name="roomselection"))
+        sc_mngr.add_widget(KeySelectionScreen(name="keyselection"))
+        sc_mngr.add_widget(PersonSelectionScreen(name="personselection"))
+        sc_mngr.add_widget(TimeSelectionScreen(name="timeselection"))
+        sc_mngr.add_widget(ReviewScreen(name="review"))
 
         return sc_mngr
 
-
     def update_review_information(self):
         self.update_starttime()
-        #sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
+        # sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
         sc_mngr.get_screen("review").ids.rev_lab_borrower.text = str("Komu půjčuje: " + self.selected_person)
         sc_mngr.get_screen("review").ids.rev_lab_key.text = str(f"Klíč: {self.selected_key}")
         sc_mngr.get_screen("review").ids.rev_lab_room.text = str(f"Místnost: {self.selected_room}")
-        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} {self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
-        #sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) + str(self.selected_endtime_date))
-
+        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(
+            f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} "
+            f"{self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
+        # sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) +
+        #                                                             str(self.selected_endtime_date))
 
     def complete_borrowing_session(self):
         room = self.get_selected_room()
@@ -487,7 +459,7 @@ class VratnyApp(MDApp):
 
         borrower = self.get_borrowers_by_name_fraction(fraction=self.selected_person)[-1]
         borrower_id = borrower.id
-        
+
         self.add_borrowing(key_id, borrower_id)
 
         self.selected_lender = ""
@@ -497,5 +469,5 @@ class VratnyApp(MDApp):
         self.selected_person = None
         self.selected_starttime = None
         self.selected_endtime_time = None
-        self.selected_endtime_date = None    
+        self.selected_endtime_date = None
         sc_mngr.current = "actionselection"

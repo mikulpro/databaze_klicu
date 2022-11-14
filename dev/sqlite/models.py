@@ -50,6 +50,13 @@ class Key(Base):
     rooms = relationship("Room", secondary=keys_rooms, back_populates="keys")
     borrowings = relationship("Borrowing", back_populates="key")
 
+    def is_borrowed(self):
+        for borrowing in self.borrowings:
+            if not borrowing.returned:
+                return True
+            else:
+                return False
+
 
 class Room(Base):
     __tablename__ = "rooms"
@@ -63,6 +70,12 @@ class Room(Base):
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", secondary=authorizations_rooms)
     keys = relationship("Key", secondary=keys_rooms, back_populates="rooms")
+
+    def get_common_key(self):
+        for key in self.keys:
+            if key.key_class == 0:
+                if not key.is_borrowed():
+                    return key
 
 
 class RoomType(Base):

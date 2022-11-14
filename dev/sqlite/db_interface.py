@@ -85,13 +85,14 @@ class Db:
             return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
     def add_borrowing(self, key_id, authorization_id):
-        borrowing = Borrowing(key_id=key_id, borrower_id=authorization_id)
+        borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
         self.session.commit()
 
     def return_key(self, borrowing_id):
         borrowing = self.session.query(Borrowing).filter(Borrowing.id == borrowing_id).one()
         borrowing.return_key()
+        self.session.commit()
 
     def get_ongoing_borrowings(self):
         return self.session.query(Borrowing).filter(Borrowing.returned.is_(None)).order_by(Borrowing.borrowed).all()
