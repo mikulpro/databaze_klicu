@@ -6,7 +6,7 @@ import datetime
 
 """
 Db:
-    -get_all_floors(self) -> set[int]
+    -get_all_floors(self) -> list[int]
     -get_rooms_by_floor(self, int: floor) -> list[Room]
     get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
     get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
@@ -33,12 +33,12 @@ class Db:
         self.session = Session(engine)
 
     def get_all_floors(self):
-        result = self.session.query(Room.floor).distinct(Room.floor).all()
-        return {i[0] for i in result}
+        result = self.session.query(Room.floor).distinct(Room.floor).order_by(Room.floor).all()
+        return [i[0] for i in result]
 
     def get_rooms_by_floor(self, floor):
-        # return self.session.execute(select(Room).filter(Room.floor == floor))
-        return self.session.query(Room).filter(Room.floor == floor).all()
+        rooms = self.session.query(Room).filter(Room.floor == floor).all()
+        return rooms
 
     def get_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.rooms).filter(
@@ -84,9 +84,10 @@ class Db:
         else:
             return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
-    def add_borrowing(self, key_id, authorization_id):
+    def add_borrowing(self, key_id, room_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
+
         self.session.commit()
 
     def return_key(self, borrowing_id):

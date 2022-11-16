@@ -316,8 +316,8 @@ class VratnyApp(MDApp):
     def get_room_by_name_fraction(self, fraction, floor=None):
         return self.db.get_room_by_name_fraction(fraction, floor)
 
-    def add_borrowing(self, key_id, borrower_id):
-        self.db.add_borrowing(key_id, borrower_id)
+    def add_borrowing(self, key_id, room_id, borrower_id):
+        self.db.add_borrowing(key_id, room_id, borrower_id)
 
     def return_key(self, borrowing_id):
         self.db.return_key(borrowing_id)
@@ -452,6 +452,7 @@ class VratnyApp(MDApp):
     def complete_borrowing_session(self):
         room = self.get_selected_room()
         room = self.get_room_by_name_fraction(fraction=room)[-1]
+        room_id = room.id
 
         room_keys = room.keys
         key_id = None
@@ -463,7 +464,7 @@ class VratnyApp(MDApp):
         borrower = self.get_borrowers_by_name_fraction(fraction=self.selected_person)[-1]
         borrower_id = borrower.id
 
-        self.add_borrowing(key_id, borrower_id)
+        self.add_borrowing(key_id, room_id, borrower_id)
 
         self.selected_lender = ""
         self.selected_floor = None

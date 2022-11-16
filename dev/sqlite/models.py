@@ -70,6 +70,7 @@ class Room(Base):
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", secondary=authorizations_rooms)
     keys = relationship("Key", secondary=keys_rooms, back_populates="rooms")
+    borrowings_count = Column(Integer, default=0)
 
     def get_common_key(self):
         for key in self.keys:
@@ -130,6 +131,7 @@ class Authorization(Base):
     origin = relationship("AuthorizationOrigin")
     rooms = relationship("Room", secondary=authorizations_rooms, back_populates="authorizations")
     borrowings = relationship("Borrowing", back_populates="authorization")
+    borrowings_count = Column(Integer, default=0)
 
     def get_borrowings_count(self):
         return len(self.borrowings)
