@@ -413,9 +413,10 @@ class VratnyApp(MDApp):
 
     def build(self):
 
-        Window.size = (1080, 720)
-        Config.set('graphics', 'width', '1080')
-        Config.set('graphics', 'height', '720')
+        Window.size = (1920, 1080)
+        Window.fullscreen = True
+        Config.set('graphics', 'width', '1920')
+        Config.set('graphics', 'height', '1080')
 
         filename = 'style_vratny.kv'
         filename = resource_find(filename) or filename
