@@ -57,7 +57,7 @@ class SearchResultWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(SearchResultWidget, self).__init__(**kwargs)
         self.label_pointer = None
-        self.borrowing = None
+        self.data = None
 
 
 # first screen
@@ -67,7 +67,6 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
 
     def _authenticate(self, username, password):
-        # if username == "Pavel Pyšný" and password == "123456":
         if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
             return True
@@ -92,9 +91,11 @@ class ActionSelectionScreen(Screen):
 
     def pujcit(self):
         sc_mngr.current = "floorselection"
+        sc_mngr.get_screen("floorselection").SearchFloorTextInputFunction(initial=True)
 
     def vratit(self):
         sc_mngr.current = "borrowingselection"
+        sc_mngr.get_screen("borrowingselection").SearchBorrowingTextInputFunction()
 
 
 class BorrowingSelectionScreen(Screen):
@@ -121,7 +122,7 @@ class BorrowingSelectionScreen(Screen):
         borrowing_widget = SearchResultWidget()
         borrowing_widget.ids.searchresultwidget_label_content.text = str(data.authorization.person.get_full_name())
         borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
-        borrowing_widget.borrowing = data
+        borrowing_widget.data = data
         self.ids.borrowings_widget_scrollview.add_widget(borrowing_widget)
 
 
@@ -148,6 +149,7 @@ class FloorSelectionScreen(Screen):
 
     def _add_floorwidget(self, data):
         floor_widget = SearchResultWidget()
+        floor_widget.data = data
         floor_widget.ids.searchresultwidget_label_content.text = str(data)
         floor_widget.label_pointer = floor_widget.ids.searchresultwidget_label_content
         self.ids.floor_widget_scrollview.add_widget(floor_widget)
@@ -170,6 +172,13 @@ class RoomSelectionScreen(Screen):
         else:
             list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
             # list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
+        
+        # rooms_to_remove = []
+        # for room in list_of_matches_rooms:
+        #     if room.get_common_key() is None:
+        #         rooms_to_remove.append(room)
+        # for room in rooms_to_remove:
+        #     list_of_matches_rooms.remove(room)
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
@@ -180,11 +189,12 @@ class RoomSelectionScreen(Screen):
             if number_of_displayed_rooms == 9:
                 break
             number_of_displayed_rooms += 1
-            self._add_keywidget(item.name)
+            self._add_keywidget(item)
 
     def _add_keywidget(self, data):
         key_widget = SearchResultWidget()
-        key_widget.ids.searchresultwidget_label_content.text = str(data)
+        key_widget.data = data
+        key_widget.ids.searchresultwidget_label_content.text = str(data.name)
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
         self.ids.room_widget_scrollview.add_widget(key_widget)
 
@@ -248,11 +258,12 @@ class PersonSelectionScreen(Screen):
                 break
             else:
                 number_of_displayed_ppl += 1
-                self._add_personwidget((str(item.firstname) + " " + str(item.surname)))
+                self._add_personwidget(item)
 
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
-        person_widget.ids.searchresultwidget_label_content.text = data
+        person_widget.data = data
+        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.firstname)} {str(data.surname)} (id: {str(data.id)})")
         person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
         self.ids.person_widget_scrollview.add_widget(person_widget)
 
@@ -367,22 +378,24 @@ class VratnyApp(MDApp):
 
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
         if sc_mngr.current == "borrowingselection":
-            self.selected_borrowing = pressed_button_instance.borrowing
+            self.selected_borrowing = pressed_button_instance.data
             self.return_key(self.selected_borrowing.id)
-            #self.logger.warning(str(dir(pressed_button_instance)))
             sc_mngr.current = "actionselection"
         if sc_mngr.current == "floorselection":
-            self.selected_floor = pressed_button_instance.text
+            self.selected_floor = pressed_button_instance.data
+            sc_mngr.get_screen("roomselection").SearchRoomTextInputFunction()
             sc_mngr.current = "roomselection"
         elif sc_mngr.current == "roomselection":
-            self.selected_room = pressed_button_instance.text
-            sc_mngr.current = "keyselection"
+            self.selected_room = pressed_button_instance.data
+            self.selected_key = pressed_button_instance.data.get_common_key()
+            sc_mngr.current = "personselection"
         elif sc_mngr.current == "keyselection":
-            self.selected_key = pressed_button_instance.text
+            self.selected_key = pressed_button_instance.data
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "personselection":
-            self.selected_person = pressed_button_instance.text
+            self.selected_person = pressed_button_instance.data
             sc_mngr.current = "review"
+            self.update_review_information()
 
     def get_selected_floor(self):
         return self.selected_floor
@@ -441,9 +454,12 @@ class VratnyApp(MDApp):
     def update_review_information(self):
         self.update_starttime()
         # sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
-        sc_mngr.get_screen("review").ids.rev_lab_borrower.text = str("Komu půjčuje: " + self.selected_person)
-        sc_mngr.get_screen("review").ids.rev_lab_key.text = str(f"Klíč: {self.selected_key}")
-        sc_mngr.get_screen("review").ids.rev_lab_room.text = str(f"Místnost: {self.selected_room}")
+        sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.get_full_name()}"
+        if self.selected_key is not None:
+            sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: {self.selected_key.registration_number}"
+        else:
+            sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: NEBYL NALEZEN ŽÁDNÝ DOSTUPNÝ KLÍČ"
+        sc_mngr.get_screen("review").ids.rev_lab_room.text = f"Místnost: {self.selected_room.name}"
         sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(
             f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} "
             f"{self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
