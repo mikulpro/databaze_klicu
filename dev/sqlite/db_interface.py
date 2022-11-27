@@ -37,13 +37,13 @@ class Db:
         return [i[0] for i in result]
 
     def get_rooms_by_floor(self, floor):
-        rooms = self.session.query(Room).filter(Room.floor == floor).all()
+        rooms = self.session.query(Room).filter(Room.floor == floor).order_by(Room.borrowings_count.desc()).all()
         return rooms
 
     def get_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
-        ).all()
+        ).order_by(Authorization.borrowings_count.desc()).all()
         return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
 
     def get_primary_authorizations_for_room(self, room_id):
