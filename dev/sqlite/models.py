@@ -7,20 +7,20 @@ import datetime
 Base = declarative_base()
 
 
-keys_rooms = Table(
-    "keys_rooms",
-    Base.metadata,
-    Column("key_number", ForeignKey("keys.registration_number")),
-    Column("room_id", ForeignKey("rooms.id")),
-)
-
-authorizations_rooms = Table(
-    "authorizations_rooms",
-    Base.metadata,
-    Column("authorization_id", ForeignKey("authorizations.id")),
-    Column("room_id", ForeignKey("rooms.id")),
-
-)
+# keys_rooms = Table(
+#     "keys_rooms",
+#     Base.metadata,
+#     Column("key_number", ForeignKey("keys.registration_number")),
+#     Column("room_id", ForeignKey("rooms.id")),
+# )
+#
+# authorizations_rooms = Table(
+#     "authorizations_rooms",
+#     Base.metadata,
+#     Column("authorization_id", ForeignKey("authorizations.id")),
+#     Column("room_id", ForeignKey("rooms.id")),
+#
+# )
 
 
 class Borrowing(Base):
@@ -46,8 +46,9 @@ class Key(Base):
 
     id = Column(Integer, primary_key=True)
     registration_number = Column(Integer, nullable=False)
+    room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
+    room = relationship("Room", back_populates="keys")
     key_class = Column(Integer, default=0)
-    rooms = relationship("Room", secondary=keys_rooms, back_populates="keys")
     borrowings = relationship("Borrowing", back_populates="key")
 
     def is_borrowed(self):
@@ -68,8 +69,8 @@ class Room(Base):
     type = relationship("RoomType")
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
-    authorizations = relationship("Authorization", secondary=authorizations_rooms)
-    keys = relationship("Key", secondary=keys_rooms, back_populates="rooms")
+    authorizations = relationship("Authorization", back_populates="room")
+    keys = relationship("Key", back_populates="room")
     borrowings_count = Column(Integer, default=0)
 
     def get_common_key(self):
@@ -125,11 +126,13 @@ class Authorization(Base):
     id = Column(Integer, primary_key=True)
     person_id = Column(Integer, ForeignKey("authorized_persons.id"))
     person = relationship("AuthorizedPerson")
+    room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
+    room = relationship("Room", back_populates="authorizations")
     created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     expiration = Column(DateTime(timezone=True), nullable=False)
     origin_id = Column(Integer, ForeignKey("authorization_origins.id"), nullable=False)
     origin = relationship("AuthorizationOrigin")
-    rooms = relationship("Room", secondary=authorizations_rooms, back_populates="authorizations")
+
     borrowings = relationship("Borrowing", back_populates="authorization")
     borrowings_count = Column(Integer, default=0)
 
