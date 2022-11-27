@@ -14,3 +14,12 @@ Currently in: alpha
 - scroll views aren't scrollable
 - no immediate warning if get_common_key() cannot assign a key
 - no return buttons for empty screens
+
+
+# Admin app
+- Features
+  - náhled jaké má kdo oprávnění
+  - náhled oprávnění pro místnosti
+  - Přidat autorizovanou osobu
+  - Upravit autorizovanou osobu
+  - přidat/zneplatnit autorizaci pro místnost
