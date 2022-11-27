@@ -71,13 +71,19 @@ class Room(Base):
     faculty = relationship("Faculty")
     authorizations = relationship("Authorization", back_populates="room")
     keys = relationship("Key", back_populates="room")
-    borrowings_count = Column(Integer, default=0)
+    borrowings_count = Column(Integer, nullable=False, default=0)
 
     def get_common_key(self):
         for key in self.keys:
             if key.key_class == 0:
                 if not key.is_borrowed():
                     return key
+
+    def increment_borrowings_count(self):
+        if not self.borrowings_count:
+            self.borrowings_count = 0
+        self.borrowings_count += 1
+
 
 
 class RoomType(Base):
@@ -134,10 +140,12 @@ class Authorization(Base):
     origin = relationship("AuthorizationOrigin")
 
     borrowings = relationship("Borrowing", back_populates="authorization")
-    borrowings_count = Column(Integer, default=0)
+    borrowings_count = Column(Integer, nullable=False, default=0)
 
-    def get_borrowings_count(self):
-        return len(self.borrowings)
+    def increment_borrowings_count(self):
+        if not self.borrowings_count:
+            self.borrowings_count = 0
+        self.borrowings_count += 1
 
 
 class AuthorizationOrigin(Base):

@@ -41,7 +41,7 @@ class Db:
         return rooms
 
     def get_authorizations_for_room(self, room_id):
-        authorizations = self.session.query(Authorization).join(Authorization.rooms).filter(
+        authorizations = self.session.query(Authorization).join(Authorization.room).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
         ).all()
         return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
@@ -84,13 +84,12 @@ class Db:
         else:
             return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
-    def add_borrowing(self, key_id, room_id, authorization_id):
+    def add_borrowing(self, key_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
-        self.session.query(Room).filter(Room.id == room_id).\
-            update({Room.borrowings_count: Room.borrowings_count + 1}, synchronize_session=False)
-        self.session.query(Authorization).filter(Authorization.id == authorization_id). \
-            update({Authorization.borrowings_count: Authorization.borrowings_count + 1}, synchronize_session=False)
+        authorization = self.session.query(Authorization).filter(Authorization.id == authorization_id).one()
+        authorization.increment_borrowings_count()
+        authorization.room.increment_borrowings_count()
         self.session.commit()
 
     def return_key(self, borrowing_id):
