@@ -427,7 +427,7 @@ class VratnyApp(MDApp):
     def build(self):
 
         Window.size = (1920, 1080)
-        Window.fullscreen = True
+        Window.fullscreen = False
         Config.set('graphics', 'width', '1920')
         Config.set('graphics', 'height', '1080')
 

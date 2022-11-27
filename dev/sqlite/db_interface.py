@@ -87,7 +87,10 @@ class Db:
     def add_borrowing(self, key_id, room_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
-
+        self.session.query(Room).filter(Room.id == room_id).\
+            update({Room.borrowings_count: Room.borrowings_count + 1}, synchronize_session=False)
+        self.session.query(Authorization).filter(Authorization.id == authorization_id). \
+            update({Authorization.borrowings_count: Authorization.borrowings_count + 1}, synchronize_session=False)
         self.session.commit()
 
     def return_key(self, borrowing_id):
