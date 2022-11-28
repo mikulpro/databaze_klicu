@@ -35,66 +35,70 @@
         id: main_screen_layout
         cols: 3
         rows: 3
-        allow_stretch: True
-        keep_ratio: False
+        size_hint: None, None
 
         Widget:
             id: blank_widget_1
-            allow_stretch: True
-            keep_ratio: False
+            size_hint: None, None
+            color: 0, 0, 0, 0
 
         MDLabel:
             id: appname_label
-            allow_stretch: True
-            keep_ratio: False
             text: "Aplikace pro správu klíčů CPTO"
             font_size: 40
-            size_hint: 1, 1
+            size_hint: None, None
             theme_text_color: "Custom"
             text_color: 0.0, .35, .39, 1
             bold: True
 
         MDLabel:
             id: clock
-            allow_stretch: True
-            keep_ratio: False
-            text: "88:88"
+            text: ""
             font_size: 24
-            size_hint: 1, 1
+            size_hint: None, None
             theme_text_color: "Custom"
-            text_color: 0, 0, 0, 1
+            text_color: 0.0, .35, .39, 1
             bold: True
 
         Widget:
             id: blank_widget_2
-            allow_stretch: True
-            keep_ratio: False
+            size_hint: None, None
+            color: 0, 0, 0, 0
 
         MDCard:
             id: bgcard
-            allow_stretch: True
-            keep_ratio: False
-            size_hint: 1, 1
+            size_hint: None, None
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             elevation: 1
-            orientation: 'vertical'
             md_bg_color: "#ededed"
             style: "elevated"
+            color: 0, 0, 0, 0
             radius: [30, 30, 30, 30]
 
             GridLayout:
                 id: login_inside_layout
-                allow_stretch: True
-                keep_ratio: False
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                cols: 1
-                rows: 5
-                size_hint: 1, 1
+                cols: 3
+                rows: 7
+                size_hint: None, None
+
+                Widget:
+                    id: blank_widget_9
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_10
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_11
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
 
                 MDTextField:
                     id: user
-                    allow_stretch: True
-                    keep_ratio: False
                     mode: "round"
                     text_color_normal: "#005963"
                     text_color_focus: "#000000"
@@ -107,20 +111,37 @@
                     icon_right: "account"
                     icon_right_color_focus: "#000000"
                     icon_right_color_normal: "#005963"
-                    font_size: root.height // 12
+                    font_size: 40
                     pos_hint: {"center_x": 0.5}
-                    size_hint: 1, 1
+                    size_hint: None, None
+
+                Widget:
+                    id: blank_widget_12
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
 
                 Widget:
                     id: blank_widget_7
-                    allow_stretch: True
-                    keep_ratio: False
-                    size_hint: 1, 1
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_13
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_14
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_15
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
 
                 MDTextField:
                     id: password
-                    allow_stretch: True
-                    keep_ratio: False
                     mode: "round"
                     text_color_normal: "#005963"
                     text_color_focus: "#000000"
@@ -133,66 +154,97 @@
                     icon_right: "key-variant"
                     icon_right_color_focus: "#000000"
                     icon_right_color_normal: "#005963"
-                    font_size: root.height // 12
+                    font_size: 40
                     pos_hint: {"center_x": 0.5}
                     password: True
-                    size_hint: 1, 1
+                    size_hint: None, None
+
+                Widget:
+                    id: blank_widget_16
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_17
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
 
                 Widget:
                     id: blank_widget_8
-                    allow_stretch: True
-                    keep_ratio: False
-                    size_hint: 1, 1
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_18
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_19
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
 
                 GridLayout:
                     cols: 2
                     rows: 1
-                    allow_stretch: True
-                    keep_ratio: False
-                    size_hint: 1, 1
+                    size_hint: None, None
 
                     Widget:
                         id: blank_widget_login_button
                         size_hint: None, None
-                        allow_stretch: True
-                        keep_ratio: False
-                        size_hint: 1, 1
+                        color: 0, 0, 0, 0
 
                     MDRoundFlatButton:
                         id: login_button
-                        allow_stretch: True
-                        keep_ratio: False
                         text: "Přihlásit se"
                         text_color: "#FFFFFF"
                         md_bg_color: "#005963"
-                        font_size: root.height // 12
+                        line_color: "#005963"
+                        font_size: 40
                         pos_hint: {'center_x': 0.75}
                         on_release: root.PrihasitSeButtonFunction()
-                        size_hint: 1, 1
+                        size_hint: None, None
+
+                Widget:
+                    id: blank_widget_20
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_21
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_22
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
+                Widget:
+                    id: blank_widget_23
+                    size_hint: None, None
+                    color: 0, 0, 0, 0
+
             
             Widget:
                 id: blank_widget_3
-                allow_stretch: True
-                keep_ratio: False
-                size_hint: 1, 1
+                size_hint: None, None
+                color: 0, 0, 0, 0
             
             Widget:
                 id: blank_widget_4
-                allow_stretch: True
-                keep_ratio: False
-                size_hint: 1, 1
+                size_hint: None, None
+                color: 0, 0, 0, 0
 
             Widget:
                 id: blank_widget_5
-                allow_stretch: True
-                keep_ratio: False
-                size_hint: 1, 1
+                size_hint: None, None
+                color: 0, 0, 0, 0
             
             Widget:
                 id: blank_widget_6
-                allow_stretch: True
-                keep_ratio: False
-                size_hint: 1, 1
+                size_hint: None, None
+                color: 0, 0, 0, 0
 
 <ActionSelectionScreen>:
 

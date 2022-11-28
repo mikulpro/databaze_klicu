@@ -1,4 +1,5 @@
 # python modules
+import time
 from datetime import datetime
 from dev.sqlite.db_interface import Db
 
@@ -7,6 +8,7 @@ from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.config import Config
 from kivy.resources import resource_find
+from kivy.clock import Clock
 
 # kivy material design library
 from kivymd.app import MDApp
@@ -20,6 +22,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
 
 # auxiliary kivy functions
 from kivy.properties import ObjectProperty
@@ -343,6 +346,17 @@ class VratnyApp(MDApp):
         current = sc_mngr.current
 
         if current == "login":
+
+            current_screen.ids.main_screen_layout.col_default_width = Window.size[0]*0.05
+            current_screen.ids.main_screen_layout.row_default_height = Window.size[1]*0.05
+            current_screen.ids.login_inside_layout.col_default_width = Window.size[0]*0.05
+            current_screen.ids.login_inside_layout.row_default_height = Window.size[1]*0.05
+            
+            # current_screen.ids.main_screen_layout.cols_minimum = [ Window.size[0]*0.05, Window.size[0]*0.90, Window.size[0]*0.05 ]
+            # current_screen.ids.main_screen_layout.rows_minimum = [ Window.size[0]*0.10, Window.size[0]*0.85, Window.size[0]*0.05 ]
+            # current_screen.ids.login_inside_layout.cols_minimum = [ Window.size[0]*0.9 ]
+            # current_screen.ids.login_inside_layout.rows_minimum = [ Window.size[1]*0.2,  Window.size[1]*0.125,  Window.size[1]*0.2,  Window.size[1]*0.125,  Window.size[1]*0.2]
+
             current_screen.ids.background.width = Window.size[0]
             current_screen.ids.background.height = Window.size[1]
             current_screen.ids.main_screen_layout.width = Window.size[0]
@@ -365,14 +379,19 @@ class VratnyApp(MDApp):
             current_screen.ids.blank_widget_5.height = Window.size[1]*0.05
             current_screen.ids.blank_widget_6.width = Window.size[0]*0.05
             current_screen.ids.blank_widget_6.height = Window.size[1]*0.05
+
+            current_screen.ids.login_inside_layout.width = Window.size[0]*0.9
+            current_screen.ids.login_inside_layout.height = Window.size[1]*0.85
             current_screen.ids.user.width = Window.size[0]*0.85
             current_screen.ids.user.height = Window.size[1]*0.2
+            current_screen.ids.user.font_size = current_screen.ids.user.height - 5 
             current_screen.ids.blank_widget_7.width = Window.size[0]*0.85
-            current_screen.ids.blank_widget_7.height = Window.size[1]*0.05
+            current_screen.ids.blank_widget_7.height = Window.size[1]*0.125
             current_screen.ids.password.width = Window.size[0]*0.85
             current_screen.ids.password.height = Window.size[1]*0.2
+            current_screen.ids.password.font_size = current_screen.ids.password.height - 5
             current_screen.ids.blank_widget_8.width = Window.size[0]*0.85
-            current_screen.ids.blank_widget_8.height = Window.size[1]*0.05
+            current_screen.ids.blank_widget_8.height = Window.size[1]*0.125
             current_screen.ids.blank_widget_login_button.width = Window.size[0]*0.45
             current_screen.ids.blank_widget_login_button.height = Window.size[1]*0.2
             current_screen.ids.login_button.width = Window.size[0]*0.4
