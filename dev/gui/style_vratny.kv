@@ -31,196 +31,157 @@
         allow_stretch: True
         keep_ratio: False
 
-    MDLabel:
-        id: appname_label
-        text: "Aplikace pro správu klíčů CPTO"
-        font_size: 40
-        halign: 'center'
-        size_hint_y: None
-        height: self.texture_size[1]
-        padding_y: 15
-        theme_text_color: "Custom"
-        text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.98}
-        bold: True
+    GridLayout:
+        id: main_screen_layout
+        cols: 3
+        rows: 3
+        allow_stretch: True
+        keep_ratio: False
 
-    MDCard:
-        size_hint: None, None
-        size: 600, 600
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        elevation: 1
-        orientation: 'vertical'
-        md_bg_color: "#ededed"
-        style: "elevated"
-        radius: [30, 30, 30, 30]
+        Widget:
+            id: blank_widget_1
+            allow_stretch: True
+            keep_ratio: False
 
-        GridLayout:
-            id: login_inside_layout
-            cols: 3
-            rows: 7
-            size_hint: None, 1.0
+        MDLabel:
+            id: appname_label
+            allow_stretch: True
+            keep_ratio: False
+            text: "Aplikace pro správu klíčů CPTO"
+            font_size: 40
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
 
-            # vrchni odszeni
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
-                width: 75
-            
-            # vrchni odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
+        MDLabel:
+            id: clock
+            allow_stretch: True
+            keep_ratio: False
+            text: "88:88"
+            font_size: 24
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0, 0, 0, 1
+            bold: True
 
-            # vrchni odsazeni
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
-                width: 75
+        Widget:
+            id: blank_widget_2
+            allow_stretch: True
+            keep_ratio: False
 
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-
-            MDTextField:
-                id: user
-                mode: "round"
-                text_color_normal: "#005963"
-                text_color_focus: "#000000"
-                background_color: "#FFFFFF"
-                multiline: False
-                fill_color_focus: "#FFFFFF"
-                line_color_normal: "#005963"
-                line_color_focus: "#000000"
-                hint_text: "Přihlašovací jméno"
-                icon_right: "account"
-                icon_right_color_focus: "#000000"
-                icon_right_color_normal: "#005963"
-                font_size: root.height // 12
-                pos_hint: {"center_x": 0.5}
-
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-
-            # prostredni odsazeni
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-                height: 50
-
-            # prostredni odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
-
-            # prostredni odsazeni
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-                height: 50
-
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-
-            MDTextField:
-                id: password
-                mode: "round"
-                text_color_normal: "#005963"
-                text_color_focus: "#000000"
-                background_color: "#FFFFFF"
-                multiline: False
-                fill_color_focus: "#FFFFFF"
-                line_color_normal: "#005963"
-                line_color_focus: "#000000"
-                hint_text: "Heslo"
-                icon_right: "key-variant"
-                icon_right_color_focus: "#000000"
-                icon_right_color_normal: "#005963"
-                font_size: root.height // 12
-                pos_hint: {"center_x": 0.5}
-                password: True
-
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-
-            # prostredni odsazeni
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-                height: 50
-
-            # prostredni odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
-
-            # prostredni odsazeni
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-                height: 50
-
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
-                height: 50
+        MDCard:
+            id: bgcard
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: None, None
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            elevation: 1
+            orientation: 'vertical'
+            md_bg_color: "#ededed"
+            style: "elevated"
+            radius: [30, 30, 30, 30]
 
             GridLayout:
-                cols: 2
-                rows: 1
+                id: login_inside_layout
+                allow_stretch: True
+                keep_ratio: False
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                cols: 1
+                rows: 5
+                size_hint: None, None
+
+                MDTextField:
+                    id: user
+                    allow_stretch: True
+                    keep_ratio: False
+                    mode: "round"
+                    text_color_normal: "#005963"
+                    text_color_focus: "#000000"
+                    background_color: "#FFFFFF"
+                    multiline: False
+                    fill_color_focus: "#FFFFFF"
+                    line_color_normal: "#005963"
+                    line_color_focus: "#000000"
+                    hint_text: "Přihlašovací jméno"
+                    icon_right: "account"
+                    icon_right_color_focus: "#000000"
+                    icon_right_color_normal: "#005963"
+                    font_size: root.height // 12
+                    pos_hint: {"center_x": 0.5}
 
                 Widget:
-                    size_hint_x: None
-                    width: password.width // 2
+                    id: blank_widget_7
+                    allow_stretch: True
+                    keep_ratio: False
 
-                MDRoundFlatButton:
-                    text: "Přihlásit se"
-                    text_color: "#FFFFFF"
-                    md_bg_color: "#005963"
+                MDTextField:
+                    id: password
+                    allow_stretch: True
+                    keep_ratio: False
+                    mode: "round"
+                    text_color_normal: "#005963"
+                    text_color_focus: "#000000"
+                    background_color: "#FFFFFF"
+                    multiline: False
+                    fill_color_focus: "#FFFFFF"
+                    line_color_normal: "#005963"
+                    line_color_focus: "#000000"
+                    hint_text: "Heslo"
+                    icon_right: "key-variant"
+                    icon_right_color_focus: "#000000"
+                    icon_right_color_normal: "#005963"
                     font_size: root.height // 12
-                    pos_hint: {'center_x': 0.75}
-                    on_release: root.PrihasitSeButtonFunction()
+                    pos_hint: {"center_x": 0.5}
+                    password: True
 
-            # prave odsazeni
-            Widget:
-                size_hint: None, None
-                width: 75
+                Widget:
+                    id: blank_widget_8
+                    allow_stretch: True
+                    keep_ratio: False
 
-            # dolni odszeni
-            # leve odsazeni
-            Widget:
-                size_hint: None, None
-                height: 50
-                width: 75
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    allow_stretch: True
+                    keep_ratio: False
+
+                    Widget:
+                        id: blank_widget_login_button
+                        size_hint: None, None
+                        allow_stretch: True
+                        keep_ratio: False
+
+                    MDRoundFlatButton:
+                        id: login_button
+                        allow_stretch: True
+                        keep_ratio: False
+                        text: "Přihlásit se"
+                        text_color: "#FFFFFF"
+                        md_bg_color: "#005963"
+                        font_size: root.height // 12
+                        pos_hint: {'center_x': 0.75}
+                        on_release: root.PrihasitSeButtonFunction()
             
-            # dolni odsazeni
             Widget:
-                size_hint: None, None
-                height: 50
-
-            # dolni odsazeni
-            # prave odsazeni
+                id: blank_widget_3
+                allow_stretch: True
+                keep_ratio: False
+            
             Widget:
-                size_hint: None, None
-                height: 50
-                width: 75
+                id: blank_widget_4
+                allow_stretch: True
+                keep_ratio: False
 
-    #MDLabel:
-    #    id: time_label
-
+            Widget:
+                id: blank_widget_5
+                allow_stretch: True
+                keep_ratio: False
+            
+            Widget:
+                id: blank_widget_6
+                allow_stretch: True
+                keep_ratio: False
 
 <ActionSelectionScreen>:
 
@@ -245,14 +206,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 300, 300
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         GridLayout:
             rows: 2
@@ -305,14 +266,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         MDTextField:
             id: borrowingsearch
@@ -365,14 +326,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         MDTextField:
             id: floorsearch
@@ -425,14 +386,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         MDTextField:
             id: roomsearch
@@ -485,14 +446,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         MDTextField:
             id: keysearch
@@ -545,14 +506,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         MDTextField:
             id: personsearch
@@ -605,14 +566,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         GridLayout:
             id: timeselection_gridlayout
@@ -727,14 +688,14 @@
         bold: True
 
     MDCard:
+        id: bgcard
         size_hint: None, None
-        size: 900, 500
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
         GridLayout:
             id: review_layout

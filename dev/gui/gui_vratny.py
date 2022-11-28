@@ -40,6 +40,14 @@ class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
 
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
+
     def _authenticate(self, username, password):
         if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
@@ -56,6 +64,7 @@ class LoginScreen(Screen):
         if self._authenticate(usr, pswd):
             # some function to select next screen
             self.manager.current = "actionselection"
+            MDApp.get_running_app().on_resize()
 
 
 class ActionSelectionScreen(Screen):
@@ -63,13 +72,23 @@ class ActionSelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(ActionSelectionScreen, self).__init__(**kwargs)
 
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
+
     def pujcit(self):
         sc_mngr.current = "floorselection"
         sc_mngr.get_screen("floorselection").SearchFloorTextInputFunction(initial=True)
+        MDApp.get_running_app().on_resize()
 
     def vratit(self):
         sc_mngr.current = "borrowingselection"
         sc_mngr.get_screen("borrowingselection").SearchBorrowingTextInputFunction()
+        MDApp.get_running_app().on_resize()
 
 
 class BorrowingSelectionScreen(Screen):
@@ -77,6 +96,14 @@ class BorrowingSelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(BorrowingSelectionScreen, self).__init__(**kwargs)
         self.SearchBorrowingTextInputFunction()  # initial search
+
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
 
     def SearchBorrowingTextInputFunction(self):
         borrowings = MDApp.get_running_app().get_ongoing_borrowings()
@@ -106,6 +133,14 @@ class FloorSelectionScreen(Screen):
         super(FloorSelectionScreen, self).__init__(**kwargs)
         self.SearchFloorTextInputFunction(initial=True)  # initial search
 
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
+
     def SearchFloorTextInputFunction(self, initial=False):
         floors = MDApp.get_running_app().get_all_floors()
 
@@ -134,6 +169,14 @@ class RoomSelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(RoomSelectionScreen, self).__init__(**kwargs)
         self.SearchRoomTextInputFunction()  # initial search
+
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
 
     def SearchRoomTextInputFunction(self):
 
@@ -171,6 +214,14 @@ class KeySelectionScreen(Screen):
         super(KeySelectionScreen, self).__init__(**kwargs)
         self.SearchKeyTextInputFunction()  # initial search
 
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
+
     def SearchKeyTextInputFunction(self):
 
         # find all relevant examples
@@ -204,6 +255,14 @@ class PersonSelectionScreen(Screen):
     def __init__(self, **kwargs):
         super(PersonSelectionScreen, self).__init__(**kwargs)
         self.PersonSearchTextInputFunction()  # initial search
+
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
 
     def PersonSearchTextInputFunction(self):
 
@@ -255,6 +314,13 @@ class ReviewScreen(Screen):
     def __init__(self, **kwargs):
         super(ReviewScreen, self).__init__(**kwargs)
 
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_leave(*args)
 
 class VratnyApp(MDApp):
 
@@ -274,8 +340,44 @@ class VratnyApp(MDApp):
 
     def on_resize(self, *args):
         current_screen = sc_mngr.current_screen
-        current_screen.ids.background.width = Window.size[0]
-        current_screen.ids.background.height = Window.size[1]
+        current = sc_mngr.current
+
+        if current == "login":
+            current_screen.ids.background.width = Window.size[0]
+            current_screen.ids.background.height = Window.size[1]
+            current_screen.ids.main_screen_layout.width = Window.size[0]
+            current_screen.ids.main_screen_layout.height = Window.size[1]
+            current_screen.ids.blank_widget_1.width = Window.size[0]*0.05
+            current_screen.ids.blank_widget_1.height = Window.size[1]*0.1
+            current_screen.ids.appname_label.width = Window.size[0]*0.9
+            current_screen.ids.appname_label.height = Window.size[1]*0.1
+            current_screen.ids.clock.width = Window.size[0]*0.05
+            current_screen.ids.clock.height = Window.size[1]*0.1
+            current_screen.ids.blank_widget_2.width = Window.size[0]*0.05
+            current_screen.ids.blank_widget_2.height = Window.size[1]*0.85
+            current_screen.ids.bgcard.width = Window.size[0]*0.9
+            current_screen.ids.bgcard.height = Window.size[1]*0.85
+            current_screen.ids.blank_widget_3.width = Window.size[0]*0.05
+            current_screen.ids.blank_widget_3.height = Window.size[1]*0.85
+            current_screen.ids.blank_widget_4.width = Window.size[0]*0.05
+            current_screen.ids.blank_widget_4.height = Window.size[1]*0.05
+            current_screen.ids.blank_widget_5.width = Window.size[0]*0.9
+            current_screen.ids.blank_widget_5.height = Window.size[1]*0.05
+            current_screen.ids.blank_widget_6.width = Window.size[0]*0.05
+            current_screen.ids.blank_widget_6.height = Window.size[1]*0.05
+            current_screen.ids.user.width = Window.size[0]*0.85
+            current_screen.ids.user.height = Window.size[1]*0.2
+            current_screen.ids.blank_widget_7.width = Window.size[0]*0.85
+            current_screen.ids.blank_widget_7.height = Window.size[1]*0.05
+            current_screen.ids.password.width = Window.size[0]*0.85
+            current_screen.ids.password.height = Window.size[1]*0.2
+            current_screen.ids.blank_widget_8.width = Window.size[0]*0.85
+            current_screen.ids.blank_widget_8.height = Window.size[1]*0.05
+            current_screen.ids.blank_widget_login_button.width = Window.size[0]*0.45
+            current_screen.ids.blank_widget_login_button.height = Window.size[1]*0.2
+            current_screen.ids.login_button.width = Window.size[0]*0.4
+            current_screen.ids.login_button.height = Window.size[1]*0.2
+
 
     def update_starttime(self):
         self.selected_starttime = datetime.now()
