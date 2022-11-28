@@ -42,60 +42,177 @@
 
     MDCard:
         size_hint: None, None
-        size: 300, 300
+        size: 600, 600
         pos_hint: {"center_x": 0.5, "center_y": 0.5}
         elevation: 1
-        padding: 25
-        spacing: 25
         orientation: 'vertical'
         md_bg_color: "#ededed"
+        style: "elevated"
+        radius: [30, 30, 30, 30]
 
-        MDTextField:
-            id: user
-            mode: "round"
-            text_color_normal: "#005963"
-            text_color_focus: "#000000"
-            background_color: "#FFFFFF"
-            multiline: False
-            fill_color_focus: "#FFFFFF"
-            line_color_normal: "#005963"
-            line_color_focus: "#000000"
-            hint_text: "Přihlašovací jméno"
-            icon_right: "account"
-            icon_right_color_focus: "#000000"
-            icon_right_color_normal: "#005963"
-            size_hint_x: None
-            width: 200
-            font_size: 18
-            pos_hint: {"center_x": 0.5}
+        GridLayout:
+            id: login_inside_layout
+            cols: 3
+            rows: 7
+            size_hint: None, 1.0
 
-        MDTextField:
-            id: password
-            mode: "round"
-            text_color_normal: "#005963"
-            text_color_focus: "#000000"
-            background_color: "#FFFFFF"
-            multiline: False
-            fill_color_focus: "#FFFFFF"
-            line_color_normal: "#005963"
-            line_color_focus: "#000000"
-            hint_text: "Heslo"
-            icon_right: "key-variant"
-            icon_right_color_focus: "#000000"
-            icon_right_color_normal: "#005963"
-            size_hint_x: None
-            width: 200
-            font_size: 18
-            pos_hint: {"center_x": 0.5}
-            password: True
+            # vrchni odszeni
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+                width: 75
+            
+            # vrchni odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
 
-        MDRoundFlatButton:
-            text: "Přihlásit se"
-            text_color: "#FFFFFF"
-            md_bg_color: "#005963"
-            font_size: 24
-            pos_hint: {'right': 1}
-            on_release: root.PrihasitSeButtonFunction()
+            # vrchni odsazeni
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+                width: 75
+
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+
+            MDTextField:
+                id: user
+                mode: "round"
+                text_color_normal: "#005963"
+                text_color_focus: "#000000"
+                background_color: "#FFFFFF"
+                multiline: False
+                fill_color_focus: "#FFFFFF"
+                line_color_normal: "#005963"
+                line_color_focus: "#000000"
+                hint_text: "Přihlašovací jméno"
+                icon_right: "account"
+                icon_right_color_focus: "#000000"
+                icon_right_color_normal: "#005963"
+                font_size: root.height // 12
+                pos_hint: {"center_x": 0.5}
+
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+
+            # prostredni odsazeni
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+                height: 50
+
+            # prostredni odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+
+            # prostredni odsazeni
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+                height: 50
+
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+
+            MDTextField:
+                id: password
+                mode: "round"
+                text_color_normal: "#005963"
+                text_color_focus: "#000000"
+                background_color: "#FFFFFF"
+                multiline: False
+                fill_color_focus: "#FFFFFF"
+                line_color_normal: "#005963"
+                line_color_focus: "#000000"
+                hint_text: "Heslo"
+                icon_right: "key-variant"
+                icon_right_color_focus: "#000000"
+                icon_right_color_normal: "#005963"
+                font_size: root.height // 12
+                pos_hint: {"center_x": 0.5}
+                password: True
+
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+
+            # prostredni odsazeni
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+                height: 50
+
+            # prostredni odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+
+            # prostredni odsazeni
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+                height: 50
+
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+                height: 50
+
+            GridLayout:
+                cols: 2
+                rows: 1
+
+                Widget:
+                    size_hint_x: None
+                    width: password.width // 2
+
+                MDRoundFlatButton:
+                    text: "Přihlásit se"
+                    text_color: "#FFFFFF"
+                    md_bg_color: "#005963"
+                    font_size: root.height // 12
+                    pos_hint: {'center_x': 0.75}
+                    on_release: root.PrihasitSeButtonFunction()
+
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                width: 75
+
+            # dolni odszeni
+            # leve odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+                width: 75
+            
+            # dolni odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+
+            # dolni odsazeni
+            # prave odsazeni
+            Widget:
+                size_hint: None, None
+                height: 50
+                width: 75
 
     #MDLabel:
     #    id: time_label
