@@ -272,6 +272,11 @@ class VratnyApp(MDApp):
         self.db = database_object
         self.logger = logger
 
+    def on_resize(self, *args):
+        current_screen = sc_mngr.current_screen
+        current_screen.ids.background.width = Window.size[0]
+        current_screen.ids.background.height = Window.size[1]
+
     def update_starttime(self):
         self.selected_starttime = datetime.now()
 
@@ -392,8 +397,13 @@ class VratnyApp(MDApp):
 
     def build(self):
 
-        Window.size = (1920, 1080)
+        global sc_mngr
+        sc_mngr = ScreenManager(transition=NoTransition())
+
         Window.fullscreen = False
+        Window.maximize()
+        Window.bind(on_resize=self.on_resize)
+
         Config.set('graphics', 'width', '1920')
         Config.set('graphics', 'height', '1080')
 
@@ -403,8 +413,6 @@ class VratnyApp(MDApp):
             Builder.unload_file(filename)
         Builder.load_file('dev/gui/style_vratny.kv')
 
-        global sc_mngr
-        sc_mngr = ScreenManager(transition=NoTransition())
         sc_mngr.add_widget(LoginScreen(name="login"))
         sc_mngr.add_widget(ActionSelectionScreen(name="actionselection"))
         sc_mngr.add_widget(BorrowingSelectionScreen(name="borrowingselection"))
@@ -415,6 +423,7 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(TimeSelectionScreen(name="timeselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
 
+        self.on_resize()
         return sc_mngr
 
     def update_review_information(self):
