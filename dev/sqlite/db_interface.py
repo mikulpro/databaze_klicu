@@ -1,20 +1,19 @@
 from dev.sqlite.models import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import select
 import datetime
 
 """
 Db:
-    -get_all_floors(self) -> list[int]
-    -get_rooms_by_floor(self, int: floor) -> list[Room]
-    get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
-    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
+    get_all_floors(self) -> list[int]
+    get_rooms_by_floor(self, int: floor) -> list[Room]
+    get_borrowable_keys_by_floor(self, int: floor, bool: only_ordinary=True) -> list[Key]
+    get_authorizations_for_room(self, int: room_id)-> list[Authorization]
+    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorization]
     get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
-    
-    add_borrowing(self, int: key_id, int: borrower_id)
-    return_key(self, int: borrowing_id)
+    add_borrowing(self, int: key_id, int: borrower_id) -> None
+    return_key(self, int: borrowing_id) -> None
     get_ongoing_borrowings(self) -> list[Borrowing]
     
     excel_dump(self) -> list[list[str]]
@@ -40,6 +39,16 @@ class Db:
         rooms = self.session.query(Room).filter(Room.floor == floor).order_by(Room.borrowings_count.desc()).all()
         return rooms
 
+    def get_borrowable_keys_by_floor(self, floor, only_ordinary=True):
+        q = self.session.query(Key).\
+            except_(self.session.query(Key).join(Borrowing).filter(Borrowing.returned == None)).\
+            join(Room).filter(Room.floor == floor).\
+            order_by(Room.borrowings_count.desc())
+        if only_ordinary:
+            q.filter(Key.key_class == 0)
+        keys = q.all()
+        return keys
+
     def get_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
@@ -48,12 +57,8 @@ class Db:
 
     def get_primary_authorizations_for_room(self, room_id):
         authorizations = self.get_authorizations_for_room(room_id)
-        # přidat filtorvání na základě origin
+        # přidat filtrování na základě origin
         return authorizations
-
-    def get_authorizations_by_bnf(self, fraction):
-        # lepší bude filtrovat v listu autorizací
-        ...
 
     def get_borrowers_by_name_fraction(self, fraction):
         fractions = fraction.split(" ")
@@ -105,7 +110,6 @@ class Db:
         data = []
         borrowings = self.session.query(Borrowing).all()
         for borrowing in borrowings:
-            print(type(borrowing))
             row = [
                 borrowing.borrowed.strftime("%d.%m.%Y"),
                 borrowing.borrowed.strftime("%H:%M"),

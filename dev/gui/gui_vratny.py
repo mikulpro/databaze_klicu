@@ -460,7 +460,7 @@ class VratnyApp(MDApp):
             sc_mngr.current = "roomselection"
         elif sc_mngr.current == "roomselection":
             self.selected_room = pressed_button_instance.data
-            self.selected_key = pressed_button_instance.data.get_common_key()
+            self.selected_key = pressed_button_instance.data.get_ordinary_key()
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "keyselection":
             self.selected_key = pressed_button_instance.data
