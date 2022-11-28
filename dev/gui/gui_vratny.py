@@ -25,32 +25,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty
 from kivy.metrics import dp
 
-
-# colors = {
-#     "Cyan": {
-#         "200": "#005963",
-#         "500": "#005963",
-#         "700": "#005963",
-#     },
-#     "Gray": {
-#         "200": "#ededed",
-#         "500": "#ededed",
-#         "700": "#ededed",
-#     },
-#     "Red": {
-#         "200": "#ff0000",
-#         "500": "#ff0000",
-#         "A700": "#ff0000",
-#     },
-#     "Light": {
-#         "StatusBar": "E0E0E0",
-#         "AppBar": "#202020",
-#         "Background": "#ededed",
-#         "CardsDialogs": "#FFFFFF",
-#         "FlatButtonDown": "#CCCCCC",
-#     },
-# }
-
 # custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
 
@@ -171,14 +145,6 @@ class RoomSelectionScreen(Screen):
                                                                                       floor=selected_floor)
         else:
             list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
-            # list_of_matches_keys = MDApp.get_running_app().get_rooms_by_floor(floor=selected_floor)
-        
-        # rooms_to_remove = []
-        # for room in list_of_matches_rooms:
-        #     if room.get_common_key() is None:
-        #         rooms_to_remove.append(room)
-        # for room in rooms_to_remove:
-        #     list_of_matches_rooms.remove(room)
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
@@ -426,8 +392,8 @@ class VratnyApp(MDApp):
 
     def build(self):
 
-        Window.size = (1920, 1080)
-        Window.fullscreen = False
+        # Window.size = (1920, 1080)
+        Window.fullscreen = 'auto'
         Config.set('graphics', 'width', '1920')
         Config.set('graphics', 'height', '1080')
 
