@@ -55,8 +55,7 @@ class Key(Base):
         for borrowing in self.borrowings:
             if not borrowing.returned:
                 return True
-            else:
-                return False
+        return False
 
     def get_room_name(self):
         return self.room.name
@@ -76,7 +75,7 @@ class Room(Base):
     keys = relationship("Key", back_populates="room")
     borrowings_count = Column(Integer, nullable=False, default=0)
 
-    def get_common_key(self):
+    def get_ordinary_key(self):
         for key in self.keys:
             if key.key_class == 0:
                 if not key.is_borrowed():

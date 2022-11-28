@@ -12,7 +12,6 @@ Db:
     get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
     get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
-    
     add_borrowing(self, int: key_id, int: borrower_id)
     return_key(self, int: borrowing_id)
     get_ongoing_borrowings(self) -> list[Borrowing]
@@ -39,6 +38,16 @@ class Db:
     def get_rooms_by_floor(self, floor):
         rooms = self.session.query(Room).filter(Room.floor == floor).order_by(Room.borrowings_count.desc()).all()
         return rooms
+
+    def get_borrowable_keys_by_floor(self, floor, only_ordinary=True):
+        q = self.session.query(Key).\
+            except_(self.session.query(Key).join(Borrowing).filter(Borrowing.returned == None)).\
+            join(Room).filter(Room.floor == floor).\
+            order_by(Room.borrowings_count.desc())
+        if only_ordinary:
+            q.filter(Key.key_class == 0)
+        keys = q.all()
+        return keys
 
     def get_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
