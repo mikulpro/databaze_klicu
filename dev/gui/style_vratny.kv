@@ -49,7 +49,7 @@
             keep_ratio: False
             text: "Aplikace pro správu klíčů CPTO"
             font_size: 40
-            size_hint: None, None
+            size_hint: 1, 1
             theme_text_color: "Custom"
             text_color: 0.0, .35, .39, 1
             bold: True
@@ -60,7 +60,7 @@
             keep_ratio: False
             text: "88:88"
             font_size: 24
-            size_hint: None, None
+            size_hint: 1, 1
             theme_text_color: "Custom"
             text_color: 0, 0, 0, 1
             bold: True
@@ -74,7 +74,7 @@
             id: bgcard
             allow_stretch: True
             keep_ratio: False
-            size_hint: None, None
+            size_hint: 1, 1
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             elevation: 1
             orientation: 'vertical'
@@ -89,7 +89,7 @@
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
                 cols: 1
                 rows: 5
-                size_hint: None, None
+                size_hint: 1, 1
 
                 MDTextField:
                     id: user
@@ -109,11 +109,13 @@
                     icon_right_color_normal: "#005963"
                     font_size: root.height // 12
                     pos_hint: {"center_x": 0.5}
+                    size_hint: 1, 1
 
                 Widget:
                     id: blank_widget_7
                     allow_stretch: True
                     keep_ratio: False
+                    size_hint: 1, 1
 
                 MDTextField:
                     id: password
@@ -134,23 +136,27 @@
                     font_size: root.height // 12
                     pos_hint: {"center_x": 0.5}
                     password: True
+                    size_hint: 1, 1
 
                 Widget:
                     id: blank_widget_8
                     allow_stretch: True
                     keep_ratio: False
+                    size_hint: 1, 1
 
                 GridLayout:
                     cols: 2
                     rows: 1
                     allow_stretch: True
                     keep_ratio: False
+                    size_hint: 1, 1
 
                     Widget:
                         id: blank_widget_login_button
                         size_hint: None, None
                         allow_stretch: True
                         keep_ratio: False
+                        size_hint: 1, 1
 
                     MDRoundFlatButton:
                         id: login_button
@@ -162,26 +168,31 @@
                         font_size: root.height // 12
                         pos_hint: {'center_x': 0.75}
                         on_release: root.PrihasitSeButtonFunction()
+                        size_hint: 1, 1
             
             Widget:
                 id: blank_widget_3
                 allow_stretch: True
                 keep_ratio: False
+                size_hint: 1, 1
             
             Widget:
                 id: blank_widget_4
                 allow_stretch: True
                 keep_ratio: False
+                size_hint: 1, 1
 
             Widget:
                 id: blank_widget_5
                 allow_stretch: True
                 keep_ratio: False
+                size_hint: 1, 1
             
             Widget:
                 id: blank_widget_6
                 allow_stretch: True
                 keep_ratio: False
+                size_hint: 1, 1
 
 <ActionSelectionScreen>:
 
