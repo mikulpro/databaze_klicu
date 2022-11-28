@@ -20,8 +20,9 @@ e = db.get_borrowable_keys_by_floor(-1)
 # print(b)
 for i in e:
 
-    print(i.id, end=",")
-    print(i.room.name)
+    print(i)
+    # print(i.id, end=",")
+    # print(i.room.name)
 
 
 #print(e)

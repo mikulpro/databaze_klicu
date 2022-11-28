@@ -1,15 +1,15 @@
 from dev.sqlite.models import *
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import select
 import datetime
 
 """
 Db:
-    -get_all_floors(self) -> list[int]
-    -get_rooms_by_floor(self, int: floor) -> list[Room]
-    get_primary_authorizations_for_room(self, int: room_id)-> list[Authorizations]
-    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorizations]
+    get_all_floors(self) -> list[int]
+    get_rooms_by_floor(self, int: floor) -> list[Room]
+    get_borrowable_keys_by_floor(self, int: floor, bool: only_ordinary=True) -> list[Key]
+    get_primary_authorizations_for_room(self, int: room_id)-> list[Authorization]
+    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorization]
     get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
     add_borrowing(self, int: key_id, int: borrower_id)

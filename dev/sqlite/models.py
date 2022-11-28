@@ -1,26 +1,10 @@
-from sqlalchemy import Table, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import declarative_base, relationship
 
 import datetime
 
 
 Base = declarative_base()
-
-
-# keys_rooms = Table(
-#     "keys_rooms",
-#     Base.metadata,
-#     Column("key_number", ForeignKey("keys.registration_number")),
-#     Column("room_id", ForeignKey("rooms.id")),
-# )
-#
-# authorizations_rooms = Table(
-#     "authorizations_rooms",
-#     Base.metadata,
-#     Column("authorization_id", ForeignKey("authorizations.id")),
-#     Column("room_id", ForeignKey("rooms.id")),
-#
-# )
 
 
 class Borrowing(Base):
@@ -35,10 +19,13 @@ class Borrowing(Base):
     returned = Column(DateTime(timezone=True), nullable=True)
 
     def return_key(self):
+        if self.returned is not None:
+            raise Exception(f"Borrowing (id:{self.id}): Klíč byl již vrácen!")
         self.returned = datetime.datetime.utcnow()
 
     def __repr__(self):
-        return f"Borrowing(id={self.id}, key={self.key}, borrower={self.authorization}, borrowed={self.borrowed} returned={self.returned}"
+        return f"Borrowing(id={self.id}, key_id={self.key_id}, authorization_id={self.authorization_id}, " \
+               f"borrowed={self.borrowed}, returned={self.returned})"
 
 
 class Key(Base):
@@ -59,6 +46,10 @@ class Key(Base):
 
     def get_room_name(self):
         return self.room.name
+
+    def __repr__(self):
+        return f"Key(id={self.id}, registration_number={self.registration_number}, " \
+               f"room_id={self.room_id}, key_class={self.key_class})"
 
 
 class Room(Base):
@@ -86,6 +77,9 @@ class Room(Base):
             self.borrowings_count = 0
         self.borrowings_count += 1
 
+    def __repr__(self):
+        return f"Room(id={self.id}, name={self.name}, floor={self.floor}, " \
+               f"type_id={self.type_id}, faculty_id={self.faculty_id}, borrowings_count={self.borrowings_count})"
 
 
 class RoomType(Base):
@@ -94,6 +88,9 @@ class RoomType(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(16), nullable=False)
 
+    def __repr__(self):
+        return f"RoomType(id={self.id}, name={self.name})"
+
 
 class Faculty(Base):
     __tablename__ = "faculties"
@@ -101,6 +98,9 @@ class Faculty(Base):
     id = Column(Integer, primary_key=True)
     abbreviation = Column(String(4), nullable=False, unique=True)
     name = Column(String(64), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"Faculty(id={self.id}, abbreviation={self.abbreviation}, name={self.name})"
 
 
 class AuthorizedPerson(Base):
@@ -117,6 +117,10 @@ class AuthorizedPerson(Base):
     def get_full_name(self):
         return self.firstname + " " + self.surname
 
+    def __repr__(self):
+        return f"AuthorizedPerson(id={self.id}, firstname={self.firstname}, surname={self.surname}, " \
+               f"workplace_id={self.workplace_id}, created={self.created})"
+
 
 class Workplace(Base):
     __tablename__ = "workplaces"
@@ -126,6 +130,10 @@ class Workplace(Base):
     name = Column(String(64), nullable=False, unique=True)
     faculty_id = Column(Integer, ForeignKey("faculties.id"))
     faculty = relationship("Faculty")
+
+    def __repr__(self):
+        return f"Workplace(id={self.id}, abbreviation={self.abbreviation}, name={self.name}, " \
+               f"faculty_id={self.faculty_id})"
 
 
 class Authorization(Base):
@@ -140,7 +148,6 @@ class Authorization(Base):
     expiration = Column(DateTime(timezone=True), nullable=False)
     origin_id = Column(Integer, ForeignKey("authorization_origins.id"), nullable=False)
     origin = relationship("AuthorizationOrigin")
-
     borrowings = relationship("Borrowing", back_populates="authorization")
     borrowings_count = Column(Integer, nullable=False, default=0)
 
@@ -149,9 +156,17 @@ class Authorization(Base):
             self.borrowings_count = 0
         self.borrowings_count += 1
 
+    def __repr__(self):
+        return f"Authorization(id={self.id}, person_id={self.person_id}, room_id={self.room_id}, " \
+               f"created={self.created}, expiration={self.expiration}, origin_id={self.origin_id}, " \
+               f"borrowings_count={self.borrowings_count})"
+
 
 class AuthorizationOrigin(Base):
     __tablename__ = "authorization_origins"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(32), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"AuthorizationOrigin(id={self.id}, name={self.name})"
