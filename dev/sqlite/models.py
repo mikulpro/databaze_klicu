@@ -58,6 +58,9 @@ class Key(Base):
             else:
                 return False
 
+    def get_room_name(self):
+        return self.room.name
+
 
 class Room(Base):
     __tablename__ = "rooms"
