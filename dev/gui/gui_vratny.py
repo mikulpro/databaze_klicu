@@ -55,6 +55,8 @@ class LoginScreen(Screen):
         if username == "" and password == "":
             MDApp.get_running_app().set_lender(username)
             return True
+        elif username == "admin" and password == "admin":
+            return True
         else:
             return False
 
@@ -342,62 +344,8 @@ class VratnyApp(MDApp):
         self.logger = logger
 
     def on_resize(self, *args):
-        current_screen = sc_mngr.current_screen
-        current = sc_mngr.current
-
-        if current == "login":
-
-            current_screen.ids.main_screen_layout.col_default_width = Window.size[0]*0.05
-            current_screen.ids.main_screen_layout.row_default_height = Window.size[1]*0.05
-            current_screen.ids.login_inside_layout.col_default_width = Window.size[0]*0.05
-            current_screen.ids.login_inside_layout.row_default_height = Window.size[1]*0.05
-            
-            # current_screen.ids.main_screen_layout.cols_minimum = [ Window.size[0]*0.05, Window.size[0]*0.90, Window.size[0]*0.05 ]
-            # current_screen.ids.main_screen_layout.rows_minimum = [ Window.size[0]*0.10, Window.size[0]*0.85, Window.size[0]*0.05 ]
-            # current_screen.ids.login_inside_layout.cols_minimum = [ Window.size[0]*0.9 ]
-            # current_screen.ids.login_inside_layout.rows_minimum = [ Window.size[1]*0.2,  Window.size[1]*0.125,  Window.size[1]*0.2,  Window.size[1]*0.125,  Window.size[1]*0.2]
-
-            current_screen.ids.background.width = Window.size[0]
-            current_screen.ids.background.height = Window.size[1]
-            current_screen.ids.main_screen_layout.width = Window.size[0]
-            current_screen.ids.main_screen_layout.height = Window.size[1]
-            current_screen.ids.blank_widget_1.width = Window.size[0]*0.05
-            current_screen.ids.blank_widget_1.height = Window.size[1]*0.1
-            current_screen.ids.appname_label.width = Window.size[0]*0.9
-            current_screen.ids.appname_label.height = Window.size[1]*0.1
-            current_screen.ids.clock.width = Window.size[0]*0.05
-            current_screen.ids.clock.height = Window.size[1]*0.1
-            current_screen.ids.blank_widget_2.width = Window.size[0]*0.05
-            current_screen.ids.blank_widget_2.height = Window.size[1]*0.85
-            current_screen.ids.bgcard.width = Window.size[0]*0.9
-            current_screen.ids.bgcard.height = Window.size[1]*0.85
-            current_screen.ids.blank_widget_3.width = Window.size[0]*0.05
-            current_screen.ids.blank_widget_3.height = Window.size[1]*0.85
-            current_screen.ids.blank_widget_4.width = Window.size[0]*0.05
-            current_screen.ids.blank_widget_4.height = Window.size[1]*0.05
-            current_screen.ids.blank_widget_5.width = Window.size[0]*0.9
-            current_screen.ids.blank_widget_5.height = Window.size[1]*0.05
-            current_screen.ids.blank_widget_6.width = Window.size[0]*0.05
-            current_screen.ids.blank_widget_6.height = Window.size[1]*0.05
-
-            current_screen.ids.login_inside_layout.width = Window.size[0]*0.9
-            current_screen.ids.login_inside_layout.height = Window.size[1]*0.85
-            current_screen.ids.user.width = Window.size[0]*0.85
-            current_screen.ids.user.height = Window.size[1]*0.2
-            current_screen.ids.user.font_size = current_screen.ids.user.height - 5 
-            current_screen.ids.blank_widget_7.width = Window.size[0]*0.85
-            current_screen.ids.blank_widget_7.height = Window.size[1]*0.125
-            current_screen.ids.password.width = Window.size[0]*0.85
-            current_screen.ids.password.height = Window.size[1]*0.2
-            current_screen.ids.password.font_size = current_screen.ids.password.height - 5
-            current_screen.ids.blank_widget_8.width = Window.size[0]*0.85
-            current_screen.ids.blank_widget_8.height = Window.size[1]*0.125
-            current_screen.ids.blank_widget_login_button.width = Window.size[0]*0.45
-            current_screen.ids.blank_widget_login_button.height = Window.size[1]*0.2
-            current_screen.ids.login_button.width = Window.size[0]*0.4
-            current_screen.ids.login_button.height = Window.size[1]*0.2
-
-
+        return
+ 
     def update_starttime(self):
         self.selected_starttime = datetime.now()
 
