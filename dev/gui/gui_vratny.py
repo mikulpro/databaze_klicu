@@ -197,7 +197,7 @@ class RoomSelectionScreen(Screen):
             list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression,
                                                                                       floor=selected_floor)
         else:
-            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction="", floor=selected_floor)
+            list_of_matches_rooms = MDApp.get_running_app().db.get_rooms_by_floor(floor=selected_floor)
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
@@ -255,7 +255,7 @@ class PersonSelectionScreen(Screen):
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
         person_widget.data = data
-        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.firstname)} {str(data.surname)} (id: {str(data.id)})")
+        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.firstname)} {str(data.surname)} (pracoviště: {str(data.workplace) if data.workplace else ''})")
         person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
         self.ids.person_widget_scrollview.add_widget(person_widget)
 
@@ -308,12 +308,14 @@ class AdminScreen(Screen):
         super(AdminScreen, self).__init__(**kwargs)
 
     def admin_func_1(self):
+        pass
         sc_mngr.current = "admin_authorized_ppl"
     
     def admin_func_2(self):
         pass
 
     def admin_func_3(self):
+        pass
         sc_mngr.get_screen("admin_authorized_ppl").admin_authorise_new_person()
 
 class AdminAuthorizedPplScreen(Screen):
@@ -323,6 +325,7 @@ class AdminAuthorizedPplScreen(Screen):
         self.display_authorised_ppl()
 
     def display_authorised_ppl(self):
+        return
         searched_expression = ""
         try:
             searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
