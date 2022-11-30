@@ -1,7 +1,11 @@
-from dev.sqlite.models import *
+import datetime
+
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import Session
-import datetime
+import sqlalchemy.exc
+
+from dev.sqlite.models import *
+from utils import hash_func
 
 """
 Db:
@@ -17,6 +21,9 @@ Db:
     get_ongoing_borrowings(self) -> list[Borrowing]
     
     excel_dump(self) -> list[list[str]]
+    
+    add_user(str: username, str: password, bool: is_superuser=False)
+    get_user_by_username(username : str) -> User
 """
 
 
@@ -60,7 +67,7 @@ class Db:
         # přidat filtrování na základě origin
         return authorizations
 
-    def get_borrowers_by_name_fraction(self, fraction):
+    def get_person_by_name_fraction(self, fraction):
         fractions = fraction.split(" ")
 
         if len(fractions) == 1:
@@ -130,3 +137,16 @@ class Db:
             data.append(row)
 
         return data
+
+    def add_user(self, username, password, is_superuser=False):
+        password_hash = hash_func(password)
+        user = User(username=username, password=password_hash, is_superuser=is_superuser)
+        try:
+            self.session.add(user)
+            self.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            raise Exception("Uživatel s tímto uživatelským jménem již existuje!")
+
+    def get_user_by_username(self, username):
+        user = self.session.query(User).filter(User.username == username).one_or_none()
+        return user

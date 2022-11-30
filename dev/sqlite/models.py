@@ -1,8 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
-from sqlalchemy.orm import declarative_base, relationship
-
 import datetime
 
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import declarative_base, relationship
+
+from utils import hash_func
 
 Base = declarative_base()
 
@@ -170,3 +171,21 @@ class AuthorizationOrigin(Base):
 
     def __repr__(self):
         return f"AuthorizationOrigin(id={self.id}, name={self.name})"
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password = Column(String)
+    is_superuser = Column(Boolean, nullable=False, default=False)
+
+    def check_password(self, password):
+        if hash_func(password) == self.password:
+            return True
+        else:
+            return False
+
+    def __repr__(self):
+        return f"User(username={self.username})"
