@@ -57,7 +57,9 @@ class LoginScreen(Screen):
             MDApp.get_running_app().set_lender(username)
             return True
         elif username == "admin" and password == "admin":
-            return True
+            MDApp.get_running_app().set_lender("admin")
+            sc_mngr.current = "admin"
+            return False
         else:
             return False
 
@@ -288,6 +290,11 @@ class ReviewScreen(Screen):
         MDApp.get_running_app().on_resize()
         return super().on_leave(*args)
 
+class AdminScreen(Screen):
+
+    def __init__(self, **kwargs):
+        super(AdminScreen, self).__init__(**kwargs)
+
 class VratnyApp(MDApp):
 
     def __init__(self, database_object=Db(), logger=None, **kwargs):
@@ -448,15 +455,18 @@ class VratnyApp(MDApp):
             self.update_review_information()
 
     def StornoButton(self, *args):
-        self.selected_lender = ""
-        self.selected_floor = None
-        self.selected_room = None
-        self.selected_key = None
-        self.selected_person = None
-        self.selected_starttime = None
-        self.selected_endtime_time = None
-        self.selected_endtime_date = None
-        sc_mngr.current = "actionselection"
+        if sc_mngr.current == "actionselection":
+            sc_mngr.current = "login"
+        else:
+            self.selected_lender = ""
+            self.selected_floor = None
+            self.selected_room = None
+            self.selected_key = None
+            self.selected_person = None
+            self.selected_starttime = None
+            self.selected_endtime_time = None
+            self.selected_endtime_date = None
+            sc_mngr.current = "actionselection"
 
     def get_selected_floor(self):
         return self.selected_floor
@@ -511,6 +521,7 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(RoomSelectionScreen(name="roomselection"))
         sc_mngr.add_widget(PersonSelectionScreen(name="personselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
+        sc_mngr.add_widget(AdminScreen(name="admin"))
 
         self.on_resize()
         return sc_mngr
