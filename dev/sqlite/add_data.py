@@ -72,9 +72,9 @@ session = Session(engine)
 #             session.add(authperson)
 #     session.commit()
 
-a = session.query(AuthorizedPerson).all()
+# a = session.query(AuthorizedPerson).all()
 # print([i.workplace_id for i in a])
-print(len(a))
+# print(len(a))
 # session.execute(delete(AuthorizedPerson).where(AuthorizedPerson.id > 300))
 # a = session.query(AuthorizedPerson).all()
 # print(len(a))
@@ -82,16 +82,30 @@ print(len(a))
 # session.commit()
 
 # Sample keys
-room1 = session.query(Room).filter(Room.id == 17).one()
-room2 = session.query(Room).filter(Room.id == 5).one()
-room3 = session.query(Room).filter(Room.id == 4).one()
-room4 = session.query(Room).filter(Room.id == 3).one()
-room5 = session.query(Room).filter(Room.id == 2).one()
-room6 = session.query(Room).filter(Room.id == 1).one()
-room7 = session.query(Room).filter(Room.id == 81).one()
-room8 = session.query(Room).filter(Room.id == 80).one()
-room9 = session.query(Room).filter(Room.id == 34).one()
-room10 = session.query(Room).filter(Room.id == 200).one()
+# room1 = session.query(Room).filter(Room.id == 17).one()
+# room2 = session.query(Room).filter(Room.id == 5).one()
+# room3 = session.query(Room).filter(Room.id == 4).one()
+# room4 = session.query(Room).filter(Room.id == 3).one()
+# room5 = session.query(Room).filter(Room.id == 2).one()
+# room6 = session.query(Room).filter(Room.id == 1).one()
+# room7 = session.query(Room).filter(Room.id == 81).one()
+# room8 = session.query(Room).filter(Room.id == 80).one()
+# room9 = session.query(Room).filter(Room.id == 34).one()
+# room10 = session.query(Room).filter(Room.id == 200).one()
+rooms = session.query(Room).all()
+
+registration_number = 252514291
+for room in rooms:
+    key = Key(
+        registration_number= registration_number,
+        key_class=0,
+        room=room
+    )
+    session.add(key)
+    print(key.registration_number)
+    registration_number += 1
+
+session.commit()
 #
 # key1 = Key(registration_number=25251429, key_class=0, rooms=[room1])
 # session.add(key1)
