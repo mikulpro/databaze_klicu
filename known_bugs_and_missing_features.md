@@ -4,9 +4,7 @@ Currently in: pre-release
 - optimalization issues (e.g. 250 MB free RAM required)
 
 # Missing Features
-- no admin interface
 - no log output
-- no immediate warning if get_common_key() cannot assign a key
 - no real authentication
 - no choice if I want to pick floor or person first when lending a key
 

@@ -457,6 +457,10 @@ class VratnyApp(MDApp):
     def StornoButton(self, *args):
         if sc_mngr.current == "actionselection":
             sc_mngr.current = "login"
+        elif sc_mngr.current in [""]:
+            sc_mngr.current = "admin"
+        elif sc_mngr.current == "admin":
+            sc_mngr.current = "login"
         else:
             self.selected_lender = ""
             self.selected_floor = None
