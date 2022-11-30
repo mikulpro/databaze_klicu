@@ -236,9 +236,9 @@ class PersonSelectionScreen(Screen):
         # find all relevant examples
         searched_expression = str(self.ids.personsearch.text)
         if len(searched_expression) >= 1:
-            list_of_matches_ppl = MDApp.get_running_app().get_person_by_name_fraction(fraction=searched_expression)
+            list_of_matches_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
         else:
-            list_of_matches_ppl = MDApp.get_running_app().get_person_by_name_fraction(fraction="")
+            list_of_matches_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction="")
 
         # undisplay old rooms
         self.ids.person_widget_scrollview.clear_widgets()
@@ -327,7 +327,7 @@ class AdminAuthorizedPplScreen(Screen):
         try:
             searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
         except: pass
-        found_ppl = MDApp.get_running_app().get_borrowers_by_name_fraction(fraction=searched_expression)
+        found_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
 
         self.ids.admin_person_widget_scrollview.clear_widgets()
 
@@ -426,13 +426,13 @@ class VratnyApp(MDApp):
         return self.db.get_rooms_by_floor(floor)
 
     def get_authorizations_for_room(self, room_id):
-        return self.db.get_authorizations_for_room(room_id)
+        return self.db.get_valid_authorizations_for_room(room_id)
 
     def get_primary_authorizations_for_room(self, room_id):
-        return self.db.get_primary_authorizations_for_room(room_id)
+        return self.db.get_prioritized_authorizations_for_room(room_id)
 
-    def get_borrowers_by_name_fraction(self, fraction):
-        return self.db.get_person_by_name_fraction(fraction)
+    def get_persons_by_name_fraction(self, fraction):
+        return self.db.get_persons_by_name_fraction(fraction)
 
     def get_room_by_name_fraction(self, fraction, floor=None):
         return self.db.get_room_by_name_fraction(fraction, floor)

@@ -1,2 +1,10 @@
 Diagramy
 https://drive.google.com/file/d/1iNCMdrMKPyXXX1XofR2uFnIMm97ss3pS/view?usp=sharing
+
+
+USERS
+username: test
+password: testovaci
+
+username: admin
+password: admin
