@@ -17,3 +17,12 @@ Currently in: pre-release
   - Přidat autorizovanou osobu
   - Upravit autorizovanou osobu
   - přidat/zneplatnit autorizaci pro místnost
+
+
+
+# Databáze
+- přidat origin autorizované osoby?
+## Mazání dat z databáze
+- zneplatnění autorizace
+- deautorizace autorizovaných osob?
+- 

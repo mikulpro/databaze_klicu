@@ -16,7 +16,7 @@ Db:
     get_all_keys(self) -> list[Key]
     get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True): bool -> list[Key]
     get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
-    get_primary_authorizations_for_room(self, room_id: int) -> list[Authorization]
+    get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
     KEY BORROWING
     add_borrowing(self, int: key_id, int: borrower_id) -> None
