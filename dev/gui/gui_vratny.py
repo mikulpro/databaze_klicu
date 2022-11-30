@@ -290,10 +290,62 @@ class ReviewScreen(Screen):
         MDApp.get_running_app().on_resize()
         return super().on_leave(*args)
 
+class AdminAuthorizedPersonWidget(GridLayout):
+
+    def __init__(self, **kwargs):
+        super(AdminAuthorizedPersonWidget, self).__init__(**kwargs)
+        self.data = None
+
+    def edit(self, instance):
+        pass
+
+    def delete(self, instance):
+        pass
+
 class AdminScreen(Screen):
 
     def __init__(self, **kwargs):
         super(AdminScreen, self).__init__(**kwargs)
+
+    def admin_func_1(self):
+        sc_mngr.current = "admin_authorized_ppl"
+    
+    def admin_func_2(self):
+        pass
+
+    def admin_func_3(self):
+        sc_mngr.get_screen("admin_authorized_ppl").admin_authorise_new_person()
+
+class AdminAuthorizedPplScreen(Screen):
+
+    def __init__(self, **kwargs):
+        super(AdminAuthorizedPplScreen, self).__init__(**kwargs)
+        self.display_authorised_ppl()
+
+    def display_authorised_ppl(self):
+        searched_expression = ""
+        try:
+            searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
+        except: pass
+        found_ppl = MDApp.get_running_app().get_borrowers_by_name_fraction(fraction=searched_expression)
+
+        self.ids.admin_person_widget_scrollview.clear_widgets()
+
+        for person in found_ppl:
+            self._admin_add_authorised_person_widget(person)
+        
+
+    def _admin_add_authorised_person_widget(self, data):
+        widget = AdminAuthorizedPersonWidget()
+        widget.data = data
+        widget.ids.name.text = str(data.get_full_name())
+        widget.ids.authorized_by.text = "Neznámý původce"
+        widget.ids.time.text = str(data.created)
+        self.ids.admin_person_widget_scrollview.add_widget(widget)
+
+
+    def admin_authorise_new_person(self):
+        pass
 
 class VratnyApp(MDApp):
 
@@ -457,7 +509,7 @@ class VratnyApp(MDApp):
     def StornoButton(self, *args):
         if sc_mngr.current == "actionselection":
             sc_mngr.current = "login"
-        elif sc_mngr.current in [""]:
+        elif sc_mngr.current in ["admin_authorized_ppl"]:
             sc_mngr.current = "admin"
         elif sc_mngr.current == "admin":
             sc_mngr.current = "login"
@@ -505,8 +557,8 @@ class VratnyApp(MDApp):
         sc_mngr = ScreenManager(transition=NoTransition())
 
         Window.fullscreen = False
-        #Window.size = (1920, 1000)
-        Window.maximize()
+        Window.size = (1920, 1000)
+        #Window.maximize()
         Window.bind(on_resize=self.on_resize)
 
         #Config.set('graphics', 'width', '1920')
@@ -526,6 +578,7 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(PersonSelectionScreen(name="personselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
         sc_mngr.add_widget(AdminScreen(name="admin"))
+        sc_mngr.add_widget(AdminAuthorizedPplScreen(name="admin_authorized_ppl"))
 
         self.on_resize()
         return sc_mngr
