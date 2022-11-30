@@ -15,6 +15,7 @@ g = db.get_user_by_username("test")
 
 print(g)
 print(g.check_password("testovaci"))
+g.commit()
 # print(a[0].name)
 # print("Results:")
 # print(dir(a))

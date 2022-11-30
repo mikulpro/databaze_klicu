@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
-from utils import hash_func
+from dev.sqlite.utils import hash_func
 
 Base = declarative_base()
 
@@ -156,6 +156,9 @@ class Authorization(Base):
         if not self.borrowings_count:
             self.borrowings_count = 0
         self.borrowings_count += 1
+
+    def invalidate(self):
+        self.expiration = datetime.datetime.utcnow()
 
     def __repr__(self):
         return f"Authorization(id={self.id}, person_id={self.person_id}, room_id={self.room_id}, " \

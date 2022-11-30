@@ -5,25 +5,39 @@ from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
 from dev.sqlite.models import *
-from utils import hash_func
+from dev.sqlite.utils import hash_func
 
 """
 Db:
+    ALL PURPOSE
     get_all_floors(self) -> list[int]
-    get_rooms_by_floor(self, int: floor) -> list[Room]
-    get_borrowable_keys_by_floor(self, int: floor, bool: only_ordinary=True) -> list[Key]
-    get_authorizations_for_room(self, int: room_id)-> list[Authorization]
-    get_primary_authorizations_for_room(self, int: room_id) -> list[Authorization]
-    get_borrowers_by_name_fraction(self, str: fraction) -> list[AuthorizedPerson]
-    get_room_by_name_fraction(self, str: fraction, int: floor=None) -> list[Room]
+    get_rooms_by_floor(self, floor: int) -> list[Room]
+    get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True): bool -> list[Key]
+    get_authorizations_for_room(self, room_id: int)-> list[Authorization]
+    get_primary_authorizations_for_room(self, room_id: int) -> list[Authorization]
+    
+    KEY BORROWING
     add_borrowing(self, int: key_id, int: borrower_id) -> None
     return_key(self, int: borrowing_id) -> None
     get_ongoing_borrowings(self) -> list[Borrowing]
     
+    EXCEL GENERATING
     excel_dump(self) -> list[list[str]]
     
-    add_user(str: username, str: password, bool: is_superuser=False)
-    get_user_by_username(username : str) -> User
+    LOGIN SYSTEM
+    add_user(username: str, password: str, is_superuser=False: bool)
+    get_user_by_username(username: str) -> User
+    
+    ADMIN
+    add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int)
+    invalidate_authorization(authorization_id: int) -> None
+    invalidate_authorization_obj(authorization: Authorization) -> None
+    
+    get_authorizations_by_name_fraction(self, fraction: str)
+    get_persons_by_name_fraction(self, fraction: str) -> list[AuthorizedPerson]
+    get_room_by_name_fraction(self, fraction: str, floor=None: int) -> list[Room]
+    
+    
 """
 
 
@@ -37,6 +51,9 @@ class Db:
     def new_session(self):
         engine = create_engine(self.db_path, echo=True, future=True)
         self.session = Session(engine)
+
+    def commit_session(self):
+        self.session.commit()
 
     def get_all_floors(self):
         result = self.session.query(Room.floor).distinct(Room.floor).order_by(Room.floor).all()
@@ -66,35 +83,6 @@ class Db:
         authorizations = self.get_authorizations_for_room(room_id)
         # přidat filtrování na základě origin
         return authorizations
-
-    def get_person_by_name_fraction(self, fraction):
-        fractions = fraction.split(" ")
-
-        if len(fractions) == 1:
-            result = self.session.query(AuthorizedPerson).filter(
-                or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                    AuthorizedPerson.surname.like(f"{fractions[0]}%")
-                    ))
-        elif len(fractions) == 2:
-            result = self.session.query(AuthorizedPerson).filter(
-                or_(
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[1]}%"),
-                         ),
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[1]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[0]}%"),
-                         ),
-                ))
-        else:
-            return []
-
-        return result.all()
-
-    def get_room_by_name_fraction(self, fraction, floor=None):
-        if floor:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"), Room.floor == floor).all()
-        else:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
 
     def add_borrowing(self, key_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
@@ -150,3 +138,74 @@ class Db:
     def get_user_by_username(self, username):
         user = self.session.query(User).filter(User.username == username).one_or_none()
         return user
+
+    def add_authorization(self, person_id, room_id, expiration, origin_id=1):
+        authorization = Authorization(
+            person_id=person_id,
+            room_id=room_id,
+            expiration=expiration,
+            origin_id=origin_id
+        )
+        self.session.add(authorization)
+        self.session.commit()
+
+    def invalidate_authorization(self, authorization_id):
+        authorization = self.session.query(Authorization).filter(Authorization.id == authorization_id).one()
+        authorization.invalidate()
+        self.session.commit()
+
+    def invalidate_authorization_obj(self, authorization):
+        authorization.invalidate()
+        self.session.commit()
+
+    def get_authorizations_by_name_fraction(self, fraction):
+        fractions = fraction.split(" ")
+
+        if len(fractions) == 1:
+            result = self.session.query(Authorization).join(AuthorizedPerson).filter(
+                or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
+                    AuthorizedPerson.surname.like(f"{fractions[0]}%")
+                    ))
+        elif len(fractions) == 2:
+            result = self.session.query(Authorization).join(AuthorizedPerson).filter(
+                or_(
+                    and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
+                         AuthorizedPerson.surname.like(f"{fractions[1]}%"),
+                         ),
+                    and_(AuthorizedPerson.firstname.like(f"{fractions[1]}%"),
+                         AuthorizedPerson.surname.like(f"{fractions[0]}%"),
+                         ),
+                ))
+        else:
+            return []
+
+        return result.all()
+
+    def get_persons_by_name_fraction(self, fraction):
+        fractions = fraction.split(" ")
+
+        if len(fractions) == 1:
+            result = self.session.query(AuthorizedPerson).filter(
+                or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
+                    AuthorizedPerson.surname.like(f"{fractions[0]}%")
+                    ))
+        elif len(fractions) == 2:
+            result = self.session.query(AuthorizedPerson).filter(
+                or_(
+                    and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
+                         AuthorizedPerson.surname.like(f"{fractions[1]}%"),
+                         ),
+                    and_(AuthorizedPerson.firstname.like(f"{fractions[1]}%"),
+                         AuthorizedPerson.surname.like(f"{fractions[0]}%"),
+                         ),
+                ))
+        else:
+            return []
+
+        return result.all()
+
+    def get_room_by_name_fraction(self, fraction, floor=None):
+        if floor:
+            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"), Room.floor == floor).all()
+        else:
+            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
