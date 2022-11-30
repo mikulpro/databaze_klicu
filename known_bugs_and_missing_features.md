@@ -7,6 +7,7 @@ Currently in: pre-release
 - no log output
 - no real authentication
 - no choice if I want to pick floor or person first when lending a key
+- admin app is incomplete
 
 
 # Admin app
