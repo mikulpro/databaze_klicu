@@ -119,14 +119,15 @@ class BorrowingSelectionScreen(Screen):
         # undisplaying old
         self.ids.borrowings_widget_scrollview.clear_widgets()
 
-        # displaying new
-        number_of_displayed_borrowings = 0
-        for b in borrowings:
-            if number_of_displayed_borrowings >= 500:
-                break
-            if self.ids.borrowingsearch.text in (str(b.authorization.person.get_full_name()) + "   " + str(b.key.room.name) + "   " +  str(b.borrowed)):
-                number_of_displayed_borrowings += 1
-                self._add_borrowingwidget(b)
+        if borrowings is not []:
+            # displaying new
+            number_of_displayed_borrowings = 0
+            for b in borrowings:
+                if number_of_displayed_borrowings >= 500:
+                    break
+                if self.ids.borrowingsearch.text in (str(b.authorization.person.get_full_name()) + "   " + str(b.key.room.name) + "   " +  str(b.borrowed)):
+                    number_of_displayed_borrowings += 1
+                    self._add_borrowingwidget(b)
 
     def _add_borrowingwidget(self, data):
         borrowing_widget = SearchResultWidget()
