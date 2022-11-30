@@ -7,6 +7,7 @@ Currently in: pre-release
 - no log output
 - no immediate warning if get_common_key() cannot assign a key
 - no real authentication
+- no choice if I want to pick floor or person first when lending a key
 
 
 # Admin app

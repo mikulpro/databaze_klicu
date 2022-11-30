@@ -150,6 +150,7 @@ class FloorSelectionScreen(Screen):
 
     def SearchFloorTextInputFunction(self, initial=False):
         floors = MDApp.get_running_app().get_all_floors()
+        floors.reverse()
 
         # undisplaying old floors
         self.ids.floor_widget_scrollview.clear_widgets()
@@ -157,7 +158,7 @@ class FloorSelectionScreen(Screen):
         # displaying new floors
         number_of_displayed_floors = 0
         for floor in floors:
-            if number_of_displayed_floors == 9:
+            if number_of_displayed_floors >= 500:
                 break
             if initial or str(self.ids.floorsearch.text) in str(floor):
                 number_of_displayed_floors += 1
@@ -202,7 +203,7 @@ class RoomSelectionScreen(Screen):
         # some function, that adds widget for each match
         number_of_displayed_rooms = 0
         for item in list_of_matches_rooms:
-            if number_of_displayed_rooms == 9:
+            if number_of_displayed_rooms >= 500:
                 break
             number_of_displayed_rooms += 1
             self._add_keywidget(item)
@@ -286,7 +287,7 @@ class PersonSelectionScreen(Screen):
         # some function, that adds widget for each match
         number_of_displayed_ppl = 0
         for item in list_of_matches_ppl:
-            if number_of_displayed_ppl >= 9:
+            if number_of_displayed_ppl >= 500:
                 break
             else:
                 number_of_displayed_ppl += 1
