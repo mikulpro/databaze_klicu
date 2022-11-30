@@ -376,6 +376,7 @@ class VratnyApp(MDApp):
 
 
     def on_resize(self, *args):
+        return
         current_screen = sc_mngr.current_screen
         current = sc_mngr.current
 
