@@ -1,6 +1,7 @@
 Currently in: pre-release
 
 # Bugs
+- optimalization issues (e.g. 250 MB free RAM required)
 
 # Missing Features
 - no admin interface

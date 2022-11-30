@@ -777,64 +777,7 @@
             width: root.width * 0.1
             height: root.height * 0.1
 
-<KeySelectionScreen>
 
-    Image:
-        id: background
-        source: 'images/cpto3.jpg'
-        size_hint: None, None
-        allow_stretch: True
-        keep_ratio: False
-
-    MDLabel:
-        id: appname_label
-        text: "Vyberte klíč"
-        font_size: 40
-        halign: 'center'
-        size_hint_y: None
-        height: self.texture_size[1]
-        padding_y: 15
-        theme_text_color: "Custom"
-        text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.98}
-        bold: True
-
-    MDCard:
-        id: bgcard
-        size_hint: None, None
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        elevation: 1
-        orientation: 'vertical'
-        md_bg_color: "#ededed"
-        style: "elevated"
-        radius: [30, 30, 30, 30]
-
-        MDTextField:
-            id: keysearch
-            mode: "round"
-            text_color_normal: "#005963"
-            text_color_focus: "#000000"
-            background_color: "#005963"
-            multiline: False
-            fill_color_focus: "#FFFFFF"
-            line_color_normal: "#005963"
-            line_color_focus: "#000000"
-            hint_text: "Registrační číslo klíče"
-            size_hint: 1, 0.1
-            font_size: 18
-            padding: 25
-            pos_hint: {"center_x": .5, "y": 1.0}
-            on_text: root.SearchKeyTextInputFunction()
-
-        GridLayout:
-            size_hint: 1, 0.9
-            padding: 25
-            id: key_widget_scrollview
-            pos_hint: {"x": 0.0}
-            cols: 1
-            rows: 9
-            spacing: 5
-            row_default_height: 40
 
 
 <PersonSelectionScreen>
@@ -991,126 +934,6 @@
             width: root.width * 0.1
             height: root.height * 0.1
 
-<TimeSelectionScreen>
-
-    Image:
-        id: background
-        source: 'images/cpto3.jpg'
-        size_hint: None, None
-        allow_stretch: True
-        keep_ratio: False
-
-    MDLabel:
-        id: appname_label4
-        text: "Aplikace pro správu klíčů CPTO"
-        font_size: 40
-        halign: 'center'
-        size_hint_y: None
-        height: self.texture_size[1]
-        padding_y: 15
-        theme_text_color: "Custom"
-        text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.98}
-        bold: True
-
-    MDCard:
-        id: bgcard
-        size_hint: None, None
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        elevation: 1
-        orientation: 'vertical'
-        md_bg_color: "#ededed"
-        style: "elevated"
-        radius: [30, 30, 30, 30]
-
-        GridLayout:
-            id: timeselection_gridlayout
-            cols: 1
-            rows: 4
-            size_hint: 1, 1
-            pos_hint: {"center_x": 0.5, "y": 1.0}
-            spacing: 25
-            padding: 25
-
-            MDLabel:
-                id: timeselection_topiclabel
-                text: "Do kdy chcete klíč vypůjčit?"
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                font_size: 32
-                size_hint: 1, 0.4
-                halign: "center"
-                valign: "top"
-                pos_hint: {"top": 1.0}
-                bold: True
-                multiline: False
-            
-            # vyber a zobrazeni data
-            GridLayout:
-                id: datepicker_layout
-                cols: 2
-                rows: 1
-                size_hint: 1, 0.2
-                pos_hint: {"center_x": 0.5}
-                spacing: 50
-
-                MDRoundFlatButton:
-                    id: datepicker_button
-                    text: "Vybrat datum"
-                    text_color: "#FFFFFF"
-                    md_bg_color: "#005963"
-                    line_color: "#005963"
-                    font_size: 24
-                    size_hint: 0.5, 0.5
-                    on_release: app.show_date_picker()
-
-                MDLabel:
-                    id: datepicker_label
-                    text: "Nebylo vybráno žádné datum"
-                    font_size: 24
-                    theme_text_color: "Custom"
-                    text_color: 0.0, .35, .39, 1
-                    size_hint: 0.5, 0.5
-                    valign: "bottom"
-
-            # vyber a zobrazeni casu
-            GridLayout:
-                id: timepicker_layout
-                cols: 2
-                rows: 1
-                size_hint: 1, 0.2
-                pos_hint: {"center_x": 0.5}
-                spacing: 50
-
-                MDRoundFlatButton:
-                    id: timepicker_button
-                    text: "Vybrat čas"
-                    text_color: "#FFFFFF"
-                    md_bg_color: "#005963"
-                    line_color: "#005963"
-                    font_size: 24
-                    size_hint: 0.5, 0.5
-                    on_release: app.show_time_picker()
-
-                MDLabel:
-                    id: timepicker_label
-                    text: "Nebyl vybrán žádný čas"
-                    font_size: 24
-                    theme_text_color: "Custom"
-                    text_color: 0.0, .35, .39, 1
-                    size_hint: 0.5, 0.5
-                    valign: "bottom"
-
-            MDRoundFlatButton:
-                id: timeselection_confirmbutton
-                text: "Potvrdit čas"
-                text_color: "#FFFFFF"
-                md_bg_color: "#005963"
-                line_color: "#005963"
-                font_size: 24
-                size_hint: 1, 0.5
-                pos_hint: {"center_X": 0.75}
-                on_release: root.confirm_timestamps()
 
 
 <ReviewScreen>
@@ -1119,140 +942,194 @@
         id: background
         source: 'images/cpto3.jpg'
         size_hint: None, None
+        width: root.width
+        height: root.height
         allow_stretch: True
         keep_ratio: False
 
-    MDLabel:
-        id: appname_label4
-        text: "Rekapitulace"
-        font_size: 40
-        halign: 'center'
-        size_hint_y: None
-        height: self.texture_size[1]
-        padding_y: 15
-        theme_text_color: "Custom"
-        text_color: 0.0, .35, .39, 1
-        pos_hint: {'top': 0.98}
-        bold: True
-
-    MDCard:
-        id: bgcard
+    GridLayout:
+        id: main_screen_layout
+        cols: 3
+        rows: 3
         size_hint: None, None
-        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-        elevation: 1
-        orientation: 'vertical'
-        md_bg_color: "#ededed"
-        style: "elevated"
-        radius: [30, 30, 30, 30]
+        width: root.width
+        height: root.height
+
+        Widget:
+            id: blank_widget_1
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        MDLabel:
+            id: appname_label
+            text: "Rekapitulace"
+            font_size: int(root.height * 0.05)
+            multiline: False
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "center"
+
+        Widget:
+            id: blank_widget_2
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        Widget:
+            id: blank_widget_3
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
+
+        MDCard:
+            id: bgcard
+            size_hint: None, None
+            elevation: 1
+            md_bg_color: "#ededed"
+            style: "elevated"
+            color: 0, 0, 0, 0
+            #radius: [30, 30, 30, 30]
+            width: root.width * 0.8
+            height: root.height * 0.8
+
+            GridLayout:
+                id: inside_layout
+                cols: 1
+                rows: 5
+                size_hint: None, None
+                width: bgcard.width
+                height: bgcard.height
+                padding: bgcard.width * 0.075, bgcard.height * 0.075, bgcard.width * 0.075, bgcard.height * 0.075
+
+                MDLabel:
+                    id: rev_lab_borrower
+                    text: "Komu půjčuje: "
+                    theme_text_color: "Custom"
+                    text_color: 0.0, .35, .39, 1
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.175
+                    font_size: self.height * 0.25
+                    valign: "center"
+
+                # jaký klíč půjčuje
+                MDLabel:
+                    id: rev_lab_key
+                    text: "Klíč: "
+                    theme_text_color: "Custom"
+                    text_color: 0.0, .35, .39, 1
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.175
+                    font_size: self.height * 0.25
+                    valign: "center"
+
+                # kvůli které místnosti
+                MDLabel:
+                    id: rev_lab_room
+                    text: "Místnost: "
+                    theme_text_color: "Custom"
+                    text_color: 0.0, .35, .39, 1
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.175
+                    font_size: self.height * 0.25
+                    valign: "center"
+
+                # na jak dlouho jej půjčuje
+                MDLabel:
+                    id: rev_lab_starttime
+                    text: "Kdy: "
+                    theme_text_color: "Custom"
+                    text_color: 0.0, .35, .39, 1
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.175
+                    font_size: self.height * 0.25
+                    valign: "center"
+    
+                GridLayout:
+                    rows: 1
+                    cols: 2
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.1
+                    spacing: 20
+
+                    MDRectangleFlatButton:
+                        id: rev_refresh_button
+                        text: "Aktualizovat"
+                        text_color: "#FFFFFF"
+                        md_bg_color: "#005963"
+                        line_color: "#005963"
+                        size_hint: None, None
+                        width: bgcard.width * 0.4
+                        height: bgcard.height * 0.2
+                        font_size: bgcard.height * 0.2 * 0.5
+                        on_release: app.update_review_information()
+
+                    MDRectangleFlatButton:
+                        id: rev_confirm_button
+                        text: "Dokončit"
+                        disabled: True
+                        text_color: "#FFFFFF"
+                        md_bg_color: "#005963"
+                        line_color: "#005963"
+                        size_hint: None, None
+                        width: bgcard.width * 0.4
+                        height: bgcard.height * 0.2
+                        font_size: bgcard.height * 0.2 * 0.5
+                        on_release: app.complete_borrowing_session()
+
+        Widget:
+            id: blank_widget_4
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
 
         GridLayout:
-            id: review_layout
+            rows: 1
             cols: 1
-            rows: 5
-            size_hint: 1, 1
-            row_default_height: 100
-            row_force_default: True
-            #spacing: 30
+            width: root.width * 0.1
+            height: root.height * 0.1
+            padding: bgcard.width * 0.025, bgcard.height * 0.025, bgcard.width * 0.025, bgcard.height * 0.025
 
-            # MDLabel:
-            #     id: rev_topiclabel
-            #     text: "Rekapitulace"
-            #     theme_text_color: "Custom"
-            #     text_color: 0.0, .35, .39, 1
-            #     font_size: 32
-            #     size_hint: 1, 0.4
-            #     halign: "center"
-            #     valign: "top"
-            #     pos_hint: {"top": 1.0}
-            #     bold: True
-            #     multiline: False
-
-            # kdo půjčuje klíč
-            # MDLabel:
-            #     id: rev_lab_lender
-            #     text: "Oprávněná osoba: "
-            #     font_size: 24
-            #     theme_text_color: "Custom"
-            #     text_color: 0.0, .35, .39, 1
-            #     size_hint: 0.5, 0.5
-            #     valign: "center"
-
-            # komu ho půjčuje
-            MDLabel:
-                id: rev_lab_borrower
-                text: "Komu půjčuje: "
-                font_size: 32
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
-                
-            # jaký klíč půjčuje
-            MDLabel:
-                id: rev_lab_key
-                text: "Klíč: "
-                font_size: 32
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
-
-            # kvůli které místnosti
-            MDLabel:
-                id: rev_lab_room
-                text: "Místnost: "
-                font_size: 32
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
-
-            # na jak dlouho jej půjčuje
-            MDLabel:
-                id: rev_lab_starttime
-                text: "Kdy: "
-                font_size: 32
-                theme_text_color: "Custom"
-                text_color: 0.0, .35, .39, 1
-                size_hint: 0.5, 0.5
-                valign: "center"
-
-            # MDLabel:
-            #     id: rev_lab_endtime
-            #     text: "Do: "
-            #     font_size: 24
-            #     theme_text_color: "Custom"
-            #     text_color: 0.0, .35, .39, 1
-            #     size_hint: 0.5, 0.5
-            #     valign: "center"
-
-            # tlačítka
-            GridLayout:
-                rows: 1
-                cols: 2
+            MDRectangleFlatButton:
+                id: storno_button
+                text: "<<<"
+                text_color: "#FFFFFF"
+                md_bg_color: "#d20019"
+                line_color: "#d20019"
+                on_release: app.StornoButton()
                 size_hint: 1, 1
-                row_default_height: 50
-                row_force_default: True
-                spacing: 50
+                width: root.width * 0.05
+                height: root.height * 0.05
+                font_size: root.height * 0.025
 
-                MDRoundFlatButton:
-                    id: timeselection_confirmbutton
-                    text: "Aktualizovat"
-                    text_color: "#FFFFFF"
-                    md_bg_color: "#005963"
-                    line_color: "#005963"
-                    font_size: 24
-                    size_hint: 0.5, 0.5
-                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                    on_release: app.update_review_information()
+        MDLabel:
+            id: clock
+            text: "??:??"
+            font_size: int(root.height * 0.05)
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "right"
 
-                MDRoundFlatButton:
-                    id: timeselection_confirmbutton
-                    text: "Dokončit"
-                    text_color: "#FFFFFF"
-                    md_bg_color: "#005963"
-                    line_color: "#005963"
-                    font_size: 24
-                    size_hint: 0.5, 0.5
-                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                    on_release: app.complete_borrowing_session()
+        Widget:
+            id: blank_widget_5
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1

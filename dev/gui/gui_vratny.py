@@ -215,49 +215,6 @@ class RoomSelectionScreen(Screen):
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
         self.ids.room_widget_scrollview.add_widget(key_widget)
 
-
-class KeySelectionScreen(Screen):
-
-    def __init__(self, **kwargs):
-        super(KeySelectionScreen, self).__init__(**kwargs)
-        self.SearchKeyTextInputFunction()  # initial search
-
-    def on_enter(self, *args):
-        MDApp.get_running_app().on_resize()
-        return super().on_enter(*args)
-
-    def on_leave(self, *args):
-        MDApp.get_running_app().on_resize()
-        return super().on_leave(*args)
-
-    def SearchKeyTextInputFunction(self):
-
-        # find all relevant examples
-        selected_room = MDApp.get_running_app().get_selected_room()
-        selected_room = MDApp.get_running_app().get_room_by_name_fraction(fraction=selected_room)
-        searched_expression = str(self.ids.keysearch.text)
-        available_keys = []
-        if selected_room is not None and len(selected_room) >= 1:
-            available_keys = selected_room[-1].keys
-
-        # undisplay old rooms
-        self.ids.key_widget_scrollview.clear_widgets()
-
-        # some function, that adds widget for each match
-        number_of_displayed_rooms = 0
-        for item in available_keys:
-            if number_of_displayed_rooms >= 9:
-                break
-            number_of_displayed_rooms += 1
-            self._add_keywidget(item.registration_number)
-
-    def _add_keywidget(self, data):
-        key_widget = SearchResultWidget()
-        key_widget.ids.searchresultwidget_label_content.text = str(data)
-        key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
-        self.ids.key_widget_scrollview.add_widget(key_widget)
-
-
 class PersonSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -323,6 +280,7 @@ class ReviewScreen(Screen):
         super(ReviewScreen, self).__init__(**kwargs)
 
     def on_enter(self, *args):
+        MDApp.get_running_app().update_review_information()
         MDApp.get_running_app().on_resize()
         return super().on_enter(*args)
 
@@ -377,7 +335,19 @@ class VratnyApp(MDApp):
                     "current_screen.ids.borrowings_widget_scrollview.width=(current_screen.ids.bgcard.width * 0.8)",
                     "current_screen.ids.borrowings_widget_scrollview.height=(current_screen.ids.bgcard.height * 0.7)",
                     "current_screen.ids.storno_button.width=(current_screen.ids.background.width * 0.05)",
-                    "current_screen.ids.storno_button.height=(current_screen.ids.background.height * 0.05)"]
+                    "current_screen.ids.storno_button.height=(current_screen.ids.background.height * 0.05)",
+                    "current_screen.ids.rev_lab_borrower.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.rev_lab_borrower.height=(current_screen.ids.bgcard.height * 0.175)",
+                    "current_screen.ids.rev_lab_key.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.rev_lab_key.height=(current_screen.ids.bgcard.height * 0.175)",
+                    "current_screen.ids.rev_lab_room.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.rev_lab_room.height=(current_screen.ids.bgcard.height * 0.175)",
+                    "current_screen.ids.rev_lab_starttime.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.rev_lab_starttime.height=(current_screen.ids.bgcard.height * 0.175)",
+                    "current_screen.ids.rev_refresh_button.width=(current_screen.ids.bgcard.width * 0.4)",
+                    "current_screen.ids.rev_refresh_button.height=(current_screen.ids.bgcard.height * 0.2)",
+                    "current_screen.ids.rev_confirm_button.width=(current_screen.ids.bgcard.width * 0.4)",
+                    "current_screen.ids.rev_confirm_button.height=(current_screen.ids.bgcard.height * 0.2)"]
 
         for line in commands:
             try:
@@ -407,8 +377,8 @@ class VratnyApp(MDApp):
     def get_room_by_name_fraction(self, fraction, floor=None):
         return self.db.get_room_by_name_fraction(fraction, floor)
 
-    def add_borrowing(self, key_id, room_id, borrower_id):
-        self.db.add_borrowing(key_id, room_id, borrower_id)
+    def add_borrowing(self, key_id, borrower_id):
+        self.db.add_borrowing(key_id, borrower_id)
 
     def return_key(self, borrowing_id):
         self.db.return_key(borrowing_id)
@@ -521,8 +491,8 @@ class VratnyApp(MDApp):
         sc_mngr = ScreenManager(transition=NoTransition())
 
         Window.fullscreen = False
-        Window.size = (1920, 1000)
-        #Window.maximize()
+        #Window.size = (1920, 1000)
+        Window.maximize()
         Window.bind(on_resize=self.on_resize)
 
         #Config.set('graphics', 'width', '1920')
@@ -539,45 +509,50 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(BorrowingSelectionScreen(name="borrowingselection"))
         sc_mngr.add_widget(FloorSelectionScreen(name="floorselection"))
         sc_mngr.add_widget(RoomSelectionScreen(name="roomselection"))
-        sc_mngr.add_widget(KeySelectionScreen(name="keyselection"))
         sc_mngr.add_widget(PersonSelectionScreen(name="personselection"))
-        sc_mngr.add_widget(TimeSelectionScreen(name="timeselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
 
         self.on_resize()
         return sc_mngr
 
     def update_review_information(self):
-        self.update_starttime()
-        # sc_mngr.get_screen("review").ids.rev_lab_lender.text = str("Oprávněná osoba: " + self.selected_lender)
-        sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.get_full_name()}"
-        if self.selected_key is not None:
-            sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: {self.selected_key.registration_number}"
-        else:
-            sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: NEBYL NALEZEN ŽÁDNÝ DOSTUPNÝ KLÍČ"
-        sc_mngr.get_screen("review").ids.rev_lab_room.text = f"Místnost: {self.selected_room.name}"
-        sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(
-            f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} "
-            f"{self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
-        # sc_mngr.get_screen("review").ids.rev_lab_endtime.text = str("Do: " + str(self.selected_endtime_time) +
-        #                                                             str(self.selected_endtime_date))
+        if sc_mngr.current == "review":
+            try:
+                ready = True
+
+                self.update_starttime()
+
+                if self.selected_person is None:
+                    ready = False
+                else:
+                    sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.get_full_name()}"
+                
+                
+                if self.selected_key is not None:
+                    sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: {self.selected_key.registration_number}"
+                else:
+                    ready = False
+                    sc_mngr.get_screen("review").ids.rev_lab_key.text = f"Klíč: NEBYL NALEZEN ŽÁDNÝ DOSTUPNÝ KLÍČ"
+                
+                if self.selected_room is not None:
+                    sc_mngr.get_screen("review").ids.rev_lab_room.text = f"Místnost: {self.selected_room.name}"
+                else:
+                    ready = False
+                
+                sc_mngr.get_screen("review").ids.rev_lab_starttime.text = str(
+                    f"Kdy: {self.selected_starttime.hour}:{self.selected_starttime.minute:02d} "
+                    f"{self.selected_starttime.day}. {self.selected_starttime.month}. {self.selected_starttime.year}")
+                                 
+                if ready:
+                    sc_mngr.get_screen("review").ids.rev_confirm_button.disabled = False
+                else:
+                    sc_mngr.get_screen("review").ids.rev_confirm_button.disabled = True
+
+            except:
+                pass
 
     def complete_borrowing_session(self):
-        room = self.get_selected_room()
-        room = self.get_room_by_name_fraction(fraction=room)[-1]
-        room_id = room.id
-
-        room_keys = room.keys
-        key_id = None
-        for item in room_keys:
-            if str(item.registration_number) == str(self.selected_key):
-                key_id = item.id
-                break
-
-        borrower = self.get_borrowers_by_name_fraction(fraction=self.selected_person)[-1]
-        borrower_id = borrower.id
-
-        self.add_borrowing(key_id, room_id, borrower_id)
+        self.add_borrowing(self.selected_key.id, self.selected_person.id)
 
         self.selected_lender = ""
         self.selected_floor = None
