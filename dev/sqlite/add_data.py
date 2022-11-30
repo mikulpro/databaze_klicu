@@ -92,20 +92,20 @@ session = Session(engine)
 # room8 = session.query(Room).filter(Room.id == 80).one()
 # room9 = session.query(Room).filter(Room.id == 34).one()
 # room10 = session.query(Room).filter(Room.id == 200).one()
-rooms = session.query(Room).all()
-
-registration_number = 252514291
-for room in rooms:
-    key = Key(
-        registration_number= registration_number,
-        key_class=0,
-        room=room
-    )
-    session.add(key)
-    print(key.registration_number)
-    registration_number += 1
-
-session.commit()
+# rooms = session.query(Room).all()
+#
+# registration_number = 252514291
+# for room in rooms:
+#     key = Key(
+#         registration_number=registration_number,
+#         key_class=0,
+#         room=room
+#     )
+#     session.add(key)
+#     print(key.registration_number)
+#     registration_number += 1
+#
+# session.commit()
 #
 # key1 = Key(registration_number=25251429, key_class=0, rooms=[room1])
 # session.add(key1)

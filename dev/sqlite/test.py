@@ -3,7 +3,12 @@ from db_interface import Db
 
 db = Db()
 
-a = db.get_room_by_name_fraction("14", 7)
+a = db.get_all_rooms()
 
+keys = []
 for i in a:
-    print(i.name)
+    keys.append(i.get_ordinary_key())
+    if i.get_ordinary_key() is None:
+        print("Velký problém")
+
+
