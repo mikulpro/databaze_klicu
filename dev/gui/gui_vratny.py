@@ -16,6 +16,7 @@ from kivymd.uix.datatables import MDDataTable
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.button import MDRoundFlatIconButton
 from kivymd.uix.pickers import MDDatePicker, MDTimePicker
+from kivy.uix.scrollview import ScrollView
 
 # kivy basic objects
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
@@ -113,20 +114,21 @@ class BorrowingSelectionScreen(Screen):
     def SearchBorrowingTextInputFunction(self):
         borrowings = MDApp.get_running_app().get_ongoing_borrowings()
 
-        # undisplaying old floors
+        # undisplaying old
         self.ids.borrowings_widget_scrollview.clear_widgets()
 
-        # displaying new floors
+        # displaying new
         number_of_displayed_borrowings = 0
         for b in borrowings:
-            if number_of_displayed_borrowings == 9:
+            if number_of_displayed_borrowings >= 500:
                 break
-            number_of_displayed_borrowings += 1
-            self._add_borrowingwidget(b)
+            if self.ids.borrowingsearch.text in (str(b.authorization.person.get_full_name()) + "   " + str(b.key.room.name) + "   " +  str(b.borrowed)):
+                number_of_displayed_borrowings += 1
+                self._add_borrowingwidget(b)
 
     def _add_borrowingwidget(self, data):
         borrowing_widget = SearchResultWidget()
-        borrowing_widget.ids.searchresultwidget_label_content.text = str(data.authorization.person.get_full_name()) + " " + str(data.key.room.name)
+        borrowing_widget.ids.searchresultwidget_label_content.text = str(data.authorization.person.get_full_name()) + "   " + str(data.key.room.name) + "   " +  str(data.borrowed)
         borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
         borrowing_widget.data = data
         self.ids.borrowings_widget_scrollview.add_widget(borrowing_widget)
@@ -344,14 +346,44 @@ class VratnyApp(MDApp):
         self.logger = logger
 
     def on_start(self):
-        Clock.schedule_interval(self.update_label, 2)
+        Clock.schedule_interval(self.update_label, 1)
 
     def update_label(self, *args):
-        if "clock" in sc_mngr.current_screen.ids:
+        try:
             sc_mngr.current_screen.ids.clock.text = f"{datetime.now().hour}:{datetime.now().minute:02d}"
+        except:
+            pass
+
+        self.on_resize()
+
 
     def on_resize(self, *args):
-        return
+        current_screen = sc_mngr.current_screen
+        current = sc_mngr.current
+
+        commands = ["current_screen.ids.user.width=(current_screen.ids.bgcard.width * 0.8)", 
+                    "current_screen.ids.user.height=(current_screen.ids.bgcard.height * 0.2)",
+                    "current_screen.ids.password.width=(current_screen.ids.bgcard.width * 0.8)", 
+                    "current_screen.ids.password.height=(current_screen.ids.bgcard.height * 0.2)",                    
+                    "current_screen.ids.login_button.width=(current_screen.ids.bgcard.width * 0.8)", 
+                    "current_screen.ids.login_button.height=(current_screen.ids.bgcard.height * 0.2)",
+                    "current_screen.ids.pujcit_button.width=(current_screen.ids.bgcard.width * 0.8)", 
+                    "current_screen.ids.pujcit_button.height=(current_screen.ids.bgcard.height * 0.35)",
+                    "current_screen.ids.vrait_button.width=current_screen.ids.pujcit_button.width", 
+                    "current_screen.ids.vrait_button.height=current_screen.ids.pujcit_button.height",
+                    "current_screen.ids.borrowingsearch.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.borrowingsearch.height=(current_screen.ids.bgcard.height * 0.1)",
+                    "current_screen.ids.borrowings_widget_scrollview.width=(current_screen.ids.bgcard.width * 0.8)",
+                    "current_screen.ids.borrowings_widget_scrollview.height=(current_screen.ids.bgcard.height * 0.7)",
+                    "current_screen.ids.storno_button.width=(current_screen.ids.background.width * 0.05)",
+                    "current_screen.ids.storno_button.height=(current_screen.ids.background.height * 0.05)"]
+
+        for line in commands:
+            try:
+                exec(line)
+            except:
+                pass
+
  
     def update_starttime(self):
         self.selected_starttime = datetime.now()
@@ -444,6 +476,17 @@ class VratnyApp(MDApp):
             sc_mngr.current = "review"
             self.update_review_information()
 
+    def StornoButton(self, *args):
+        self.selected_lender = ""
+        self.selected_floor = None
+        self.selected_room = None
+        self.selected_key = None
+        self.selected_person = None
+        self.selected_starttime = None
+        self.selected_endtime_time = None
+        self.selected_endtime_date = None
+        sc_mngr.current = "actionselection"
+
     def get_selected_floor(self):
         return self.selected_floor
 
@@ -477,11 +520,12 @@ class VratnyApp(MDApp):
         sc_mngr = ScreenManager(transition=NoTransition())
 
         Window.fullscreen = False
-        Window.maximize()
+        Window.size = (1920, 1000)
+        #Window.maximize()
         Window.bind(on_resize=self.on_resize)
 
-        Config.set('graphics', 'width', '1920')
-        Config.set('graphics', 'height', '1080')
+        #Config.set('graphics', 'width', '1920')
+        #Config.set('graphics', 'height', '1080')
 
         filename = 'style_vratny.kv'
         filename = resource_find(filename) or filename
@@ -499,6 +543,7 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(TimeSelectionScreen(name="timeselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
 
+        self.on_resize()
         return sc_mngr
 
     def update_review_information(self):
