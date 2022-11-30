@@ -225,6 +225,7 @@ class PersonSelectionScreen(Screen):
 
     def on_enter(self, *args):
         MDApp.get_running_app().on_resize()
+        self.PersonSearchTextInputFunction()
         return super().on_enter(*args)
 
     def on_leave(self, *args):
@@ -233,19 +234,23 @@ class PersonSelectionScreen(Screen):
 
     def PersonSearchTextInputFunction(self):
 
-        # find all relevant examples
-        searched_expression = str(self.ids.personsearch.text)
-        if len(searched_expression) >= 1:
-            list_of_matches_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
-        else:
-            list_of_matches_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction="")
+        list_of_matches = []
+        if MDApp.get_running_app().selected_room is not None:
+            authorizations = MDApp.get_running_app().get_prioritized_authorizations_for_room(MDApp.get_running_app().selected_room.id)
+
+            # find all relevant examples
+            searched_expression = str(self.ids.personsearch.text)
+
+            for authorization in authorizations:
+                if searched_expression in str(authorization.person.get_full_name()):
+                    list_of_matches.append(authorization)
 
         # undisplay old rooms
         self.ids.person_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
         number_of_displayed_ppl = 0
-        for item in list_of_matches_ppl:
+        for item in list_of_matches:
             if number_of_displayed_ppl >= 500:
                 break
             else:
@@ -255,7 +260,7 @@ class PersonSelectionScreen(Screen):
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
         person_widget.data = data
-        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.firstname)} {str(data.surname)} (pracoviště: {str(data.workplace) if data.workplace else ''})")
+        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.person.firstname)} {str(data.person.surname)} (pracoviště: {str(data.person.workplace) if data.person.workplace else ''})")
         person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
         self.ids.person_widget_scrollview.add_widget(person_widget)
 
@@ -430,7 +435,7 @@ class VratnyApp(MDApp):
     def get_authorizations_for_room(self, room_id):
         return self.db.get_valid_authorizations_for_room(room_id)
 
-    def get_primary_authorizations_for_room(self, room_id):
+    def get_prioritized_authorizations_for_room(self, room_id):
         return self.db.get_prioritized_authorizations_for_room(room_id)
 
     def get_persons_by_name_fraction(self, fraction):
@@ -439,8 +444,8 @@ class VratnyApp(MDApp):
     def get_room_by_name_fraction(self, fraction, floor=None):
         return self.db.get_room_by_name_fraction(fraction, floor)
 
-    def add_borrowing(self, key_id, borrower_id):
-        self.db.add_borrowing(key_id, borrower_id)
+    def add_borrowing(self, key_id, authorization_id):
+        self.db.add_borrowing(key_id, authorization_id)
 
     def return_key(self, borrowing_id):
         self.db.return_key(borrowing_id)
@@ -596,7 +601,7 @@ class VratnyApp(MDApp):
                 if self.selected_person is None:
                     ready = False
                 else:
-                    sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.get_full_name()}"
+                    sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.person.get_full_name()}"
                 
                 
                 if self.selected_key is not None:
