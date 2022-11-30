@@ -343,6 +343,13 @@ class VratnyApp(MDApp):
         self.db = database_object
         self.logger = logger
 
+    def on_start(self):
+        Clock.schedule_interval(self.update_label, 2)
+
+    def update_label(self, *args):
+        if "clock" in sc_mngr.current_screen.ids:
+            sc_mngr.current_screen.ids.clock.text = f"{datetime.now().hour}:{datetime.now().minute:02d}"
+
     def on_resize(self, *args):
         return
  
@@ -492,7 +499,6 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(TimeSelectionScreen(name="timeselection"))
         sc_mngr.add_widget(ReviewScreen(name="review"))
 
-        self.on_resize()
         return sc_mngr
 
     def update_review_information(self):
