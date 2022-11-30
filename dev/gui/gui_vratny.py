@@ -425,10 +425,10 @@ class VratnyApp(MDApp):
         return self.db.get_rooms_by_floor(floor)
 
     def get_authorizations_for_room(self, room_id):
-        return self.db.get_authorizations_for_room(room_id)
+        return self.db.get_valid_authorizations_for_room(room_id)
 
     def get_primary_authorizations_for_room(self, room_id):
-        return self.db.get_primary_authorizations_for_room(room_id)
+        return self.db.get_prioritized_authorizations_for_room(room_id)
 
     def get_persons_by_name_fraction(self, fraction):
         return self.db.get_persons_by_name_fraction(fraction)

@@ -11,9 +11,11 @@ from dev.sqlite.utils import hash_func
 Db:
     ALL PURPOSE
     get_all_floors(self) -> list[int]
+    get_all_rooms(self) -> list[Room]
     get_rooms_by_floor(self, floor: int) -> list[Room]
+    get_all_keys(self) -> list[Key]
     get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True): bool -> list[Key]
-    get_authorizations_for_room(self, room_id: int)-> list[Authorization]
+    get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
     get_primary_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
     KEY BORROWING
@@ -32,7 +34,15 @@ Db:
     add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int)
     invalidate_authorization(authorization_id: int) -> None
     invalidate_authorization_obj(authorization: Authorization) -> None
-    
+        add_person(...)
+        add_authorization(...)
+        update_person(...)
+        ?update_authorization(...)
+        ?add_key(...)
+        ?update_key(..)
+        ?add_room(...)
+        ?update_room(...)
+            
     get_authorizations_by_name_fraction(self, fraction: str)
     get_persons_by_name_fraction(self, fraction: str) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, fraction: str, floor=None: int) -> list[Room]
@@ -59,9 +69,15 @@ class Db:
         result = self.session.query(Room.floor).distinct(Room.floor).order_by(Room.floor).all()
         return [i[0] for i in result]
 
+    def get_all_rooms(self):
+        return self.session.query(Room).all()
+
     def get_rooms_by_floor(self, floor):
         rooms = self.session.query(Room).filter(Room.floor == floor).order_by(Room.borrowings_count.desc()).all()
         return rooms
+
+    def get_all_keys(self):
+        return self.session.query(Key).all()
 
     def get_borrowable_keys_by_floor(self, floor, only_ordinary=True):
         q = self.session.query(Key).\
@@ -69,18 +85,18 @@ class Db:
             join(Room).filter(Room.floor == floor).\
             order_by(Room.borrowings_count.desc())
         if only_ordinary:
-            q.filter(Key.key_class == 0)
+            q = q.filter(Key.key_class == 0)
         keys = q.all()
         return keys
 
-    def get_authorizations_for_room(self, room_id):
+    def get_valid_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
         ).order_by(Authorization.borrowings_count.desc()).all()
         return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
 
-    def get_primary_authorizations_for_room(self, room_id):
-        authorizations = self.get_authorizations_for_room(room_id)
+    def get_prioritized_authorizations_for_room(self, room_id):
+        authorizations = self.get_valid_authorizations_for_room(room_id)
         # přidat filtrování na základě origin
         return authorizations
 
@@ -162,12 +178,12 @@ class Db:
         fractions = fraction.split(" ")
 
         if len(fractions) == 1:
-            result = self.session.query(Authorization).join(AuthorizedPerson).filter(
+            result_q = self.session.query(Authorization).join(AuthorizedPerson).filter(
                 or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                     AuthorizedPerson.surname.like(f"{fractions[0]}%")
                     ))
         elif len(fractions) == 2:
-            result = self.session.query(Authorization).join(AuthorizedPerson).filter(
+            result_q = self.session.query(Authorization).join(AuthorizedPerson).filter(
                 or_(
                     and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                          AuthorizedPerson.surname.like(f"{fractions[1]}%"),
@@ -179,18 +195,18 @@ class Db:
         else:
             return []
 
-        return result.all()
+        return result_q.order_by(AuthorizedPerson.surname).all()
 
     def get_persons_by_name_fraction(self, fraction):
         fractions = fraction.split(" ")
 
         if len(fractions) == 1:
-            result = self.session.query(AuthorizedPerson).filter(
+            result_q = self.session.query(AuthorizedPerson).filter(
                 or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                     AuthorizedPerson.surname.like(f"{fractions[0]}%")
                     ))
         elif len(fractions) == 2:
-            result = self.session.query(AuthorizedPerson).filter(
+            result_q = self.session.query(AuthorizedPerson).filter(
                 or_(
                     and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
                          AuthorizedPerson.surname.like(f"{fractions[1]}%"),
@@ -202,10 +218,10 @@ class Db:
         else:
             return []
 
-        return result.all()
+        return result_q.order_by(AuthorizedPerson.surname).all()
 
     def get_room_by_name_fraction(self, fraction, floor=None):
+        rooms_q = self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).order_by(Room.name)
         if floor:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%"), Room.floor == floor).all()
-        else:
-            return self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).all()
+            rooms_q = rooms_q.filter(Room.floor == floor)
+        return rooms_q.all()

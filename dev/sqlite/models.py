@@ -160,6 +160,12 @@ class Authorization(Base):
     def invalidate(self):
         self.expiration = datetime.datetime.utcnow()
 
+    def is_valid(self):
+        if self.expiration > datetime.datetime.utcnow():
+            return True
+        else:
+            return False
+
     def __repr__(self):
         return f"Authorization(id={self.id}, person_id={self.person_id}, room_id={self.room_id}, " \
                f"created={self.created}, expiration={self.expiration}, origin_id={self.origin_id}, " \
