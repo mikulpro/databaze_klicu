@@ -70,6 +70,11 @@ class Room(Base):
     def get_ordinary_key(self):
         for key in self.keys:
             if key.key_class == 0:
+                return key
+
+    def get_borrowable_key(self):
+        for key in self.keys:
+            if key.key_class == 0:
                 if not key.is_borrowed():
                     return key
 

@@ -7,8 +7,8 @@ a = db.get_all_rooms()
 
 keys = []
 for i in a:
-    keys.append(i.get_ordinary_key())
     if i.get_ordinary_key() is None:
-        print("Velký problém")
+        keys.append(i)
 
+print("Problémy:" + str(keys))
 
