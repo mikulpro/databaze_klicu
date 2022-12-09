@@ -14,7 +14,8 @@ Db:
     get_all_rooms(self) -> list[Room]
     get_rooms_by_floor(self, floor: int) -> list[Room]
     get_all_keys(self) -> list[Key]
-    get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True): bool -> list[Key]
+    get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
+    get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room] 
     get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
     get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
@@ -45,8 +46,8 @@ Db:
     get_authorizations_by_name_fraction(self, fraction: str) -> list[Authorization]
     get_persons_by_name_fraction(self, fraction: str) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, fraction: str, floor=None: int) -> list[Room]
-    
-    
+    get_all_authorizations(self) -> list[Authorization]
+    get_all_authorized_persons(self) -> list[AuthorizedPerson]
 """
 
 
@@ -88,6 +89,17 @@ class Db:
             q = q.filter(Key.key_class == 0)
         keys = q.all()
         return keys
+
+    def get_available_rooms_by_floor(self, floor, only_ordinary=True):
+        q = self.session.query(Room).\
+            filter(Room.floor==floor).join(Key). \
+            except_(self.session.query(Room).join(Key).join(Borrowing).filter(Borrowing.returned == None)).\
+            order_by(Room.borrowings_count.desc())
+        if only_ordinary:
+            q = q.filter(Key.key_class == 0)
+        rooms = q.all()
+        return rooms
+
 
     def get_valid_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
@@ -246,3 +258,9 @@ class Db:
         if floor:
             rooms_q = rooms_q.filter(Room.floor == floor)
         return rooms_q.all()
+
+    def get_all_authorizations(self):
+        return self.session.query(Authorization).filter(Authorization.origin_id==1).all()
+    def get_all_authorized_persons(self):
+        return self.session.query(AuthorizedPerson).all()
+
