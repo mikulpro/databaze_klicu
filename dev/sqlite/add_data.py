@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
 import datetime
+import random
 
 engine = create_engine("sqlite:///db.sqlite", echo=True, future=True)
 Base.metadata.create_all(engine)
@@ -142,4 +143,18 @@ session = Session(engine)
 # session.add(authorization3)
 # authorization4 = Authorization(borrower_id=39, expiration=(datetime.datetime.utcnow() + datetime.timedelta(days=100)), rooms=[room8])
 # session.add(authorization4)
+# session.commit()
+
+# persons = session.query(AuthorizedPerson).all()
+# rooms = session.query(Room).all()
+# for person in persons:
+#     for i in range(random.randint(1, 10)):
+#         room = random.choice(rooms)
+#         a = Authorization(person=person, room=room, expiration=(datetime.datetime.utcnow() + datetime.timedelta(days=100)), origin_id=1)
+#         session.add(a)
+#
+# authorizations = session.query(Authorization).all()
+# for i in authorizations:
+#     print(i)
+#
 # session.commit()
