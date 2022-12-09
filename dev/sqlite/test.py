@@ -4,9 +4,10 @@ from db_interface import Db
 db = Db()
 
 #a = db.update_person(301, surname="Novák1")
-b = db.get_persons_by_name_fraction("Jan Novák")
+#b = db.get_persons_by_name_fraction("Jan Novák")
 c = db.get_available_rooms_by_floor(7)
-print(c)
+for i in c:
+    print(i.name)
 
 #print(b)
 # keys = []

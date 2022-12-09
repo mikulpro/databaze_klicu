@@ -1,5 +1,3 @@
-import datetime
-
 from sqlalchemy import create_engine, or_, and_, update
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
@@ -15,7 +13,8 @@ Db:
     get_rooms_by_floor(self, floor: int) -> list[Room]
     get_all_keys(self) -> list[Key]
     get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
-    get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room] 
+    get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room]
+    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary=True: bool) -> dict{str: List[Room]} 
     get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
     get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
@@ -91,15 +90,28 @@ class Db:
         return keys
 
     def get_available_rooms_by_floor(self, floor, only_ordinary=True):
+        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing).filter(Borrowing.returned == None)
         q = self.session.query(Room).\
-            filter(Room.floor==floor).join(Key). \
-            except_(self.session.query(Room).join(Key).join(Borrowing).filter(Borrowing.returned == None)).\
+            filter(Room.floor==floor). \
+            except_(q_unavailable_rooms).join(Key).\
             order_by(Room.borrowings_count.desc())
         if only_ordinary:
             q = q.filter(Key.key_class == 0)
         rooms = q.all()
         return rooms
 
+
+    def get_rooms_availability_dict_by_floor(self, floor, only_ordinary=True):
+        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing).filter(Borrowing.returned == None)
+        q_available_rooms = self.session.query(Room). \
+            filter(Room.floor == floor). \
+            except_(q_unavailable_rooms).join(Key). \
+            order_by(Room.borrowings_count.desc())
+        if only_ordinary:
+            q_available_rooms = q_available_rooms.filter(Key.key_class == 0)
+        available_rooms = q_available_rooms.all()
+        unavailable_rooms = q_unavailable_rooms.all()
+        return {"available": available_rooms, "unavailable": unavailable_rooms}
 
     def get_valid_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
