@@ -1,5 +1,6 @@
 # python modules
 import time
+import logging
 from datetime import datetime
 from dev.sqlite.db_interface import Db
 
@@ -358,7 +359,7 @@ class AdminAuthorizedPplScreen(Screen):
 
 class VratnyApp(MDApp):
 
-    def __init__(self, database_object=Db(), logger=None, **kwargs):
+    def __init__(self, database_object=Db(), **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
         self.selected_floor = None
@@ -370,7 +371,11 @@ class VratnyApp(MDApp):
         self.selected_endtime_date = None
         self.selected_borrowing = None
         self.db = database_object
-        self.logger = logger
+
+        # logger setup
+        self.key_logger = logging.getLogger("key")
+        self.exceptions_logger = logging.getLogger("exception")
+        
 
     def on_start(self):
         Clock.schedule_interval(self.update_label, 1)
