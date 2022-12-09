@@ -53,15 +53,15 @@ class LoginScreen(Screen):
         return super().on_leave(*args)
 
     def _authenticate(self, username, password):
-        if username == "" and password == "":
+        
+        user = MDApp.get_running_app().db.get_user_by_username(username)
+        if user.check_password(password):
             MDApp.get_running_app().set_lender(username)
-            return True
-        elif username == "admin" and password == "admin":
-            MDApp.get_running_app().set_lender("admin")
-            sc_mngr.current = "admin"
-            return False
-        else:
-            return False
+            if user.is_superuser:
+                sc_mngr.current = "admin"
+                return False
+            else:
+                return True
 
     def PrihasitSeButtonFunction(self):
 
@@ -314,14 +314,12 @@ class AdminScreen(Screen):
         super(AdminScreen, self).__init__(**kwargs)
 
     def admin_func_1(self):
-        pass
         sc_mngr.current = "admin_authorized_ppl"
     
     def admin_func_2(self):
         pass
 
     def admin_func_3(self):
-        pass
         sc_mngr.get_screen("admin_authorized_ppl").admin_authorise_new_person()
 
 class AdminAuthorizedPplScreen(Screen):
@@ -331,12 +329,11 @@ class AdminAuthorizedPplScreen(Screen):
         self.display_authorised_ppl()
 
     def display_authorised_ppl(self):
-        return
         searched_expression = ""
-        try:
-            searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
-        except: pass
-        found_ppl = MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
+        
+        searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
+        
+        found_ppl = [] #MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
 
         self.ids.admin_person_widget_scrollview.clear_widgets()
 
@@ -505,7 +502,7 @@ class VratnyApp(MDApp):
             sc_mngr.current = "roomselection"
         elif sc_mngr.current == "roomselection":
             self.selected_room = pressed_button_instance.data
-            self.selected_key = pressed_button_instance.data.get_ordinary_key()
+            self.selected_key = pressed_button_instance.data.get_borrowable_key()
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "keyselection":
             self.selected_key = pressed_button_instance.data
