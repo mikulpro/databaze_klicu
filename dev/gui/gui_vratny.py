@@ -218,6 +218,8 @@ class RoomSelectionScreen(Screen):
         key_widget.ids.searchresultwidget_label_content.text = str(data.name)
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
         self.ids.room_widget_scrollview.add_widget(key_widget)
+        if data.get_borrowable_key() is None:
+            key_widget.disabled = True
 
 class PersonSelectionScreen(Screen):
 
@@ -375,7 +377,7 @@ class VratnyApp(MDApp):
         # logger setup
         self.key_logger = logging.getLogger("key")
         self.exceptions_logger = logging.getLogger("exception")
-        
+
 
     def on_start(self):
         Clock.schedule_interval(self.update_label, 1)
