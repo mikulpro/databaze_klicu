@@ -55,7 +55,7 @@ class LoginScreen(Screen):
     def _authenticate(self, username, password):
         
         user = MDApp.get_running_app().db.get_user_by_username(username)
-        if user.check_password(password):
+        if user is not None and user.check_password(password):
             MDApp.get_running_app().set_lender(username)
             if user.is_superuser:
                 sc_mngr.current = "admin"
@@ -114,7 +114,7 @@ class BorrowingSelectionScreen(Screen):
         return super().on_leave(*args)
 
     def SearchBorrowingTextInputFunction(self):
-        borrowings = MDApp.get_running_app().get_ongoing_borrowings()
+        borrowings = MDApp.get_running_app().db.get_ongoing_borrowings()
 
         # undisplaying old
         self.ids.borrowings_widget_scrollview.clear_widgets()
@@ -152,7 +152,7 @@ class FloorSelectionScreen(Screen):
         return super().on_leave(*args)
 
     def SearchFloorTextInputFunction(self, initial=False):
-        floors = MDApp.get_running_app().get_all_floors()
+        floors = MDApp.get_running_app().db.get_all_floors()
         floors.reverse()
 
         # undisplaying old floors
@@ -195,7 +195,7 @@ class RoomSelectionScreen(Screen):
         selected_floor = MDApp.get_running_app().get_selected_floor()
         searched_expression = str(self.ids.roomsearch.text)
         if len(searched_expression) >= 1:
-            list_of_matches_rooms = MDApp.get_running_app().get_room_by_name_fraction(fraction=searched_expression,
+            list_of_matches_rooms = MDApp.get_running_app().db.get_room_by_name_fraction(fraction=searched_expression,
                                                                                       floor=selected_floor)
         else:
             list_of_matches_rooms = MDApp.get_running_app().db.get_rooms_by_floor(floor=selected_floor)
@@ -237,7 +237,7 @@ class PersonSelectionScreen(Screen):
 
         list_of_matches = []
         if MDApp.get_running_app().selected_room is not None:
-            authorizations = MDApp.get_running_app().get_prioritized_authorizations_for_room(MDApp.get_running_app().selected_room.id)
+            authorizations = MDApp.get_running_app().db.get_prioritized_authorizations_for_room(MDApp.get_running_app().selected_room.id)
 
             # find all relevant examples
             searched_expression = str(self.ids.personsearch.text)
@@ -326,7 +326,10 @@ class AdminAuthorizedPplScreen(Screen):
 
     def __init__(self, **kwargs):
         super(AdminAuthorizedPplScreen, self).__init__(**kwargs)
+        
+    def on_enter(self, *args):
         self.display_authorised_ppl()
+        return super().on_enter(*args)
 
     def display_authorised_ppl(self):
         searched_expression = ""
@@ -424,36 +427,6 @@ class VratnyApp(MDApp):
     def update_starttime(self):
         self.selected_starttime = datetime.now()
 
-    def get_all_floors(self):
-        return self.db.get_all_floors()
-
-    def get_rooms_by_floor(self, floor):
-        return self.db.get_rooms_by_floor(floor)
-
-    def get_authorizations_for_room(self, room_id):
-        return self.db.get_valid_authorizations_for_room(room_id)
-
-    def get_prioritized_authorizations_for_room(self, room_id):
-        return self.db.get_prioritized_authorizations_for_room(room_id)
-
-    def get_persons_by_name_fraction(self, fraction):
-        return self.db.get_persons_by_name_fraction(fraction)
-
-    def get_room_by_name_fraction(self, fraction, floor=None):
-        return self.db.get_room_by_name_fraction(fraction, floor)
-
-    def add_borrowing(self, key_id, authorization_id):
-        self.db.add_borrowing(key_id, authorization_id)
-
-    def return_key(self, borrowing_id):
-        self.db.return_key(borrowing_id)
-
-    def get_ongoing_borrowings(self):
-        return self.db.get_ongoing_borrowings()
-
-    def excel_dump(self):
-        return self.db.excel_dump()
-
     def set_lender(self, input):
         self.selected_lender = input
 
@@ -494,7 +467,7 @@ class VratnyApp(MDApp):
     def SearchResultWidgetClickFunction(self, pressed_button_instance):
         if sc_mngr.current == "borrowingselection":
             self.selected_borrowing = pressed_button_instance.data
-            self.return_key(self.selected_borrowing.id)
+            self.db.return_key(self.selected_borrowing.id)
             sc_mngr.current = "actionselection"
         if sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.data
@@ -626,7 +599,7 @@ class VratnyApp(MDApp):
                 pass
 
     def complete_borrowing_session(self):
-        self.add_borrowing(self.selected_key.id, self.selected_person.id)
+        self.db.add_borrowing(self.selected_key.id, self.selected_person.id)
 
         self.selected_lender = ""
         self.selected_floor = None
