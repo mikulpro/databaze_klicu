@@ -102,7 +102,8 @@ class Db:
 
 
     def get_rooms_availability_dict_by_floor(self, floor, only_ordinary=True):
-        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing).filter(Borrowing.returned == None)
+        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing).\
+            filter(Borrowing.returned == None, Room.floor==floor)
         q_available_rooms = self.session.query(Room). \
             filter(Room.floor == floor). \
             except_(q_unavailable_rooms).join(Key). \

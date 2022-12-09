@@ -198,28 +198,40 @@ class RoomSelectionScreen(Screen):
         if len(searched_expression) >= 1:
             list_of_matches_rooms = MDApp.get_running_app().db.get_room_by_name_fraction(fraction=searched_expression,
                                                                                       floor=selected_floor)
+            # FIX ME
+            available_rooms = list_of_matches_rooms
         else:
-            list_of_matches_rooms = MDApp.get_running_app().db.get_rooms_by_floor(floor=selected_floor)
+            list_of_matches_rooms = MDApp.get_running_app().db.get_rooms_availability_dict_by_floor(floor=selected_floor)
+            available_rooms = list_of_matches_rooms["available"]
+            unavailable_rooms = list_of_matches_rooms["unavailable"]
+
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
 
         # some function, that adds widget for each match
         number_of_displayed_rooms = 0
-        for item in list_of_matches_rooms:
+        for item in available_rooms:
             if number_of_displayed_rooms >= 500:
                 break
             number_of_displayed_rooms += 1
-            self._add_keywidget(item)
+            self._add_keywidget(item, False)
 
-    def _add_keywidget(self, data):
+        for item in unavailable_rooms:
+            if number_of_displayed_rooms >= 500:
+                break
+            number_of_displayed_rooms += 1
+            self._add_keywidget(item, True)
+
+    def _add_keywidget(self, data, disabled):
         key_widget = SearchResultWidget()
         key_widget.data = data
         key_widget.ids.searchresultwidget_label_content.text = str(data.name)
         key_widget.label_pointer = key_widget.ids.searchresultwidget_label_content
         self.ids.room_widget_scrollview.add_widget(key_widget)
-        if data.get_borrowable_key() is None:
-            key_widget.disabled = True
+        key_widget.disabled = disabled
+        # if data.get_borrowable_key() is None:
+        #     key_widget.disabled = True
 
 class PersonSelectionScreen(Screen):
 
