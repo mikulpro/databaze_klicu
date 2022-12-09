@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import create_engine, or_, and_
+from sqlalchemy import create_engine, or_, and_, update
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
@@ -27,23 +27,22 @@ Db:
     excel_dump(self) -> list[list[str]]
     
     LOGIN SYSTEM
-    add_user(username: str, password: str, is_superuser=False: bool)
-    get_user_by_username(username: str) -> User
+    add_user(username: str, password: str, is_superuser=False: bool) -> None
+    get_user_by_username(username: str) -> User?
     
     ADMIN
-    add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int)
+    add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int) -> None
     invalidate_authorization(authorization_id: int) -> None
     invalidate_authorization_obj(authorization: Authorization) -> None
-        add_person(...)
-        add_authorization(...)
-        update_person(...)
+    add_person(self, firstname: str, surname: str, workplace_id=None: int) -> None
+    update_person(self, person_id : int, **kwargs) -> None (firstname : str, surname: str, workplace_id : int)
         ?update_authorization(...)
         ?add_key(...)
         ?update_key(..)
         ?add_room(...)
         ?update_room(...)
-            
-    get_authorizations_by_name_fraction(self, fraction: str)
+
+    get_authorizations_by_name_fraction(self, fraction: str) -> list[Authorization]
     get_persons_by_name_fraction(self, fraction: str) -> list[AuthorizedPerson]
     get_room_by_name_fraction(self, fraction: str, floor=None: int) -> list[Room]
     
@@ -65,6 +64,7 @@ class Db:
     def commit_session(self):
         self.session.commit()
 
+    # ALL PURPOSE
     def get_all_floors(self):
         result = self.session.query(Room.floor).distinct(Room.floor).order_by(Room.floor).all()
         return [i[0] for i in result]
@@ -100,6 +100,7 @@ class Db:
         # přidat filtrování na základě origin
         return authorizations
 
+    # KEY BORROWING
     def add_borrowing(self, key_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
@@ -116,6 +117,7 @@ class Db:
     def get_ongoing_borrowings(self):
         return self.session.query(Borrowing).filter(Borrowing.returned.is_(None)).order_by(Borrowing.borrowed).all()
 
+    # EXCEL GENERATING
     def excel_dump(self):
         # [borrowed: date, time, key, borrower name, return: date, time]
         data = []
@@ -142,6 +144,7 @@ class Db:
 
         return data
 
+    # LOGIN SYSTEM
     def add_user(self, username, password, is_superuser=False):
         password_hash = hash_func(password)
         user = User(username=username, password=password_hash, is_superuser=is_superuser)
@@ -155,6 +158,7 @@ class Db:
         user = self.session.query(User).filter(User.username == username).one_or_none()
         return user
 
+    # ADMIN
     def add_authorization(self, person_id, room_id, expiration, origin_id=1):
         authorization = Authorization(
             person_id=person_id,
@@ -172,6 +176,23 @@ class Db:
 
     def invalidate_authorization_obj(self, authorization):
         authorization.invalidate()
+        self.session.commit()
+
+    def add_person(self, firstname, surname, workplace_id=None):
+        person = AuthorizedPerson(
+            firstname=firstname,
+            surname=surname,
+            workplace_id=workplace_id
+        )
+        self.session.add(person)
+        self.session.commit()
+
+    def update_person(self, person_id, **kwargs):
+        self.session.execute(
+            update(AuthorizedPerson)
+            .where(AuthorizedPerson.id == person_id)
+            .values(kwargs)
+        )
         self.session.commit()
 
     def get_authorizations_by_name_fraction(self, fraction):
