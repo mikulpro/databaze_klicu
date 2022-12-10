@@ -124,7 +124,6 @@ class Db:
         return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
 
     def get_prioritized_authorizations_for_room(self, room_id):
-        authorizations = self.get_valid_authorizations_for_room(room_id)
         q = self.session.query(Authorization, func.rank().over(
         order_by=(func.count(Borrowing.id).desc(), Authorization.origin_id.desc(), Authorization.expiration.desc()))). \
             join(Authorization.room, Authorization.person). \
@@ -140,25 +139,6 @@ class Db:
             WHERE DATE('now') < a.expiration AND a.room_id == 10
             GROUP BY ap.id 
         """
-        # q = self.session.query(Authorization).join(Authorization.room).\
-        #     filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow())\
-        #     .join(Authorization.person).join(Authorization.borrowings, isouter=True).\
-        #     group_by(AuthorizedPerson.id).\
-        #     order_by(func.count(Authorization.borrowings), Authorization.origin_id.desc(), Authorization.expiration.desc())
-        #
-        # q = self.session.query(Authorization).join(Authorization.room). \
-        #     filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()).\
-        #     join(Authorization.person).\
-        #     group_by(AuthorizedPerson.id).order_by(
-        #     func.count(AuthorizedPerson.borrowings), Authorization.origin_id.desc(), Authorization.expiration.desc()
-        # )
-            # budoucí možné filtrování na základě origin
-        # prioritozed_authorization = []
-        # person_ids = []
-        # for a in q.all():
-        #     if a.person_id not in person_ids:
-        #         prioritozed_authorization.append(a)
-        #         person_ids.append(a.person_id)
         prioritized_authorizations = [i[0] for i in q.all()]
         return prioritized_authorizations
 
@@ -167,7 +147,6 @@ class Db:
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
         authorization = self.session.query(Authorization).filter(Authorization.id == authorization_id).one()
-        #authorization.increment_borrowings_count()
         authorization.room.increment_borrowings_count()
         self.session.commit()
 

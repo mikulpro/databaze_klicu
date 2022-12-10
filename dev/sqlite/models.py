@@ -156,12 +156,7 @@ class Authorization(Base):
     origin_id = Column(Integer, ForeignKey("authorization_origins.id"), nullable=False)
     origin = relationship("AuthorizationOrigin")
     borrowings = relationship("Borrowing", back_populates="authorization")
-    #borrowings_count = Column(Integer, nullable=False, default=0)
 
-    # def increment_borrowings_count(self):
-    #     if not self.borrowings_count:
-    #         self.borrowings_count = 0
-    #     self.borrowings_count += 1
 
     def invalidate(self):
         self.expiration = datetime.datetime.utcnow()
