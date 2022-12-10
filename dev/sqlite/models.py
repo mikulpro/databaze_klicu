@@ -119,6 +119,7 @@ class AuthorizedPerson(Base):
     workplace = relationship("Workplace")
     created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     authorizations = relationship("Authorization", back_populates="person")
+    #borrowings = relationship("Borrowing", secondary='authorizations', viewonly=True)
 
     def get_full_name(self):
         return self.firstname + " " + self.surname
@@ -155,12 +156,12 @@ class Authorization(Base):
     origin_id = Column(Integer, ForeignKey("authorization_origins.id"), nullable=False)
     origin = relationship("AuthorizationOrigin")
     borrowings = relationship("Borrowing", back_populates="authorization")
-    borrowings_count = Column(Integer, nullable=False, default=0)
+    #borrowings_count = Column(Integer, nullable=False, default=0)
 
-    def increment_borrowings_count(self):
-        if not self.borrowings_count:
-            self.borrowings_count = 0
-        self.borrowings_count += 1
+    # def increment_borrowings_count(self):
+    #     if not self.borrowings_count:
+    #         self.borrowings_count = 0
+    #     self.borrowings_count += 1
 
     def invalidate(self):
         self.expiration = datetime.datetime.utcnow()
@@ -173,8 +174,7 @@ class Authorization(Base):
 
     def __repr__(self):
         return f"Authorization(id={self.id}, person_id={self.person_id}, room_id={self.room_id}, " \
-               f"created={self.created}, expiration={self.expiration}, origin_id={self.origin_id}, " \
-               f"borrowings_count={self.borrowings_count})"
+               f"created={self.created}, expiration={self.expiration}, origin_id={self.origin_id})"
 
 
 class AuthorizationOrigin(Base):

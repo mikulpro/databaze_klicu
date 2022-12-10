@@ -158,3 +158,12 @@ session = Session(engine)
 #     print(i)
 #
 # session.commit()
+
+# a = Authorization(person_id=10, room_id=10,  expiration=(datetime.datetime.utcnow() + datetime.timedelta(days=100)), origin_id=2)
+# session.add(a)
+# a = Authorization(person_id=10, room_id=10,  expiration=(datetime.datetime.utcnow() - datetime.timedelta(days=100)), origin_id=2)
+# session.add(a)
+# a = Authorization(person_id=10, room_id=10,  expiration=(datetime.datetime.utcnow() - datetime.timedelta(days=100)), origin_id=1)
+# session.add(a)
+# session.commit()
+

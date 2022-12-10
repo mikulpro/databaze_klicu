@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, or_, and_, update
+from sqlalchemy import create_engine, or_, and_, update, func
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
@@ -14,7 +14,7 @@ Db:
     get_all_keys(self) -> list[Key]
     get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
     get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room]
-    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary=True: bool) -> dict{str: List[Room]} 
+    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary_keys=True: bool) -> dict{str: List[Room]} 
     get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
     get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
@@ -79,7 +79,7 @@ class Db:
     def get_all_keys(self):
         return self.session.query(Key).all()
 
-    def get_borrowable_keys_by_floor(self, floor, only_ordinary=True):
+    def get_borrowable_keys_by_floor(self, floor, only_ordinary =True):
         q = self.session.query(Key).\
             except_(self.session.query(Key).join(Borrowing).filter(Borrowing.returned == None)).\
             join(Room).filter(Room.floor == floor).\
@@ -101,36 +101,72 @@ class Db:
         return rooms
 
 
-    def get_rooms_availability_dict_by_floor(self, floor, only_ordinary=True):
-        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing).\
-            filter(Borrowing.returned == None, Room.floor==floor)
+    def get_rooms_availability_dict_by_floor(self, floor, only_ordinary_keys=True):
+        # q_unavailable_rooms = self.session.query(Room.keys).join(Key.borrowings).\
+        #     filter(Borrowing.returned == None, Room.floor==floor).order_by(Room.borrowings_count.desc())
+        # unavailable_rooms = q_unavailable_rooms.all()
+        # # if only_ordinary_keys:
+        # #     q_unavailable_rooms = q_unavailable_rooms.filter(Key.key_class == 0)
+        # q_available_rooms = self.session.query(Room). \
+        #     filter(Room.floor == floor). \
+        #     except_(q_unavailable_rooms).join(Key.borrowings). \
+        #     order_by(Room.borrowings_count.desc())
+        # if only_ordinary_keys:
+        #     q_available_rooms = q_available_rooms.filter(Key.key_class == 0)
+        # available_rooms = q_available_rooms.all()
+        #
+        # return {"available": available_rooms, "unavailable": unavailable_rooms}
+        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing). \
+            filter(Borrowing.returned == None, Room.floor == floor)
+        if only_ordinary_keys:
+            q_unavailable_rooms = q_unavailable_rooms.filter(Key.key_class == 0)
         q_available_rooms = self.session.query(Room). \
             filter(Room.floor == floor). \
             except_(q_unavailable_rooms).join(Key). \
             order_by(Room.borrowings_count.desc())
-        if only_ordinary:
+        if only_ordinary_keys:
             q_available_rooms = q_available_rooms.filter(Key.key_class == 0)
+
         available_rooms = q_available_rooms.all()
-        unavailable_rooms = q_unavailable_rooms.all()
+        unavailable_rooms = q_unavailable_rooms.order_by(Room.borrowings_count.desc()).all()
         return {"available": available_rooms, "unavailable": unavailable_rooms}
 
     def get_valid_authorizations_for_room(self, room_id):
         authorizations = self.session.query(Authorization).join(Authorization.room).filter(
             Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()
-        ).order_by(Authorization.borrowings_count.desc()).all()
+        ).all()
         return sorted(authorizations, key=lambda authorization: len(authorization.borrowings))
 
     def get_prioritized_authorizations_for_room(self, room_id):
         authorizations = self.get_valid_authorizations_for_room(room_id)
-        # přidat filtrování na základě origin
-        return authorizations
+        # q = self.session.query(Authorization).join(Authorization.room).\
+        #     filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow())\
+        #     .join(Authorization.person).join(Authorization.borrowings, isouter=True).\
+        #     group_by(AuthorizedPerson.id).\
+        #     order_by(func.count(Authorization.borrowings), Authorization.origin_id.desc(), Authorization.expiration.desc())
+        #
+        # q = self.session.query(Authorization).join(Authorization.room). \
+        #     filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()).\
+        #     join(Authorization.person).\
+        #     group_by(AuthorizedPerson.id).order_by(
+        #     func.count(AuthorizedPerson.borrowings), Authorization.origin_id.desc(), Authorization.expiration.desc()
+        # )
+            # budoucí možné filtrování na základě origin
+        # prioritozed_authorization = []
+        # person_ids = []
+        # for a in q.all():
+        #     if a.person_id not in person_ids:
+        #         prioritozed_authorization.append(a)
+        #         person_ids.append(a.person_id)
+        prioritized_authorizations = authorizations
+        return prioritized_authorizations
 
     # KEY BORROWING
     def add_borrowing(self, key_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
         self.session.add(borrowing)
         authorization = self.session.query(Authorization).filter(Authorization.id == authorization_id).one()
-        authorization.increment_borrowings_count()
+        #authorization.increment_borrowings_count()
         authorization.room.increment_borrowings_count()
         self.session.commit()
 
