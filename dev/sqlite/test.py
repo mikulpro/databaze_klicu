@@ -5,9 +5,11 @@ db = Db()
 
 #a = db.update_person(301, surname="Novák1")
 #b = db.get_persons_by_name_fraction("Jan Novák")
-a = db.get_rooms_availability_dict_by_floor(1)
+#a = db.get_rooms_availability_dict_by_floor(1)
 # c = db.get_valid_authorizations_for_room(1)
-# d = db.get_prioritized_authorizations_for_room(1)
+d = db.get_prioritized_authorizations_for_room(10)
+print(len(d))
+print(d)
 # for i in c:
 #     print(i.name)
 # print(len(c))

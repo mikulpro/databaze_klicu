@@ -102,20 +102,6 @@ class Db:
 
 
     def get_rooms_availability_dict_by_floor(self, floor, only_ordinary_keys=True):
-        # q_unavailable_rooms = self.session.query(Room.keys).join(Key.borrowings).\
-        #     filter(Borrowing.returned == None, Room.floor==floor).order_by(Room.borrowings_count.desc())
-        # unavailable_rooms = q_unavailable_rooms.all()
-        # # if only_ordinary_keys:
-        # #     q_unavailable_rooms = q_unavailable_rooms.filter(Key.key_class == 0)
-        # q_available_rooms = self.session.query(Room). \
-        #     filter(Room.floor == floor). \
-        #     except_(q_unavailable_rooms).join(Key.borrowings). \
-        #     order_by(Room.borrowings_count.desc())
-        # if only_ordinary_keys:
-        #     q_available_rooms = q_available_rooms.filter(Key.key_class == 0)
-        # available_rooms = q_available_rooms.all()
-        #
-        # return {"available": available_rooms, "unavailable": unavailable_rooms}
         q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing). \
             filter(Borrowing.returned == None, Room.floor == floor)
         if only_ordinary_keys:
@@ -139,6 +125,21 @@ class Db:
 
     def get_prioritized_authorizations_for_room(self, room_id):
         authorizations = self.get_valid_authorizations_for_room(room_id)
+        q = self.session.query(Authorization, func.rank().over(
+        order_by=(func.count(Borrowing.id).desc(), Authorization.origin_id.desc(), Authorization.expiration.desc()))). \
+            join(Authorization.room, Authorization.person). \
+            filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()). \
+            join(Authorization.borrowings, isouter=True).\
+            group_by(AuthorizedPerson.id)
+        """
+            RAW QUERY:
+            SELECT *, RANK() OVER (ORDER BY COUNT(b.id) DESC, a.origin_id DESC, a.expiration DESC)
+            FROM authorizations a 
+            INNER JOIN authorized_persons ap ON a.person_id == ap.id
+            LEFT JOIN borrowings b ON a.id == b.authorization_id 
+            WHERE DATE('now') < a.expiration AND a.room_id == 10
+            GROUP BY ap.id 
+        """
         # q = self.session.query(Authorization).join(Authorization.room).\
         #     filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow())\
         #     .join(Authorization.person).join(Authorization.borrowings, isouter=True).\
@@ -158,7 +159,7 @@ class Db:
         #     if a.person_id not in person_ids:
         #         prioritozed_authorization.append(a)
         #         person_ids.append(a.person_id)
-        prioritized_authorizations = authorizations
+        prioritized_authorizations = [i[0] for i in q.all()]
         return prioritized_authorizations
 
     # KEY BORROWING
