@@ -7,47 +7,58 @@ from dev.sqlite.utils import hash_func
 
 """
 Db:
-    ALL PURPOSE
-    get_all_floors(self) -> list[int]
-    get_all_rooms(self) -> list[Room]
-    get_rooms_by_floor(self, floor: int) -> list[Room]
-    get_all_keys(self) -> list[Key]
-    get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
-    get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room]
-    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
-    search_rooms_availability_dict_by_floor(self, expression: str, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
-    get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
-    get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
+    ROOMS
+        get_all_floors(self) -> list[int]
+        get_all_rooms(self) -> list[Room]
+        get_rooms_by_floor(self, floor: int) -> list[Room]
+        get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room]
+        get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
+        search_rooms(self, expression: str, floor=None: int) -> list[Room]
+        search_rooms_availability_dict_by_floor(self, expression: str, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
     
-    KEY BORROWING
-    add_borrowing(self, int: key_id, int: borrower_id) -> None
-    return_key(self, int: borrowing_id) -> None
-    get_ongoing_borrowings(self) -> list[Borrowing]
+    KEYS
+        get_all_keys(self) -> list[Key]
+        get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
+    
+    AUTHORIZATIONS
+        get_all_authorizations(self) -> list[Authorization]
+        get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
+        get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
+        search_authorizations(self, expression: str) -> list[Authorization]
+        search_prioritized_authorizations_for_room(self, expression: str, room_id: int) -> list[Authorization]
+
+        add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int) -> None
+        invalidate_authorization(authorization_id: int) -> None
+        invalidate_authorization_obj(authorization: Authorization) -> None
+    
+    BORROWINGS
+        add_borrowing(self, int: key_id, int: borrower_id) -> None
+        return_key(self, int: borrowing_id) -> None
+        get_ongoing_borrowings(self) -> list[Borrowing]
     
     EXCEL GENERATING
-    excel_dump(self) -> list[list[str]]
+        excel_dump(self) -> list[list[str]]
+        # přidat časově omezený exel dump
     
     LOGIN SYSTEM
-    add_user(username: str, password: str, is_superuser=False: bool) -> None
-    get_user_by_username(username: str) -> User?
+        get_user_by_username(username: str) -> User?
+        add_user(username: str, password: str, is_superuser=False: bool) -> None
     
-    ADMIN
-    add_authorization(person_id: int, room_id: int, expiration: datetime, origin_id=1 : int) -> None
-    invalidate_authorization(authorization_id: int) -> None
-    invalidate_authorization_obj(authorization: Authorization) -> None
-    add_person(self, firstname: str, surname: str, workplace_id=None: int) -> None
-    update_person(self, person_id : int, **kwargs) -> None (firstname : str, surname: str, workplace_id : int)
+    AUTHORIZED PERSONS
+        get_all_authorized_persons(self) -> list[AuthorizedPerson]
+        search_authorized_persons(self, expression: str) -> list[AuthorizedPerson]
+        
+        add_person(self, firstname: str, surname: str, workplace_id=None: int) -> None
+        update_person(self, person_id : int, **kwargs) -> None (firstname : str, surname: str, workplace_id : int) -> None
+    
+    
+    
+    ADMIN    
         ?update_authorization(...)
         ?add_key(...)
         ?update_key(..)
         ?add_room(...)
         ?update_room(...)
-
-    get_authorizations_by_name_fraction(self, fraction: str) -> list[Authorization]
-    get_persons_by_name_fraction(self, fraction: str) -> list[AuthorizedPerson]
-    get_room_by_name_fraction(self, fraction: str, floor=None: int) -> list[Room]
-    get_all_authorizations(self) -> list[Authorization]
-    get_all_authorized_persons(self) -> list[AuthorizedPerson]
 """
 
 
@@ -159,6 +170,38 @@ class Db:
         prioritized_authorizations = [i[0] for i in q.all()]
         return prioritized_authorizations
 
+    def search_prioritized_authorizations_for_room(self, expression, room_id):
+        q = self.session.query(Authorization, func.rank().over(
+        order_by=(func.count(Borrowing.id).desc(), Authorization.origin_id.desc(), Authorization.expiration.desc()))). \
+            join(Authorization.room, Authorization.person). \
+            filter(Room.id == room_id, Authorization.expiration > datetime.datetime.utcnow()). \
+            join(Authorization.borrowings, isouter=True).\
+            group_by(AuthorizedPerson.id)
+
+        # SEARCHING
+        words = expression.split(' ')
+        if len(words) == 1:
+            q = q.filter(
+            or_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                AuthorizedPerson.surname.like(f"{words[0]}%")
+                ))
+
+        elif len(words) == 2:
+            q = q.filter(
+                or_(
+                    and_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                         AuthorizedPerson.surname.like(f"{words[1]}%"),
+                         ),
+                    and_(AuthorizedPerson.firstname.like(f"{words[1]}%"),
+                         AuthorizedPerson.surname.like(f"{words[0]}%"),
+                         ),
+                ))
+
+        prioritized_authorizations = [i[0] for i in q.all()]
+        return prioritized_authorizations
+
+
+
     # KEY BORROWING
     def add_borrowing(self, key_id, authorization_id):
         borrowing = Borrowing(key_id=key_id, authorization_id=authorization_id)
@@ -253,22 +296,22 @@ class Db:
         )
         self.session.commit()
 
-    def get_authorizations_by_name_fraction(self, fraction):
-        fractions = fraction.split(" ")
+    def search_authorizations(self, expression):
+        words = expression.split(" ")
 
-        if len(fractions) == 1:
+        if len(words) == 1:
             result_q = self.session.query(Authorization).join(AuthorizedPerson).filter(
-                or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                    AuthorizedPerson.surname.like(f"{fractions[0]}%")
+                or_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                    AuthorizedPerson.surname.like(f"{words[0]}%")
                     ))
-        elif len(fractions) == 2:
+        elif len(words) == 2:
             result_q = self.session.query(Authorization).join(AuthorizedPerson).filter(
                 or_(
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[1]}%"),
+                    and_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                         AuthorizedPerson.surname.like(f"{words[1]}%"),
                          ),
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[1]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[0]}%"),
+                    and_(AuthorizedPerson.firstname.like(f"{words[1]}%"),
+                         AuthorizedPerson.surname.like(f"{words[0]}%"),
                          ),
                 ))
         else:
@@ -276,22 +319,22 @@ class Db:
 
         return result_q.order_by(AuthorizedPerson.surname).all()
 
-    def get_persons_by_name_fraction(self, fraction):
-        fractions = fraction.split(" ")
+    def search_authorized_persons(self, expression):
+        words = expression.split(" ")
 
-        if len(fractions) == 1:
+        if len(words) == 1:
             result_q = self.session.query(AuthorizedPerson).filter(
-                or_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                    AuthorizedPerson.surname.like(f"{fractions[0]}%")
+                or_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                    AuthorizedPerson.surname.like(f"{words[0]}%")
                     ))
-        elif len(fractions) == 2:
+        elif len(words) == 2:
             result_q = self.session.query(AuthorizedPerson).filter(
                 or_(
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[0]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[1]}%"),
+                    and_(AuthorizedPerson.firstname.like(f"{words[0]}%"),
+                         AuthorizedPerson.surname.like(f"{words[1]}%"),
                          ),
-                    and_(AuthorizedPerson.firstname.like(f"{fractions[1]}%"),
-                         AuthorizedPerson.surname.like(f"{fractions[0]}%"),
+                    and_(AuthorizedPerson.firstname.like(f"{words[1]}%"),
+                         AuthorizedPerson.surname.like(f"{words[0]}%"),
                          ),
                 ))
         else:
@@ -299,8 +342,8 @@ class Db:
 
         return result_q.order_by(AuthorizedPerson.surname).all()
 
-    def get_room_by_name_fraction(self, fraction, floor=None):
-        rooms_q = self.session.query(Room).filter(Room.name.like(f"%{fraction}%")).order_by(Room.name)
+    def search_rooms(self, expression, floor=None):
+        rooms_q = self.session.query(Room).filter(Room.name.like(f"%{expression}%")).order_by(Room.name)
         if floor:
             rooms_q = rooms_q.filter(Room.floor == floor)
         return rooms_q.all()

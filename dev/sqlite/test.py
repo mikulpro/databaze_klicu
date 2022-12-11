@@ -4,7 +4,7 @@ from db_interface import Db
 db = Db()
 
 #a = db.update_person(301, surname="Novák1")
-#b = db.get_persons_by_name_fraction("Jan Novák")
+#b = db.search_authorized_persons("Jan Novák")
 #a = db.get_rooms_availability_dict_by_floor(1)
 # c = db.get_valid_authorizations_for_room(1)
 d = db.get_prioritized_authorizations_for_room(10)

@@ -7,8 +7,8 @@ import pysqlite3
     -get all borrowers
         get all rooms
     -get all rooms on a floor
-    -search borrower by name fraction
-        search room by name fraction
+    -search borrower by name expression
+        search room by name expression
     excel dump
     
     add vypůjčka - pujc klic

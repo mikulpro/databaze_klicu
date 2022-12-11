@@ -349,7 +349,7 @@ class AdminAuthorizedPplScreen(Screen):
         
         searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
         
-        found_ppl = [] #MDApp.get_running_app().get_persons_by_name_fraction(fraction=searched_expression)
+        found_ppl = [] #MDApp.get_running_app().search_authorized_persons(expression=searched_expression)
 
         self.ids.admin_person_widget_scrollview.clear_widgets()
 
