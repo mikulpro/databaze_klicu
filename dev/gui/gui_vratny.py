@@ -1,6 +1,6 @@
 # python modules
 import time
-import logging
+# import logging
 from datetime import datetime
 from dev.sqlite.db_interface import Db
 
@@ -10,6 +10,7 @@ from kivy.lang import Builder
 from kivy.config import Config
 from kivy.resources import resource_find
 from kivy.clock import Clock
+from kivy.logger import Logger
 
 # kivy material design library
 from kivymd.app import MDApp
@@ -377,7 +378,7 @@ class VratnyApp(MDApp):
         self.selected_floor = None
         self.selected_room = None
         self.selected_key = None
-        self.selected_person = None
+        self.selected_authorization = None
         self.selected_starttime = None
         self.selected_endtime_time = None
         self.selected_endtime_date = None
@@ -385,8 +386,16 @@ class VratnyApp(MDApp):
         self.db = database_object
 
         # logger setup
-        self.key_logger = logging.getLogger("key")
-        self.exceptions_logger = logging.getLogger("exception")
+        Config.set('kivy', 'log_enable', 1)
+        Config.set('kivy', 'log_dir', 'logs')
+        Config.set('kivy', 'log_level', 'debug')
+        Config.set('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
+
+        Logger.info('Logger nastaven')
+        # logging.basicConfig(filename="app.log", force=True)
+        # self.key_logger = logging.getLogger("key")
+        # self.exceptions_logger = logging.getLogger("exception")
+        # self.key_logger.info("Logger nastaven")
 
 
     def on_start(self):
@@ -498,7 +507,7 @@ class VratnyApp(MDApp):
             self.selected_key = pressed_button_instance.data
             sc_mngr.current = "personselection"
         elif sc_mngr.current == "personselection":
-            self.selected_person = pressed_button_instance.data
+            self.selected_authorization = pressed_button_instance.data
             sc_mngr.current = "review"
             self.update_review_information()
 
@@ -514,7 +523,7 @@ class VratnyApp(MDApp):
             self.selected_floor = None
             self.selected_room = None
             self.selected_key = None
-            self.selected_person = None
+            self.selected_authorization = None
             self.selected_starttime = None
             self.selected_endtime_time = None
             self.selected_endtime_date = None
@@ -586,10 +595,10 @@ class VratnyApp(MDApp):
 
                 self.update_starttime()
 
-                if self.selected_person is None:
+                if self.selected_authorization is None:
                     ready = False
                 else:
-                    sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_person.person.get_full_name()}"
+                    sc_mngr.get_screen("review").ids.rev_lab_borrower.text = f"Komu půjčuje: {self.selected_authorization.person.get_full_name()}"
                 
                 
                 if self.selected_key is not None:
@@ -616,13 +625,15 @@ class VratnyApp(MDApp):
                 pass
 
     def complete_borrowing_session(self):
-        self.db.add_borrowing(self.selected_key.id, self.selected_person.id)
+        self.db.add_borrowing(self.selected_key.id, self.selected_authorization.id)
+        Logger.info(f"Vypůjčen klíč: {self.selected_key.registration_number} "
+                             f"osobě:{self.selected_authorization.person.get_full_name}")
 
         self.selected_lender = ""
         self.selected_floor = None
         self.selected_room = None
         self.selected_key = None
-        self.selected_person = None
+        self.selected_authorization = None
         self.selected_starttime = None
         self.selected_endtime_time = None
         self.selected_endtime_date = None
