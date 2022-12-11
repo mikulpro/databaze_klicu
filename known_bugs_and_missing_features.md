@@ -2,6 +2,7 @@ Currently in: pre-release
 
 # Bugs
 - optimalization issues (e.g. 250 MB free RAM required)
+- scrolling position persists even when action is canceled, sometimes leading to tiles with rooms being seamingly hidden
 
 # Missing Features
 - no log output
