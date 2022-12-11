@@ -14,7 +14,8 @@ Db:
     get_all_keys(self) -> list[Key]
     get_borrowable_keys_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Key]
     get_available_rooms_by_floor(self, floor: int, only_ordinary=True: bool) -> list[Room]
-    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary_keys=True: bool) -> dict{str: List[Room]} 
+    get_rooms_availability_dict_by_floor(self, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
+    search_rooms_availability_dict_by_floor(self, expression: str, floor: int, only_ordinary_keys=True: bool) -> dict[str, List[Room]]
     get_valid_authorizations_for_room(self, room_id: int)-> list[Authorization]
     get_prioritized_authorizations_for_room(self, room_id: int) -> list[Authorization]
     
@@ -108,6 +109,22 @@ class Db:
             q_unavailable_rooms = q_unavailable_rooms.filter(Key.key_class == 0)
         q_available_rooms = self.session.query(Room). \
             filter(Room.floor == floor). \
+            except_(q_unavailable_rooms).join(Key). \
+            order_by(Room.borrowings_count.desc())
+        if only_ordinary_keys:
+            q_available_rooms = q_available_rooms.filter(Key.key_class == 0)
+
+        available_rooms = q_available_rooms.all()
+        unavailable_rooms = q_unavailable_rooms.order_by(Room.borrowings_count.desc()).all()
+        return {"available": available_rooms, "unavailable": unavailable_rooms}
+
+    def search_rooms_availability_dict_by_floor(self, expression, floor, only_ordinary_keys=True):
+        q_unavailable_rooms = self.session.query(Room).join(Key).join(Borrowing). \
+            filter(Borrowing.returned == None, Room.floor == floor, Room.name.like(f"%{expression}%"))
+        if only_ordinary_keys:
+            q_unavailable_rooms = q_unavailable_rooms.filter(Key.key_class == 0)
+        q_available_rooms = self.session.query(Room). \
+            filter(Room.floor == floor, Room.name.like(f"%{expression}%")). \
             except_(q_unavailable_rooms).join(Key). \
             order_by(Room.borrowings_count.desc())
         if only_ordinary_keys:

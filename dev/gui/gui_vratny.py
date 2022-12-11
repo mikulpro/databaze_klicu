@@ -196,15 +196,13 @@ class RoomSelectionScreen(Screen):
         selected_floor = MDApp.get_running_app().get_selected_floor()
         searched_expression = str(self.ids.roomsearch.text)
         if len(searched_expression) >= 1:
-            list_of_matches_rooms = MDApp.get_running_app().db.get_room_by_name_fraction(fraction=searched_expression,
-                                                                                      floor=selected_floor)
-            # FIX ME
-            available_rooms = list_of_matches_rooms
+            list_of_matches_rooms = MDApp.get_running_app().\
+                db.search_rooms_availability_dict_by_floor(expression=searched_expression, floor=selected_floor)
         else:
             list_of_matches_rooms = MDApp.get_running_app().db.get_rooms_availability_dict_by_floor(floor=selected_floor)
-            available_rooms = list_of_matches_rooms["available"]
-            unavailable_rooms = list_of_matches_rooms["unavailable"]
 
+        available_rooms = list_of_matches_rooms["available"]
+        unavailable_rooms = list_of_matches_rooms["unavailable"]
 
         # undisplay old rooms
         self.ids.room_widget_scrollview.clear_widgets()
