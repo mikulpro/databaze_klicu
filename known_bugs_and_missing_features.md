@@ -9,6 +9,7 @@ Currently in: pre-release
 - no real authentication
 - no choice if I want to pick floor or person first when lending a key
 - admin app is incomplete
+- pressing ENTER logs you in
 
 
 # Admin app
