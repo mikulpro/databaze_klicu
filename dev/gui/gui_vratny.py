@@ -39,6 +39,13 @@ class SearchResultWidget(BoxLayout):
         self.label_pointer = None
         self.data = None
 
+class LoadingScreen(Screen):
+    def __init__(self, **kwargs):
+        super(LoadingScreen, self).__init__(**kwargs)
+
+    def on_enter(self, *args):
+        MDApp.get_running_app().on_resize()
+        return super().on_enter(*args)
 
 # first screen
 class LoginScreen(Screen):
@@ -105,9 +112,9 @@ class BorrowingSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(BorrowingSelectionScreen, self).__init__(**kwargs)
-        self.SearchBorrowingTextInputFunction()  # initial search
 
     def on_enter(self, *args):
+        self.SearchBorrowingTextInputFunction()
         MDApp.get_running_app().on_resize()
         return super().on_enter(*args)
 
@@ -143,9 +150,9 @@ class FloorSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(FloorSelectionScreen, self).__init__(**kwargs)
-        self.SearchFloorTextInputFunction(initial=True)  # initial search
 
     def on_enter(self, *args):
+        self.SearchFloorTextInputFunction(initial=True)
         MDApp.get_running_app().on_resize()
         return super().on_enter(*args)
 
@@ -181,9 +188,9 @@ class RoomSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(RoomSelectionScreen, self).__init__(**kwargs)
-        self.SearchRoomTextInputFunction()  # initial search
 
     def on_enter(self, *args):
+        self.SearchRoomTextInputFunction()
         MDApp.get_running_app().on_resize()
         return super().on_enter(*args)
 
@@ -236,7 +243,6 @@ class PersonSelectionScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PersonSelectionScreen, self).__init__(**kwargs)
-        self.PersonSearchTextInputFunction()  # initial search
 
     def on_enter(self, *args):
         MDApp.get_running_app().on_resize()
@@ -320,7 +326,9 @@ class AdminAuthorizedPersonWidget(GridLayout):
         pass
 
     def delete(self, instance):
-        pass
+        MDApp.get_running_app().db.invalidate_authorization_obj(instance.data)
+        instance.parent.remove_widget(instance)
+
 
 class AdminScreen(Screen):
 
@@ -340,7 +348,10 @@ class AdminAuthorizedPplScreen(Screen):
 
     def __init__(self, **kwargs):
         super(AdminAuthorizedPplScreen, self).__init__(**kwargs)
-        
+
+    def change_to_loading(self):
+        sc_mngr.current = "loading"
+
     def on_enter(self, *args):
         self.display_authorised_ppl()
         return super().on_enter(*args)
@@ -350,20 +361,38 @@ class AdminAuthorizedPplScreen(Screen):
         
         searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
         
-        found_ppl = [] #MDApp.get_running_app().search_authorized_persons(expression=searched_expression)
+        found_ppl = []
+        if searched_expression is None or searched_expression == "":
+            number_of_displayed_auths = 0
+            for widget in MDApp.get_running_app().preloaded_auths:
+                number_of_displayed_auths += 1
+                self.ids.admin_person_widget_scrollview.add_widget(widget)
+                if number_of_displayed_auths >= 2000:
+                    break
+            return
+        else:
+            found_ppl = MDApp.get_running_app().db.search_authorizations(searched_expression)
 
         self.ids.admin_person_widget_scrollview.clear_widgets()
 
+        number_of_displayed_auths = 0
         for person in found_ppl:
-            self._admin_add_authorised_person_widget(person)
+            number_of_displayed_auths += 1
+            if number_of_displayed_auths < 40:
+                self._admin_add_authorised_person_widget(person)
         
 
     def _admin_add_authorised_person_widget(self, data):
         widget = AdminAuthorizedPersonWidget()
         widget.data = data
-        widget.ids.name.text = str(data.get_full_name())
-        widget.ids.authorized_by.text = "Neznámý původce"
+        widget.ids.name.text = str(data.person.get_full_name())
+        if data.origin_id == "1" or data.origin_id == 1:
+            widget.ids.authorized_by.text = "admin"
+        else:
+            widget.ids.authorized_by.text = "neznámý"
         widget.ids.time.text = str(data.created)
+        widget.ids.time2.text = str(data.expiration)
+        widget.ids.room.text = str(data.room.name)
         self.ids.admin_person_widget_scrollview.add_widget(widget)
 
 
@@ -384,6 +413,9 @@ class VratnyApp(MDApp):
         self.selected_endtime_date = None
         self.selected_borrowing = None
         self.db = database_object
+        self.preloaded_auths = []
+        self.return_screen = "login"
+        self.number_of_auths_to_load = 1
 
         # logger setup
         Config.set('kivy', 'log_enable', 1)
@@ -399,16 +431,50 @@ class VratnyApp(MDApp):
 
 
     def on_start(self):
-        Clock.schedule_interval(self.update_label, 1)
+        Clock.schedule_interval(self.update_label, 2)
 
     def update_label(self, *args):
         try:
             sc_mngr.current_screen.ids.clock.text = f"{datetime.now().hour}:{datetime.now().minute:02d}"
         except:
             pass
-
+        
         self.on_resize()
+        
+        if self.preloaded_auths == []:
+            self.preload_auths(return_screen=self.return_screen, number_of_auths=self.number_of_auths_to_load)
+            self.return_screen = "login"
+            self.number_of_auths_to_load = 300
 
+    def preload_auths_again(self):
+        sc_mngr.current = "loading"
+        self.return_screen = "admin_authorized_ppl"
+        self.number_of_auths_to_load = 600
+        self.preloaded_auths = []
+
+    def preload_auths(self, return_screen="login", number_of_auths=1):
+        Logger.info("Nacitani auths zacalo")
+        sc_mngr.current_screen = sc_mngr.get_screen("loading")
+        self.preloaded_auths = []
+        instructions = self.db.get_all_authorizations()
+        counter = 0
+        for item in instructions:
+            if counter >= number_of_auths:
+                break
+            widget = AdminAuthorizedPersonWidget()
+            widget.data = item
+            widget.ids.name.text = str(item.person.get_full_name())
+            if item.origin_id == "1" or item.origin_id == 1:
+                widget.ids.authorized_by.text = "admin"
+            else:
+                widget.ids.authorized_by.text = "systém"
+            widget.ids.time.text = str(item.created)
+            widget.ids.time2.text = str(item.expiration)
+            widget.ids.room.text = str(item.room.name)
+            self.preloaded_auths.append(widget)
+            counter += 1
+        Logger.info('Nacteni auths dokonceno')
+        sc_mngr.current = return_screen
 
     def on_resize(self, *args):
         current_screen = sc_mngr.current_screen
@@ -585,6 +651,9 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(AdminScreen(name="admin"))
         sc_mngr.add_widget(AdminAuthorizedPplScreen(name="admin_authorized_ppl"))
 
+        # !!! LoadingScreen has to be added last
+        sc_mngr.add_widget(LoadingScreen(name="loading"))
+        sc_mngr.current = "loading"
         self.on_resize()
         return sc_mngr
 
