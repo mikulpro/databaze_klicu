@@ -352,10 +352,10 @@ class AdminAuthorizedPplScreen(Screen):
         sc_mngr.current = "loading"
 
     def on_enter(self, *args):
-        self.display_authorised_ppl()
+        self.display_authorizations()
         return super().on_enter(*args)
 
-    def display_authorised_ppl(self):
+    def display_authorizations(self):
         searched_expression = ""
         
         searched_expression = str(sc_mngr.get_screen("admin_authorized_ppl").ids.admin_auth_ppl_search.text)
@@ -456,21 +456,28 @@ class VratnyApp(MDApp):
         Logger.info("Nacitani auths zacalo")
         sc_mngr.current_screen = sc_mngr.get_screen("loading")
         self.preloaded_auths = []
-        instructions = self.db.get_all_authorizations()
+        instructions = self.db.get_all_authorizations_screen()
         counter = 0
         for item in instructions:
             if counter >= number_of_auths:
                 break
             widget = AdminAuthorizedPersonWidget()
             widget.data = item
-            widget.ids.name.text = str(item.person.get_full_name())
-            if item.origin_id == "1" or item.origin_id == 1:
-                widget.ids.authorized_by.text = "admin"
-            else:
-                widget.ids.authorized_by.text = "systém"
-            widget.ids.time.text = str(item.created)
-            widget.ids.time2.text = str(item.expiration)
-            widget.ids.room.text = str(item.room.name)
+            # (1746, 'Jan', 'Novák', 'admin', datetime.datetime(2022, 12, 9, 13, 51, 59, 762329), datetime.datetime(2023, 3, 19, 13, 51, 59, 430651), 'CP-5.24')
+            widget.ids.name.text = item[1] + " " + item[2]
+            widget.ids.authorized_by.text = item[3]
+
+            widget.ids.time.text = item[4].strftime("%H:%M %d.%m.%Y")
+            widget.ids.time2.text = item[5].strftime("%H:%M %d.%m.%Y")
+            widget.ids.room.text = str(item[6])
+            # widget.ids.name.text = str(item.person.get_full_name())
+            # if item.origin_id == "1" or item.origin_id == 1:
+            #     widget.ids.authorized_by.text = "admin"
+            # else:
+            #     widget.ids.authorized_by.text = "systém"
+            # widget.ids.time.text = str(item.created)
+            # widget.ids.time2.text = str(item.expiration)
+            # widget.ids.room.text = str(item.room.name)
             self.preloaded_auths.append(widget)
             counter += 1
         Logger.info('Nacteni auths dokonceno')
