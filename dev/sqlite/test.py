@@ -9,10 +9,13 @@ db = Db()
 # c = db.get_valid_authorizations_for_room(1)
 d = db.get_prioritized_authorizations_for_room(10)
 e = db.search_prioritized_authorizations_for_room("Ho Mi", 10)
-print(len(e))
-print(e)
-for i in e:
-    print(i.person.get_full_name())
+f = db.get_all_authorizations_screen()
+print(len(f))
+print(f)
+for i in f:
+    print(i)
+# for i in e:
+#     print(i.person.get_full_name())
 # print(len(c))
 # print(len(d))
 # print(c)

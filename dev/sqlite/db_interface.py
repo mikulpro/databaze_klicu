@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, or_, and_, update, func
+from sqlalchemy import create_engine, or_, and_, update, func, select
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
@@ -52,21 +52,23 @@ Db:
         update_person(self, person_id : int, **kwargs) -> None (firstname : str, surname: str, workplace_id : int) -> None
     
     
-    
     ADMIN    
         ?update_authorization(...)
         ?add_key(...)
         ?update_key(..)
         ?add_room(...)
         ?update_room(...)
+        
+    SCREENS
+        get_all_authorizations_screen(self)
 """
 
 
 class Db:
 
     def __init__(self, db_path="sqlite:///db.sqlite"):
-        self.db_path = db_path
-        self.session = None
+        self.db_path: String = db_path
+        self.session: Session = None
         self.new_session()
 
     def new_session(self):
@@ -352,4 +354,22 @@ class Db:
         return self.session.query(Authorization).filter(Authorization.origin_id==1).all()
     def get_all_authorized_persons(self):
         return self.session.query(AuthorizedPerson).all()
+
+    """
+        SCREENS
+            Selecty přímo pro obrazovky
+    """
+    def get_all_authorizations_screen(self):
+        s = select(
+            Authorization.id,
+            AuthorizedPerson.firstname,
+            AuthorizedPerson.surname,
+            AuthorizationOrigin.name,
+            Authorization.created,
+            Authorization.expiration,
+            Room.name).\
+            join(Authorization.origin).join(Authorization.person).join(Authorization.room)
+
+        result = self.session.execute(s).all()
+        return result
 

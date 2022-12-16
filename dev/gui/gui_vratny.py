@@ -1,6 +1,5 @@
 # python modules
 import time
-# import logging
 from datetime import datetime
 from dev.sqlite.db_interface import Db
 
@@ -424,6 +423,7 @@ class VratnyApp(MDApp):
         Config.set('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
 
         Logger.info('Logger nastaven')
+        
         # logging.basicConfig(filename="app.log", force=True)
         # self.key_logger = logging.getLogger("key")
         # self.exceptions_logger = logging.getLogger("exception")
