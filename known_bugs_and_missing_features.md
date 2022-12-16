@@ -12,6 +12,7 @@ Currently in: pre-release
 - pressing ENTER does not log you in
 - stránkování výpisu autorizací chybí
 - je třeba provést upravení zobrazovaných textů na jen potřebné informace
+- změnit dobu trvání autorizace
 
 
 # Admin app
