@@ -13,6 +13,9 @@ Currently in: pre-release
 - stránkování výpisu autorizací chybí
 - je třeba provést upravení zobrazovaných textů na jen potřebné informace
 - změnit dobu trvání autorizace
+- možnosti měnit nastavení pro aplikaci
+- tlačítka učeben zvětšit na čtverečky
+- upravit čitelnost textů
 
 
 # Admin app
