@@ -419,20 +419,7 @@ class VratnyApp(MDApp):
 
         # Load config file
         Config.read('kivy.config')
-
-        # logger setup
-        # Config.set('kivy', 'log_enable', 1)
-        # Config.set('kivy', 'log_dir', 'logs')
-        # Config.set('kivy', 'log_level', 'debug')
-        # Config.set('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
-
-        Logger.info('Vratny app: Logger nastaven')
-
-        
-        # logging.basicConfig(filename="app.log", force=True)
-        # self.key_logger = logging.getLogger("key")
-        # self.exceptions_logger = logging.getLogger("exception")
-        # self.key_logger.info("Logger nastaven")
+        Logger.warning('Vratny app: Log level nastaven na debug')
 
 
     def on_start(self):
