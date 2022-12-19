@@ -1,5 +1,6 @@
 # python modules
 import time
+import logging
 from datetime import datetime
 from dev.sqlite.db_interface import Db
 
@@ -416,13 +417,17 @@ class VratnyApp(MDApp):
         self.return_screen = "login"
         self.number_of_auths_to_load = 1
 
-        # logger setup
-        Config.set('kivy', 'log_enable', 1)
-        Config.set('kivy', 'log_dir', 'logs')
-        Config.set('kivy', 'log_level', 'debug')
-        Config.set('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
+        # Load config file
+        Config.read('kivy.config')
 
-        Logger.info('Logger nastaven')
+        # logger setup
+        # Config.set('kivy', 'log_enable', 1)
+        # Config.set('kivy', 'log_dir', 'logs')
+        # Config.set('kivy', 'log_level', 'debug')
+        # Config.set('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
+
+        Logger.info('Vratny app: Logger nastaven')
+
         
         # logging.basicConfig(filename="app.log", force=True)
         # self.key_logger = logging.getLogger("key")
@@ -453,7 +458,7 @@ class VratnyApp(MDApp):
         self.preloaded_auths = []
 
     def preload_auths(self, return_screen="login", number_of_auths=1):
-        Logger.info("Nacitani auths zacalo")
+        Logger.info("Admin app: Nacitani auths zacalo")
         sc_mngr.current_screen = sc_mngr.get_screen("loading")
         self.preloaded_auths = []
         instructions = self.db.get_all_authorizations_screen()
@@ -467,8 +472,8 @@ class VratnyApp(MDApp):
             widget.ids.name.text = item[1] + " " + item[2]
             widget.ids.authorized_by.text = item[3]
 
-            widget.ids.time.text = item[4].strftime("%H:%M %d.%m.%Y")
-            widget.ids.time2.text = item[5].strftime("%H:%M %d.%m.%Y")
+            widget.ids.time.text = item[4].strftime("%d.%m.%Y %H:%M")
+            widget.ids.time2.text = item[5].strftime("%d.%m.%Y %H:%M")
             widget.ids.room.text = str(item[6])
             # widget.ids.name.text = str(item.person.get_full_name())
             # if item.origin_id == "1" or item.origin_id == 1:
@@ -480,7 +485,7 @@ class VratnyApp(MDApp):
             # widget.ids.room.text = str(item.room.name)
             self.preloaded_auths.append(widget)
             counter += 1
-        Logger.info('Nacteni auths dokonceno')
+        Logger.info('Admin app: Nacteni auths dokonceno')
         sc_mngr.current = return_screen
 
     def on_resize(self, *args):
@@ -567,6 +572,12 @@ class VratnyApp(MDApp):
         if sc_mngr.current == "borrowingselection":
             self.selected_borrowing = pressed_button_instance.data
             self.db.return_key(self.selected_borrowing.id)
+            key = self.selected_borrowing.key
+            Logger.info(f"Vratny app: "
+                        f"[{datetime.utcnow().strftime('%d.%m.%Y %H:%M')}] "
+                        f"Vrácen klíč {key.registration_number} "
+                        f"od místnosti {key.room.name} "
+                        f"osobou {self.selected_borrowing.authorization.person.get_full_name()}")
             sc_mngr.current = "actionselection"
         if sc_mngr.current == "floorselection":
             self.selected_floor = pressed_button_instance.data
@@ -702,8 +713,11 @@ class VratnyApp(MDApp):
 
     def complete_borrowing_session(self):
         self.db.add_borrowing(self.selected_key.id, self.selected_authorization.id)
-        Logger.info(f"Vypůjčen klíč: {self.selected_key.registration_number} "
-                             f"osobě:{self.selected_authorization.person.get_full_name}")
+        Logger.info(f"Vratny app: "
+                    f"[{datetime.utcnow().strftime('%d.%m.%Y %H:%M')}] "
+                    f"Vypůjčen klíč {self.selected_key.registration_number} "
+                    f"od místnosti {self.selected_key.room.name} "
+                    f"osobě {self.selected_authorization.person.get_full_name()}")
 
         self.selected_lender = ""
         self.selected_floor = None

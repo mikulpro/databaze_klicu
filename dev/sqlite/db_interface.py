@@ -72,7 +72,7 @@ class Db:
         self.new_session()
 
     def new_session(self):
-        engine = create_engine(self.db_path, echo=True, future=True)
+        engine = create_engine(self.db_path, future=True)
         self.session = Session(engine)
 
     def commit_session(self):
