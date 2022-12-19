@@ -368,6 +368,7 @@ class Db:
             Authorization.created,
             Authorization.expiration,
             Room.name).\
+            filter(Authorization.expiration > datetime.datetime.utcnow()).\
             join(Authorization.origin).join(Authorization.person).join(Authorization.room)
 
         result = self.session.execute(s).all()
