@@ -2,8 +2,8 @@ from sqlalchemy import create_engine, or_, and_, update, func, select
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
 
-from dev.sqlite.models import *
-from dev.sqlite.utils import hash_func
+from vratnyapp.dev.sqlite.models import *
+from vratnyapp.dev.sqlite.utils import hash_func
 
 """
 Db:

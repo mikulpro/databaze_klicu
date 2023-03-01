@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
-from dev.sqlite.utils import hash_func
+from vratnyapp.dev.sqlite.utils import hash_func
 
 Base = declarative_base()
 

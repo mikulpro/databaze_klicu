@@ -1,8 +1,6 @@
 # python modules
-import time
-import logging
 from datetime import datetime
-from dev.sqlite.db_interface import Db
+from vratnyapp.dev.sqlite.db_interface import Db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
@@ -14,22 +12,15 @@ from kivy.logger import Logger
 
 # kivy material design library
 from kivymd.app import MDApp
-from kivymd.uix.datatables import MDDataTable
-from kivymd.theming import ThemableBehavior
-from kivymd.uix.button import MDRoundFlatIconButton
 from kivymd.uix.pickers import MDDatePicker, MDTimePicker
-from kivy.uix.scrollview import ScrollView
 
 # kivy basic objects
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
-from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
+
 
 # auxiliary kivy functions
-from kivy.properties import ObjectProperty
-from kivy.metrics import dp
 
 # custom widget fot ppl and keys
 class SearchResultWidget(BoxLayout):
