@@ -13,3 +13,9 @@ kivy==2.1.0
 kivymd~=1.1.1
 SQLAlchemy~=1.4.43
 alembic~=1.8.1
+Flask~=2.2.3
+fastapi~=0.94.1
+pydantic~=1.10.6
+requests~=2.28.2
+bcrypt~=4.0.1
+passlib~=1.7.4
