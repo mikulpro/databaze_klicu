@@ -1,9 +1,22 @@
+import os
 import datetime
+from pathlib import Path
+import importlib.util
 
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
-from vratnyapp.dev.sqlite.utils import hash_func
+
+main_folder_path = Path(__file__).resolve().parent
+project_folder_path = main_folder_path.parent
+
+# db_interface
+module_path = os.path.join(project_folder_path, 'sqlite', 'utils.py')
+spec = importlib.util.spec_from_file_location('utils', module_path)
+module_to_import = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module_to_import)
+hash_func = module_to_import.hash_func
+
 
 Base = declarative_base()
 

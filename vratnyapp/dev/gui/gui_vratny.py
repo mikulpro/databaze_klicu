@@ -7,7 +7,7 @@ from pathlib import Path
 import importlib.util
 main_folder_path = Path(__file__).resolve().parent
 project_folder_path = main_folder_path.parent
-module_path = os.path.join(project_folder_path, 'sqlite\old', 'db_interface.py')
+module_path = os.path.join(project_folder_path, 'sqlite', 'db_interface.py')
 spec = importlib.util.spec_from_file_location('db_interface', module_path)
 module_to_import = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module_to_import)
@@ -403,7 +403,7 @@ class AdminAuthorizedPplScreen(Screen):
 
 class VratnyApp(MDApp):
 
-    def __init__(self, database_object=Db(), **kwargs):
+    def __init__(self, database_object, **kwargs):
         super(VratnyApp, self).__init__(**kwargs)
         self.selected_lender = ""
         self.selected_floor = None
@@ -423,7 +423,6 @@ class VratnyApp(MDApp):
         Config.read('kivy.config')
         Logger.warning('Vratny app: Log level nastaven na debug')
 
-
     def on_start(self):
         Clock.schedule_interval(self.update_label, 2)
 
@@ -435,11 +434,14 @@ class VratnyApp(MDApp):
         
         self.on_resize()
         
+        '''
         if self.preloaded_auths == []:
             self.preload_auths(return_screen=self.return_screen, number_of_auths=self.number_of_auths_to_load)
             self.return_screen = "login"
             self.number_of_auths_to_load = 300
+        '''
 
+    '''
     def preload_auths_again(self):
         sc_mngr.current = "loading"
         self.return_screen = "admin_authorized_ppl"
@@ -476,6 +478,7 @@ class VratnyApp(MDApp):
             counter += 1
         Logger.info('Admin app: Nacteni auths dokonceno')
         sc_mngr.current = return_screen
+    '''
 
     def on_resize(self, *args):
         current_screen = sc_mngr.current_screen
@@ -648,7 +651,7 @@ class VratnyApp(MDApp):
             Builder.unload_file(filename)
         Builder.load_file('dev/gui/style_vratny.kv')
 
-        sc_mngr.add_widget(LoginScreen(name="login"))
+        #sc_mngr.add_widget(LoginScreen(name="login"))
         sc_mngr.add_widget(ActionSelectionScreen(name="actionselection"))
         sc_mngr.add_widget(BorrowingSelectionScreen(name="borrowingselection"))
         sc_mngr.add_widget(FloorSelectionScreen(name="floorselection"))
@@ -657,10 +660,9 @@ class VratnyApp(MDApp):
         sc_mngr.add_widget(ReviewScreen(name="review"))
         sc_mngr.add_widget(AdminScreen(name="admin"))
         sc_mngr.add_widget(AdminAuthorizedPplScreen(name="admin_authorized_ppl"))
-
-        # !!! LoadingScreen has to be added last
-        sc_mngr.add_widget(LoadingScreen(name="loading"))
-        sc_mngr.current = "loading"
+        #sc_mngr.add_widget(LoadingScreen(name="loading"))
+        
+        sc_mngr.current = "actionselection"
         self.on_resize()
         return sc_mngr
 
