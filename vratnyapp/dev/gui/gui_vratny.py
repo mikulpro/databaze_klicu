@@ -1,6 +1,17 @@
 # python modules
 from datetime import datetime
-from vratnyapp.dev.sqlite.db_interface import Db
+
+# db api
+import os
+from pathlib import Path
+import importlib.util
+main_folder_path = Path(__file__).resolve().parent
+project_folder_path = main_folder_path.parent
+module_path = os.path.join(project_folder_path, 'sqlite\old', 'db_interface.py')
+spec = importlib.util.spec_from_file_location('db_interface', module_path)
+module_to_import = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module_to_import)
+Db = module_to_import.Db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
