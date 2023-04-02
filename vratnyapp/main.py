@@ -22,6 +22,6 @@ spec.loader.exec_module(module_to_import)
 VratnyApp = module_to_import.VratnyApp
 
 #database = Db("vratnyapp\dev\sqlite\db.sqlite")
-database = Db("sqlite:///dev/sqlite/db.sqlite")
+database = Db("sqlite:///vratnyapp/dev/sqlite/db.sqlite")
 app = VratnyApp(database_object=database)
 app.run()
