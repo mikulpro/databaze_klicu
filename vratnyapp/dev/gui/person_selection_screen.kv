@@ -1,0 +1,153 @@
+<PersonSelectionScreen>
+
+    Image:
+        id: background
+        source: 'images/cpto3.jpg'
+        size_hint: None, None
+        width: root.width
+        height: root.height
+        allow_stretch: True
+        keep_ratio: False
+
+    GridLayout:
+        id: main_screen_layout
+        cols: 3
+        rows: 3
+        size_hint: None, None
+        width: root.width
+        height: root.height
+
+        Widget:
+            id: blank_widget_1
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        MDLabel:
+            id: appname_label
+            text: "Kdo si klíč půjčuje?"
+            font_size: int(root.height * 0.05)
+            multiline: False
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "center"
+
+        Widget:
+            id: blank_widget_2
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        Widget:
+            id: blank_widget_3
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
+
+        MDCard:
+            id: bgcard
+            size_hint: None, None
+            elevation: 1
+            md_bg_color: "#ededed"
+            style: "elevated"
+            color: 0, 0, 0, 0
+            #radius: [30, 30, 30, 30]
+            width: root.width * 0.8
+            height: root.height * 0.8
+
+            GridLayout:
+                id: inside_layout
+                cols: 1
+                rows: 2
+                size_hint: None, None
+                width: bgcard.width
+                height: bgcard.height
+                padding: bgcard.width * 0.1, bgcard.height * 0.1, bgcard.width * 0.1, bgcard.height * 0.1
+                spacing: 5
+
+                MDTextField:
+                    id: personsearch
+                    mode: "rectangle"
+                    text_color_normal: "#005963"
+                    text_color_focus: "#000000"
+                    hint_text_color_normal: "#005963"
+                    hint_text_color_focus: "#000000"
+                    background_color: "#005963"
+                    multiline: False
+                    fill_color_focus: "#FFFFFF"
+                    line_color_normal: "#005963"
+                    line_color_focus: "#000000"
+                    hint_text: "Vyhledat osobu"
+                    size_hint: None, None
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.1
+                    font_size: bgcard.height * 0.025
+                    on_text: root.PersonSearchTextInputFunction()
+
+                ScrollView:
+                    width: bgcard.width * 0.8
+                    height: bgcard.height * 0.7
+                    do_scroll_x: False
+                    do_scroll_y: True
+
+                    GridLayout:
+                        id: person_widget_scrollview
+                        cols: 1
+                        rows: 500
+                        spacing: 5
+                        row_default_height: bgcard.height * 0.05
+                        height: bgcard.height * 0.05 * 500 + 5*499
+                        size_hint_x: 1
+                        size_hint_y: None
+        
+        Widget:
+            id: blank_widget_4
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
+
+        GridLayout:
+            rows: 1
+            cols: 1
+            width: root.width * 0.1
+            height: root.height * 0.1
+            padding: root.width * 0.025, root.height * 0.025, root.width * 0.025, root.height * 0.025
+
+            MDRectangleFlatButton:
+                id: storno_button
+                text: "<<<"
+                text_color: "#FFFFFF"
+                md_bg_color: "#d20019"
+                line_color: "#d20019"
+                on_release: app.StornoButton()
+                size_hint: 1, 1
+                width: root.width * 0.05
+                height: root.height * 0.05
+                font_size: root.height * 0.025
+
+        MDLabel:
+            id: clock
+            text: "??:??"
+            font_size: int(root.height * 0.05)
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "right"
+
+        Widget:
+            id: blank_widget_5
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1

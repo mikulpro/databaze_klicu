@@ -1,0 +1,59 @@
+<AdminAuthorizedPersonWidget>:
+    id: auth_widget
+    size_hint: 1, 0.06
+    cols: 6
+    rows: 1
+
+    MDLabel:
+        id: name
+        bold: True
+        color: 0, 0, 0, 1
+        text: "ERROR"
+        font_size: self.height * 0.5
+
+    MDLabel:
+        id: authorized_by
+        bold: True
+        color: 0, 0, 0, 1
+        text: "ERROR"
+        font_size: self.height * 0.5
+
+    MDLabel:
+        id: time
+        bold: True
+        color: 0, 0, 0, 1
+        text: "ERROR"
+        font_size: self.height * 0.5
+
+    MDLabel:
+        id: time2
+        bold: True
+        color: 0, 0, 0, 1
+        text: "ERROR"
+        font_size: self.height * 0.5
+
+    MDLabel:
+        id: room
+        bold: True
+        color: 0, 0, 0, 1
+        text: "ERROR"
+        font_size: self.height * 0.5
+
+    # MDRectangleFlatButton:
+    #     id: edit_button
+    #     text: "Upravit"
+    #     text_color: "#000000"
+    #     md_bg_color: "#FFFFFF"
+    #     line_color: "#000000"
+    #     on_release: root.edit(self.parent)
+    #     size_hint: 1, 1
+
+    MDRectangleFlatButton:
+        id: edit_button
+        text: "ZNEPLATNIT"
+        font_size: self.height * 0.4
+        text_color: "#FFFFFF"
+        md_bg_color: "#d20019"
+        line_color: "#d20019"
+        on_release: root.delete(self.parent)
+        size_hint: 1, 1

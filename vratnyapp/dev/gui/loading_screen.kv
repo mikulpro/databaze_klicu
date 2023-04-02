@@ -1,0 +1,112 @@
+<LoadingScreen>:
+
+    Image:
+        id: background
+        source: 'images/cpto3.jpg'
+        size_hint: None, None
+        width: root.width
+        height: root.height
+        allow_stretch: True
+        keep_ratio: False
+
+    GridLayout:
+        id: main_screen_layout
+        cols: 3
+        rows: 3
+        size_hint: None, None
+        width: root.width
+        height: root.height
+
+        Widget:
+            id: blank_widget_1
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        MDLabel:
+            id: appname_label
+            text: "Aplikace pro správu klíčů CPTO"
+            font_size: int(root.height * 0.05)
+            multiline: False
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "center"
+
+        Widget:
+            id: blank_widget_2
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        Widget:
+            id: blank_widget_3
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
+
+        MDCard:
+            id: bgcard
+            size_hint: None, None
+            elevation: 1
+            md_bg_color: "#ededed"
+            style: "elevated"
+            color: 0, 0, 0, 0
+            #radius: [30, 30, 30, 30]
+            width: root.width * 0.8
+            height: root.height * 0.8
+
+            MDLabel:
+                id: loading_label
+                multiline: True
+                text: "Právě probíhá načítání dat, prosíme Vás o chvilku strpení. Načítání dat by nikdy nemělo trvat déle než 10 minut."
+                font_size: int(root.height * 0.05)
+                multiline: False
+                size_hint: None, None
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                theme_text_color: "Custom"
+                text_color: 0.0, .35, .39, 1
+                bold: True
+                width: root.width * 0.8
+                height: root.height * 0.1
+                halign: "center"
+                valign: "center"
+        
+        Widget:
+            id: blank_widget_4
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.8
+
+        Widget:
+            id: blank_widget_5
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1
+
+        MDLabel:
+            id: clock
+            text: "??:??"
+            font_size: int(root.height * 0.05)
+            size_hint: None, None
+            theme_text_color: "Custom"
+            text_color: 0.0, .35, .39, 1
+            bold: True
+            width: root.width * 0.8
+            height: root.height * 0.1
+            halign: "right"
+
+        Widget:
+            id: blank_widget_7
+            size_hint: None, None
+            color: 0, 0, 0, 0
+            width: root.width * 0.1
+            height: root.height * 0.1

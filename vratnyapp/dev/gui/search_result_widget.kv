@@ -1,0 +1,13 @@
+<SearchResultWidget>
+    size_hint: 1, 0.06
+
+    MDRectangleFlatButton:
+        id: searchresultwidget_label_content
+        size_hint: 1, 1
+        text: "ERROR"
+        on_release: app.SearchResultWidgetClickFunction(self.parent)
+        text_color: "#FFFFFF"
+        md_bg_color: "#005963"
+        line_color: "#005963"
+        icon_color: "#FFFFFF"
+        font_size: self.height * 0.5
