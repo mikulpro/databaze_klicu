@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import importlib.util
-from sqlalchemy import create_engine, or_, and_, update, func, select
+from sqlalchemy import String, create_engine, or_, and_, update, func, select
 from sqlalchemy.orm import Session
 import sqlalchemy.exc
 import datetime
