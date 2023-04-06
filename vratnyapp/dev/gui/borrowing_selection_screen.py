@@ -1,18 +1,8 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 
-# try:
+
 from dev.gui.search_result_widget import SearchResultWidget
-# except:
-#     import os
-#     from pathlib import Path
-#     import importlib.util
-#     main_folder_path = Path(__file__).resolve().parent
-#     project_folder_path = main_folder_path.parent
-#     module_path = os.path.join(project_folder_path, 'gui', 'search_result_widget.py')
-#     spec = importlib.util.spec_from_file_location('search_result_widget', module_path)
-#     search_result_widget = importlib.util.module_from_spec(spec)
-#     spec.loader.exec_module(search_result_widget)
 
 
 class BorrowingSelectionScreen(Screen):

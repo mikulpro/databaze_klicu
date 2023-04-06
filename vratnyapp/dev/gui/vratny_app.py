@@ -5,13 +5,13 @@ from datetime import datetime
 import os
 from pathlib import Path
 import importlib.util
-main_folder_path = Path(__file__).resolve().parent
-project_folder_path = main_folder_path.parent
-module_path = os.path.join(project_folder_path, 'sqlite', 'db_interface.py')
-spec = importlib.util.spec_from_file_location('db_interface', module_path)
-module_to_import = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module_to_import)
-Db = module_to_import.Db
+# main_folder_path = Path(__file__).resolve().parent
+# project_folder_path = main_folder_path.parent
+# module_path = os.path.join(project_folder_path, 'sqlite', 'db_interface.py')
+# spec = importlib.util.spec_from_file_location('db_interface', module_path)
+# module_to_import = importlib.util.module_from_spec(spec)
+# spec.loader.exec_module(module_to_import)
+# Db = module_to_import.Db
 
 # kivy builder and builder configuration
 from kivy.core.window import Window
@@ -29,49 +29,49 @@ from kivymd.uix.pickers import MDDatePicker, MDTimePicker
 from kivy.uix.screenmanager import ScreenManager, NoTransition
 
 # kivy import custom screens
-try:
-    from admin_screen import AdminScreen
-    from admin_authorized_ppl_screen import AdminAuthorizedPplScreen
-    from action_selection_screen import ActionSelectionScreen
-    from review_screen import ReviewScreen
-    from borrowing_selection_screen import BorrowingSelectionScreen
-    from floor_selection_screen import FloorSelectionScreen
-    from room_selection_screen import RoomSelectionScreen
-    from person_selection_screen import PersonSelectionScreen
-    from search_result_widget import SearchResultWidget
-except:
-    screens_to_load = [ 'action_selection_screen', 
-                    'borrowing_selection_screen', 
-                    'floor_selection_screen', 
-                    'room_selection_screen', 
-                    'person_selection_screen', 
-                    'review_screen', 
-                    'admin_screen', 
-                    'admin_authorized_ppl_screen',
-                    'search_result_widget']
-
-    classes_to_load = ["AdminScreen", 
-                       "AdminAuthorizedPplScreen", 
-                       "ActionSelectionScreen", 
-                       "ReviewScreen", 
-                       "BorrowingSelectionScreen", 
-                       "FloorSelectionScreen", 
-                       "RoomSelectionScreen", 
-                       "PersonSelectionScreen",
-                       "SearchResultWidget"]
-
-    for _screen in screens_to_load:
-        main_folder_path = Path(__file__).resolve().parent
-        project_folder_path = main_folder_path.parent
-        module_path = os.path.join(project_folder_path, 'gui', f"{_screen}.py")
-        spec = importlib.util.spec_from_file_location(_screen, module_path)
-        module_to_import = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module_to_import)
-        for _class in classes_to_load:
-            try:
-                exec(f"{_class} = module_to_import.{_class}")
-            except:
-                pass
+# try:
+from .admin_screen import AdminScreen
+from .admin_authorized_ppl_screen import AdminAuthorizedPplScreen
+from .action_selection_screen import ActionSelectionScreen
+from .review_screen import ReviewScreen
+from .borrowing_selection_screen import BorrowingSelectionScreen
+from .floor_selection_screen import FloorSelectionScreen
+from .room_selection_screen import RoomSelectionScreen
+from .person_selection_screen import PersonSelectionScreen
+from .search_result_widget import SearchResultWidget
+# except:
+#     screens_to_load = [ 'action_selection_screen',
+#                     'borrowing_selection_screen',
+#                     'floor_selection_screen',
+#                     'room_selection_screen',
+#                     'person_selection_screen',
+#                     'review_screen',
+#                     'admin_screen',
+#                     'admin_authorized_ppl_screen',
+#                     'search_result_widget']
+#
+#     classes_to_load = ["AdminScreen",
+#                        "AdminAuthorizedPplScreen",
+#                        "ActionSelectionScreen",
+#                        "ReviewScreen",
+#                        "BorrowingSelectionScreen",
+#                        "FloorSelectionScreen",
+#                        "RoomSelectionScreen",
+#                        "PersonSelectionScreen",
+#                        "SearchResultWidget"]
+#
+#     for _screen in screens_to_load:
+#         main_folder_path = Path(__file__).resolve().parent
+#         project_folder_path = main_folder_path.parent
+#         module_path = os.path.join(project_folder_path, 'gui', f"{_screen}.py")
+#         spec = importlib.util.spec_from_file_location(_screen, module_path)
+#         module_to_import = importlib.util.module_from_spec(spec)
+#         spec.loader.exec_module(module_to_import)
+#         for _class in classes_to_load:
+#             try:
+#                 exec(f"{_class} = module_to_import.{_class}")
+#             except:
+#                 pass
 
 
 
