@@ -1,18 +1,18 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 
-try:
-    import search_result_widget
-except:
-    import os
-    from pathlib import Path
-    import importlib.util
-    main_folder_path = Path(__file__).resolve().parent
-    project_folder_path = main_folder_path.parent
-    module_path = os.path.join(project_folder_path, 'gui', 'search_result_widget.py')
-    spec = importlib.util.spec_from_file_location('search_result_widget', module_path)
-    search_result_widget = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(search_result_widget)  
+# try:
+from dev.gui.search_result_widget import SearchResultWidget
+# except:
+#     import os
+#     from pathlib import Path
+#     import importlib.util
+#     main_folder_path = Path(__file__).resolve().parent
+#     project_folder_path = main_folder_path.parent
+#     module_path = os.path.join(project_folder_path, 'gui', 'search_result_widget.py')
+#     spec = importlib.util.spec_from_file_location('search_result_widget', module_path)
+#     search_result_widget = importlib.util.module_from_spec(spec)
+#     spec.loader.exec_module(search_result_widget)
 
 
 class BorrowingSelectionScreen(Screen):
@@ -46,7 +46,7 @@ class BorrowingSelectionScreen(Screen):
                     self._add_borrowingwidget(b)
 
     def _add_borrowingwidget(self, data):
-        borrowing_widget = search_result_widget.SearchResultWidget()
+        borrowing_widget = SearchResultWidget()
         borrowing_widget.change_text(str(data.authorization.person.get_full_name()) + "   " + str(data.key.room.name) + "   " +  str(f"{data.borrowed.hour}:{data.borrowed.minute:02d} {data.borrowed.day}. {data.borrowed.month}. {data.borrowed.year}"))
         borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
         borrowing_widget.data = data
