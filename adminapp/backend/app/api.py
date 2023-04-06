@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
 import bcrypt
+from fastapi.middleware.cors import CORSMiddleware
 
 from .db_models import *
 from .models import *
@@ -20,6 +21,18 @@ Base.metadata.create_all(bind=engine)
 
 # Initialize the app
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
