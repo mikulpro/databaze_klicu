@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 
-from dev.gui.search_result_widget import SearchResultWidget
+from .search_result_widget import SearchResultWidget
 
 
 class FloorSelectionScreen(Screen):

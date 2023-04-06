@@ -1,19 +1,8 @@
 from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 
-try:
-    from admin_authorized_person_widget import AdminAuthorizedPersonWidget
-except:
-    import os
-    from pathlib import Path
-    import importlib.util
-    main_folder_path = Path(__file__).resolve().parent
-    project_folder_path = main_folder_path.parent
-    module_path = os.path.join(project_folder_path, 'gui', 'admin_authorized_person_widget.py')
-    spec = importlib.util.spec_from_file_location('admin_authorized_person_widget', module_path)
-    module_to_import = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module_to_import)
-    AdminAuthorizedPersonWidget = module_to_import.AdminAuthorizedPersonWidget
+from .admin_authorized_person_widget import AdminAuthorizedPersonWidget
+
 
 class AdminAuthorizedPplScreen(Screen):
 
