@@ -58,6 +58,7 @@ class PersonSelectionScreen(Screen):
     def _add_personwidget(self, data):
         person_widget = SearchResultWidget()
         person_widget.data = data
-        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.person.firstname)} {str(data.person.surname)} (pracoviště: {str(data.person.workplace) if data.person.workplace else ''})")
+        #person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.person.firstname)} {str(data.person.surname)} (pracoviště: {str(data.person.workplace) if data.person.workplace else ''})")
+        person_widget.ids.searchresultwidget_label_content.text = (f"{str(data.person.firstname)} {str(data.person.surname)} | {str(data.person.workplace.abbreviation) if data.person.workplace else ''}")
         person_widget.label_pointer = person_widget.ids.searchresultwidget_label_content
         self.ids.person_widget_scrollview.add_widget(person_widget)
