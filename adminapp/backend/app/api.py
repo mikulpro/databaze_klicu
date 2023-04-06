@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import FastAPI, HTTPException
 from fastapi import Depends
 from sqlalchemy import create_engine
@@ -352,30 +354,82 @@ def delete_room(room_id: int, db: Session = Depends(get_db)):
 
 
 # Users
-@app.post("/users/")
-def create_user(user: User, db: Session = Depends(get_db)):
-    hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
-    db_user = UserDB(username=user.username, password=hashed_password.decode('utf-8'), is_superuser=user.is_superuser)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+# @app.post("/users/")
+# def create_user(user: User, db: Session = Depends(get_db)):
+#     hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
+#     db_user = UserDB(username=user.username, password=hashed_password.decode('utf-8'), is_superuser=user.is_superuser)
+#     db.add(db_user)
+#     db.commit()
+#     db.refresh(db_user)
+#     return User.from_orm(db_user)
 
 
 @app.get("/users/")
-def read_users(db: Session = Depends(get_db)):
+def read_users(db: Session = Depends(get_db), limit=None):
     users = db.query(UserDB).all()
-    return users
+
+    return [User.from_orm(user) for user in users]
 
 
-@app.put("/users/{user_id}")
-def update_user(user_id: int, user: User, db: Session = Depends(get_db)):
-    db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    db_user.username = user.username
-    db_user.password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
-    db_user.is_superuser = user.is_superuser
+# @app.put("/users/{user_id}")
+# def update_user(user_id: int, user: User, db: Session = Depends(get_db)):
+#     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
+#     if not db_user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     db_user.username = user.username
+#     db_user.password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
+#     db_user.is_superuser = user.is_superuser
+#     db.commit()
+#     db.refresh(db_user)
+#     return db_user
+
+@app.post("/authorizations/")
+def create_authorization(authorization: Authorization, db: Session = Depends(get_db)):
+    db_authorization = AuthorizationDB(
+        person_id=authorization.person_id,
+        created=datetime.utcnow(),
+        expiration=authorization.expiration,
+        origin_id=authorization.origin_id,
+        room_id=authorization.room_id
+    )
+    db.add(db_authorization)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_authorization)
+    return db_authorization
+
+@app.get("/authorizations/")
+def read_authorizations(db: Session = Depends(get_db)):
+    authorizations = db.query(AuthorizationDB).all()
+    return authorizations
+
+@app.get("/authorizations/{authorization_id}")
+def read_authorization(authorization_id: int, db: Session = Depends(get_db)):
+    authorization = db.query(AuthorizationDB).filter(AuthorizationDB.id == authorization_id).first()
+    if not authorization:
+        raise HTTPException(status_code=404, detail="Authorization not found")
+    return authorization
+
+@app.put("/authorizations/{authorization_id}")
+def update_authorization(authorization_id: int, authorization: Authorization, db: Session = Depends(get_db)):
+    db_authorization = db.query(AuthorizationDB).filter(AuthorizationDB.id == authorization_id).first()
+    if not db_authorization:
+        raise HTTPException(status_code=404, detail="Authorization not found")
+
+    db_authorization.person_id = authorization.person_id
+    db_authorization.expiration = authorization.expiration
+    db_authorization.origin_id = authorization.origin_id
+    db_authorization.room_id = authorization.room_id
+
+    db.commit()
+    db.refresh(db_authorization)
+    return db_authorization
+
+@app.delete("/authorizations/{authorization_id}")
+def delete_authorization(authorization_id: int, db: Session = Depends(get_db)):
+    db_authorization = db.query(AuthorizationDB).filter(AuthorizationDB.id == authorization_id).first()
+    if not db_authorization:
+        raise HTTPException(status_code=404, detail="Authorization not found")
+
+    db.delete(db_authorization)
+    db.commit()
+    return {"message": "Authorization deleted successfully"}

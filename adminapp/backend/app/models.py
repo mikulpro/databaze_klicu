@@ -92,11 +92,12 @@ class Room(BaseModel):
 class User(BaseModel):
     id: Optional[int] = None
     username: str
-    password: Optional[str] = None
+    #password: Optional[str] = None
     is_superuser: bool
 
     class Config:
         orm_mode = True
+        #exclude = ("password",)
 
 
 class Authorization(BaseModel):
