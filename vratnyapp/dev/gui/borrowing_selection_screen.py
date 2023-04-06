@@ -47,7 +47,7 @@ class BorrowingSelectionScreen(Screen):
 
     def _add_borrowingwidget(self, data):
         borrowing_widget = search_result_widget.SearchResultWidget()
-        borrowing_widget.change_text(str(data.authorization.person.get_full_name()) + "   " + str(data.key.room.name) + "   " +  str(data.borrowed))
+        borrowing_widget.change_text(str(data.authorization.person.get_full_name()) + "   " + str(data.key.room.name) + "   " +  str(f"{data.borrowed.hour}:{data.borrowed.minute:02d} {data.borrowed.day}. {data.borrowed.month}. {data.borrowed.year}"))
         borrowing_widget.label_pointer = borrowing_widget.ids.searchresultwidget_label_content
         borrowing_widget.data = data
         self.ids.borrowings_widget_scrollview.add_widget(borrowing_widget)
