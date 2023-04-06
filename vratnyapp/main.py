@@ -5,8 +5,8 @@ os.environ['KIVY_HOME'] = os.path.join(os.getcwd(), "kivy")
 # from pathlib import Path
 # import importlib.util
 
-from vratnyapp.dev.gui.vratny_app import VratnyApp
-from vratnyapp.dev.sqlite.db_interface import Db
+from dev.gui.vratny_app import VratnyApp
+from dev.sqlite.db_interface import Db
 # main_folder_path = Path(__file__).resolve().parent
 # project_folder_path = main_folder_path.parent
 #
