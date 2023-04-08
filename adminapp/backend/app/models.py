@@ -19,6 +19,25 @@ class Faculty(BaseModel):
     class Config:
         orm_mode = True
 
+class Workplace(BaseModel):
+    id: Optional[int] = None
+    abbreviation: str
+    name: str
+    faculty_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+# class AuthorizedPerson(BaseModel):
+#     id: Optional[int] = None
+#     firstname: str
+#     surname: str
+#     workplace_id: Optional[int] = None
+#     created: Optional[str] = None
+#
+#     class Config:
+#         orm_mode = True
 
 class AuthorizedPerson(BaseModel):
     id: Optional[int] = None
@@ -26,6 +45,7 @@ class AuthorizedPerson(BaseModel):
     surname: str
     workplace_id: Optional[int] = None
     created: Optional[str] = None
+    workplace: Optional[Workplace] = None
 
     class Config:
         orm_mode = True
@@ -41,16 +61,6 @@ class AlembicVersion(BaseModel):
 class AuthorizationOrigin(BaseModel):
     id: Optional[int] = None
     name: str
-
-    class Config:
-        orm_mode = True
-
-
-class Workplace(BaseModel):
-    id: Optional[int] = None
-    abbreviation: str
-    name: str
-    faculty_id: Optional[int] = None
 
     class Config:
         orm_mode = True

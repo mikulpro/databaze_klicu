@@ -3,7 +3,7 @@ import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi import Depends
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session, joinedload
 from passlib.context import CryptContext
 import bcrypt
 from fastapi.middleware.cors import CORSMiddleware
@@ -139,6 +139,22 @@ def create_authorized_person(authorized_person: AuthorizedPerson, db: Session = 
 def read_authorized_persons(db: Session = Depends(get_db)):
     authorized_persons = db.query(AuthorizedPersonDB).all()
     return authorized_persons
+
+
+@app.get("/authorized_persons/{person_id}")
+async def get_authorized_person(person_id: int, db: Session = Depends(get_db)):
+    # session = Session()
+
+    # session = get_db()
+    person = (
+        db.query(AuthorizedPersonDB)
+        .options(joinedload(AuthorizedPersonDB.workplace))
+        .filter(AuthorizedPersonDB.id == person_id)
+        .first()
+    )
+    if person is None:
+        raise HTTPException(status_code=404, detail="Person not found")
+    return person
 
 
 @app.put("/authorized_persons/{authorized_person_id}")
