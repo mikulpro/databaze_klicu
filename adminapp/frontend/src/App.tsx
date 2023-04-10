@@ -10,10 +10,45 @@ import {
 } from "@mui/material";
 import './App.css';
 
+
 interface LoginState {
   email: string;
   password: string;
 }
+
+interface IProps {
+}
+
+interface IState {
+  workplaces: Array<{ id: number; faculty_id: number; abbreviation: string; name: string }>;
+}
+
+class App extends Component<IProps, IState> {
+
+    constructor(props:IProps) {
+        super(props);
+        this.state = {
+            workplaces: []
+        };
+    }
+
+    componentDidMount() {
+         fetch("http://localhost:8001/workplaces/")
+          .then(response => response.json())
+          .then((workplaces_list: Array<{ id: number; faculty_id: number; abbreviation: string; name: string }>) => {
+            this.setState({
+              workplaces: workplaces_list
+            });
+          });
+    }
+
+    render() {
+        if (!this.state.workplaces) {
+            return <h2>Loading...</h2>
+        }
+        const workplaces_list: JSX.Element[] = this.state.workplaces.map((workplace: {id: number; faculty_id: number; abbreviation: string; name: string }, i: number) => (
+            <li key={workplace.id}>{workplace.abbreviation}</li>)) }
+
 
 const App: React.FC = () => {
   const [loginState, setLoginState] = useState<LoginState>({
