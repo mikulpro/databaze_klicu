@@ -3,21 +3,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import logo from './logo.svg';
 import './App.css';
-import Header from "./Header";
+import Navbar from './components/navbar/components/Navbar';
 
 
-const sections = [
-  { title: 'Technology', url: '#' },
-  { title: 'Design', url: '#' },
-  { title: 'Culture', url: '#' },
-  { title: 'Business', url: '#' },
-  { title: 'Politics', url: '#' },
-  { title: 'Opinion', url: '#' },
-  { title: 'Science', url: '#' },
-  { title: 'Health', url: '#' },
-  { title: 'Style', url: '#' },
-  { title: 'Travel', url: '#' },
-];
 
 const theme = createTheme();
 
@@ -44,7 +32,7 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <div className="App">
-                <Header sections={sections} title='Aplikace pro správu klíčů CPTO'/>
+                <Navbar/>
                 <header className="App-header">
                     <h1>Seznam pracovišť</h1>
                     <ul>
